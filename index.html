@@ -1,0 +1,2235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Willingdon College - Autonomous Exam Billing Portal</title>
+    <link rel="stylesheet" href="styles.css?v=8.1">
+</head>
+
+<body style="word-wrap: break-word;">
+    <!-- Global Full-Screen Cursor Color Trail (covers all areas: background, card, inputs, buttons) -->
+    <canvas id="cursor-trail-canvas" class="cursor-trail-canvas"></canvas>
+
+    <!-- Login Screen HTML -->
+    <div id="login-screen" class="no-print login-backdrop">
+        <canvas id="login-bg-canvas" class="login-bg-3d-canvas"></canvas>
+        <div class="login-card cyber-card" id="login-card-element">
+            <div class="cyber-corner top-left"></div>
+            <div class="cyber-corner top-right"></div>
+            <div class="cyber-corner bottom-left"></div>
+            <div class="cyber-corner bottom-right"></div>
+            <div id="login-3d-container" class="login-3d-canvas-wrap"></div>
+            <h1 class="login-logo">Willingdon College</h1>
+            <p class="login-subtitle">// AUTONOMOUS EXAM BILLING PORTAL</p>
+
+            <div id="login-error-msg" class="login-error" style="display: none;">ACCESS DENIED // INVALID CREDENTIALS</div>
+
+            <form onsubmit="event.preventDefault(); attemptLogin();">
+                <div class="login-form-group">
+                    <label class="login-label" for="login-username">Login ID</label>
+                    <input type="text" id="login-username" class="login-input" required autocomplete="username"
+                        placeholder="Enter Login ID">
+                </div>
+
+                <div class="login-form-group">
+                    <label class="login-label" for="login-password">Password</label>
+                    <div class="login-input-wrapper">
+                        <input type="password" id="login-password" class="login-input" required
+                            autocomplete="current-password" placeholder="Enter Password">
+                        <button type="button" class="login-toggle-password" onclick="toggleLoginPassword()">
+                            <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                viewBox="0 0 24 24">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-btn" id="login-btn">
+                    <span id="login-btn-text">Sign In</span>
+                    <div class="login-btn-progress-bar" id="login-progress-bar"></div>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="app-container" style="display: none;">
+        <nav id="main-nav" class="top-navbar no-print">
+            <div class="nav-content-container">
+                <div class="nav-tabs-group">
+                    <a href="#page1" class="nav-tab active" style="--item-index: 1;">
+                        <span class="nav-tab-badge">1</span>
+                        <span class="nav-tab-text">Attendance</span>
+                    </a>
+                    <a href="#page2" class="nav-tab" style="--item-index: 2;">
+                        <span class="nav-tab-badge">2</span>
+                        <span class="nav-tab-text">Lab Cert</span>
+                    </a>
+                    <a href="#page3" class="nav-tab" style="--item-index: 3;">
+                        <span class="nav-tab-badge">3</span>
+                        <span class="nav-tab-text">Arrangement</span>
+                    </a>
+                    <a href="#page4" class="nav-tab" style="--item-index: 4;">
+                        <span class="nav-tab-badge">4</span>
+                        <span class="nav-tab-text">Verification</span>
+                    </a>
+                    <a href="#page5" class="nav-tab" style="--item-index: 5;">
+                        <span class="nav-tab-badge">5</span>
+                        <span class="nav-tab-text">Remun (Ext)</span>
+                    </a>
+                    <a href="#page6" class="nav-tab" style="--item-index: 6;">
+                        <span class="nav-tab-badge">6</span>
+                        <span class="nav-tab-text">Remun (Int)</span>
+                    </a>
+                    <a href="#page7" class="nav-tab" style="--item-index: 7;">
+                        <span class="nav-tab-badge">7</span>
+                        <span class="nav-tab-text">Assistants</span>
+                    </a>
+                    <a href="#page8" class="nav-tab" style="--item-index: 8;">
+                        <span class="nav-tab-badge">8</span>
+                        <span class="nav-tab-text">Final Bills</span>
+                    </a>
+                </div>
+
+                <div class="nav-actions-group">
+                    <button type="button" onclick="saveAllBillDataManually()" class="nav-btn btn-save"
+                        title="Save all entered data permanently (Ctrl+S)" style="--item-index: 9;">
+                        <svg class="nav-btn-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            viewBox="0 0 24 24">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                            <polyline points="17 21 17 13 7 13 7 21" />
+                            <polyline points="7 3 7 8 15 8" />
+                        </svg>
+                        <span>Save Data</span>
+                    </button>
+                    <button type="button" onclick="handleDownloadPdf()" class="nav-btn btn-download"
+                        title="Download complete bill as PDF to your PC" style="--item-index: 10;">
+                        <svg class="nav-btn-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            viewBox="0 0 24 24">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        <span>Download PDF</span>
+                    </button>
+                    <button type="button" onclick="window.print()" class="nav-btn btn-print" title="Print All Pages"
+                        style="--item-index: 11;">
+                        <svg class="nav-btn-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            viewBox="0 0 24 24">
+                            <polyline points="6 9 6 2 18 2 18 9" />
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                            <rect x="6" y="14" width="12" height="8" />
+                        </svg>
+                        <span>Print All</span>
+                    </button>
+                    <button type="button" onclick="clearAllBillData()" class="nav-btn btn-clear"
+                        title="Clear all entered bill data" style="--item-index: 12;">
+                        <svg class="nav-btn-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            viewBox="0 0 24 24">
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                        </svg>
+                        <span>Clear Data</span>
+                    </button>
+                    <button type="button" onclick="openShareModal()" class="nav-btn btn-share"
+                        title="Share bill document" style="--item-index: 12;">
+                        <svg class="nav-btn-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            viewBox="0 0 24 24">
+                            <circle cx="18" cy="5" r="3" />
+                            <circle cx="6" cy="12" r="3" />
+                            <circle cx="18" cy="19" r="3" />
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                        </svg>
+                        <span>Share</span>
+                    </button>
+                    <button type="button" onclick="logout()" class="nav-btn btn-logout" title="Sign out"
+                        style="--item-index: 13;">
+                        <svg class="nav-btn-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            viewBox="0 0 24 24">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                            <polyline points="16 17 21 12 16 7" />
+                            <line x1="21" y1="12" x2="9" y2="12" />
+                        </svg>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Dynamic Glowing Animated Laser Runner -->
+            <div class="nav-glow-runner"></div>
+        </nav>
+
+        <div class="page" id="page1">
+
+
+
+
+
+
+            <p class=MsoNormal><span lang=EN-US>
+                </span></p>
+
+
+
+            <p class=MsoNormal><span lang=EN-US style='font-size:26.0pt'> </span></p>
+
+            <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US
+                        style='font-size:26.0pt'>Willingdon College, Sangli. </span></b></p>
+
+            <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US
+                        style='font-size:18.0pt'>Autonomous</span></b></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US><select id="course-dropdown"
+                        class="course-dropdown"
+                        style="font-size: 16px; font-weight: bold; font-family: inherit; margin: 0 5px; padding: 2px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer;">
+                        <option value="B.SC.IT">B.SC.IT</option>
+                        <option value="B.C.S">B.C.S</option>
+                        <option value="M.SC">M.SC</option>
+                        <option value="Bsc.CS">Bsc.CS</option>
+                    </select></span> <select id="part-dropdown" class="part-dropdown"
+                    style="font-size: 16px; font-weight: bold; font-family: inherit; margin: 0 5px; padding: 2px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer;">
+                    <option value="Part - I">Part - I</option>
+                    <option value="Part - II">Part - II</option>
+                    <option value="Part - III">Part - III</option>
+                    <option value="Part - IV">Part - IV</option>
+                    <option value="Part - V">Part - V</option>
+                    <option value="Part - VI">Part - VI</option>
+                </select>
+                Practical Examination <select id="month-dropdown" class="month-dropdown"
+                    style="font-size: 16px; font-weight: bold; font-family: inherit; margin: 0 5px; padding: 2px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer;">
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="Oct">Oct</option>
+                    <option value="Dec">Dec</option>
+                </select>
+                <select id="year-dropdown" class="year-dropdown"
+                    style="font-size: 16px; font-weight: bold; font-family: inherit; margin: 0 5px; padding: 2px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer;">
+                    <option value="2024">2024</option>
+                    <option value="2025" selected>2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                    <option value="2029">2029</option>
+                    <option value="2030">2030</option>
+                </select></span>
+            </p>
+
+            <p class=MsoNormal style='line-height:150%'><span lang=EN-US> Centre :- <b><u>Willingdon
+                            College, Sangli.</u></b> Subject :- </span><b><span lang=EN-US
+                        style='font-size:10.0pt;line-height:150%'><input type="text" class="subject-input"
+                            placeholder="Enter Subject"
+                            style="font-size: 14px; font-weight: bold; font-family: inherit; margin: 0 5px; padding: 2px; border: 1px solid #ccc; border-radius: 4px; width: 300px; background: white;"
+                            id="subject-input" value="BSc IT C Programing And HTML">
+                    </span></b> Date :- <b><span class="date-display print-date-display" style="display: none;">23/09/2026</span><input type="date" class="date-input no-print-date"
+                        value="2026-09-23"
+                        title="Select Date via Calendar"
+                        style="font-size: 14px; font-weight: bold; font-family: inherit; margin: 0 5px; padding: 2px 6px; border: 1px solid #ccc; border-radius: 4px; width: 140px; background: white; cursor: pointer;"
+                        id="date-input"></b>
+            </p>
+
+            <p class=MsoNormal style='line-height:150%'><span lang=EN-US>
+                    REPORT OF ATTENDANCE AT CANDIDATES AT THE PRACTICAL EXAMINATIONS</span></p>
+
+            <p class=MsoNormal style='line-height:150%'><span lang=EN-US>
+                    ( To be submitted in Triplicates along with mark-lists )</span></p>
+
+            <p class=MsoNormal style='line-height:150%'><span lang=EN-US style='font-size:
+14.0pt;line-height:150%'> Examiners Names &amp; College</span></p>
+
+            <p class=MsoNormal style='line-height:150%'><span lang=EN-US> 1. <b>
+                        <input type="text" id="p1-ext-name" class="examiner-input" placeholder="Enter Examiner Name"
+                            style="font-size: 14px; font-weight: bold; font-family: inherit; margin: 0; padding: 2px; border: 1px solid #ccc; border-radius: 4px; width: 200px; background: white;">
+                        <input type="text" id="p1-ext-college" class="college-input" placeholder="Enter College Name"
+                            style="font-size: 14px; font-weight: bold; font-family: inherit; margin: 0 5px; padding: 2px; border: 1px solid #ccc; border-radius: 4px; width: 250px; background: white;">
+                    </b></span></p>
+            <p class=MsoNormal><span lang=EN-US> 2. <b><u>
+                            <input type="text" id="p1-int-name" class="examiner2-input"
+                                placeholder="Enter Examiner 2 Name"
+                                style="font-size: 14px; font-weight: bold; font-family: inherit; margin: 0; padding: 2px; border: 1px solid #ccc; border-radius: 4px; width: 200px; background: white;">
+                            <input type="text" id="p1-int-college" class="college2-input"
+                                placeholder="Enter College Name"
+                                style="font-size: 14px; font-weight: bold; font-family: inherit; margin: 0 5px; padding: 2px; border: 1px solid #ccc; border-radius: 4px; width: 250px; background: white;">
+                        </u></span></b></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width=653
+                style='width:489.8pt;margin-left:21.75pt;border-collapse:collapse;border:none'>
+                <tr style='height:89.1pt'>
+                    <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:89.1pt'>
+                        <p class=MsoNormal><span lang=EN-US>Batch No.</span></p>
+                        <p class=MsoNormal><span lang=EN-US>Date and time of </span></p>
+                        <p class=MsoNormal><span lang=EN-US>the Practical </span></p>
+                        <p class=MsoNormal><span lang=EN-US>examination</span></p>
+                    </td>
+                    <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
+  border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:89.1pt'>
+                        <p class=MsoNormal><span lang=EN-US>Total No. of </span></p>
+                        <p class=MsoNormal><span lang=EN-US>Candidates called</span></p>
+                        <p class=MsoNormal><span lang=EN-US>for examination</span></p>
+                    </td>
+                    <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
+  border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:89.1pt'>
+                        <p class=MsoNormal><span lang=EN-US>Total No. of</span></p>
+                        <p class=MsoNormal><span lang=EN-US>Candidates present</span></p>
+                        <p class=MsoNormal><span lang=EN-US>at the examination</span></p>
+                        <p class=MsoNormal><span lang=EN-US>on the dates</span></p>
+                        <p class=MsoNormal><span lang=EN-US>allotted to them</span></p>
+                    </td>
+                    <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
+  border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:89.1pt'>
+                        <p class=MsoNormal><span lang=EN-US>Seat Nos. of </span></p>
+                        <p class=MsoNormal><span lang=EN-US>Candidates</span></p>
+                        <p class=MsoNormal><span lang=EN-US>examined</span></p>
+                        <p class=MsoNormal><span lang=EN-US>out of turn</span></p>
+                    </td>
+                    <td width=131 valign=top style='width:98.0pt;border:solid windowtext 1.0pt;
+  border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:89.1pt'>
+                        <p class=MsoNormal><span lang=EN-US>Seat No. of </span></p>
+                        <p class=MsoNormal><span lang=EN-US>Candidates who</span></p>
+                        <p class=MsoNormal><span lang=EN-US>were absent Total</span></p>
+                    </td>
+                </tr>
+                <tr style='height:62.1pt'>
+                    <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:62.1pt'>
+                        <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US><select
+                                        class="batch-dropdown"
+                                        style="font-size: 14px; font-weight: bold; font-family: inherit; margin: 0; padding: 2px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer;">
+                                        <option value="Batch I" selected>Batch I</option>
+                                        <option value="Batch II">Batch II</option>
+                                        <option value="Batch III">Batch III</option>
+                                        <option value="Batch IV">Batch IV</option>
+                                        <option value="Batch V">Batch V</option>
+                                        <option value="Batch VI">Batch VI</option>
+                                    </select></span></b></p>
+                        <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US>&nbsp;</span></p>
+                    </td>
+                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:62.1pt'>
+                        <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
+                                    class="table-input col-2-input" placeholder="0" id="p1-r1-c2"></span></p>
+                    </td>
+                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:62.1pt'>
+                        <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
+                                    class="table-input col-3-input" placeholder="0" id="p1-r1-c3"></span></p>
+                    </td>
+                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:62.1pt'>
+                        <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
+                                    class="table-input col-4-input" placeholder="0" id="p1-r1-c4"></span></p>
+                    </td>
+                    <td width=131 valign=top style='width:98.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:62.1pt'>
+                        <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
+                                    class="table-input col-5-input" placeholder="0" id="p1-r1-c5"></span></p>
+                    </td>
+                </tr>
+                <tr style='height:56.6pt'>
+                    <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:56.6pt'>
+                        <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US><select
+                                        class="batch-dropdown"
+                                        style="font-size: 14px; font-weight: bold; font-family: inherit; margin: 0; padding: 2px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer;">
+                                        <option value="Batch I">Batch I</option>
+                                        <option value="Batch II" selected>Batch II</option>
+                                        <option value="Batch III">Batch III</option>
+                                        <option value="Batch IV">Batch IV</option>
+                                        <option value="Batch V">Batch V</option>
+                                        <option value="Batch VI">Batch VI</option>
+                                    </select></span></b></p>
+                        <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US>&nbsp;</span></p>
+                    </td>
+                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:56.6pt'>
+                        <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
+                                    class="table-input col-2-input" placeholder="0" id="p1-r2-c2"></span></p>
+                    </td>
+                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:56.6pt'>
+                        <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
+                                    class="table-input col-3-input" placeholder="0" id="p1-r2-c3"></span></p>
+                    </td>
+                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:56.6pt'>
+                        <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
+                                    class="table-input col-4-input" placeholder="0" id="p1-r2-c4"></span></p>
+                    </td>
+                    <td width=131 valign=top style='width:98.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:56.6pt'>
+                        <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
+                                    class="table-input col-5-input" placeholder="0" id="p1-r2-c5"></span></p>
+                    </td>
+                </tr>
+                <tr style='height:47.15pt'>
+                    <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
+                        <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US><select
+                                        class="batch-dropdown"
+                                        style="font-size: 14px; font-weight: bold; font-family: inherit; margin: 0; padding: 2px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer;">
+                                        <option value="Batch I">Batch I</option>
+                                        <option value="Batch II">Batch II</option>
+                                        <option value="Batch III" selected>Batch III</option>
+                                        <option value="Batch IV">Batch IV</option>
+                                        <option value="Batch V">Batch V</option>
+                                        <option value="Batch VI">Batch VI</option>
+                                    </select></span></b></p>
+                        <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US>&nbsp;</span></p>
+                    </td>
+                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
+                        <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
+                                    class="table-input col-2-input" placeholder="0" id="p1-r3-c2"></span></p>
+                    </td>
+                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
+                        <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
+                                    class="table-input col-3-input" placeholder="0" id="p1-r3-c3"></span></p>
+                    </td>
+                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
+                        <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
+                                    class="table-input col-4-input" placeholder="0" id="p1-r3-c4"></span></p>
+                    </td>
+                    <td width=131 valign=top style='width:98.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
+                        <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
+                                    class="table-input col-5-input" placeholder="0" id="p1-r3-c5"></span></p>
+                    </td>
+                </tr>
+                <tr style='height:47.15pt'>
+                    <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
+                        <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US>&nbsp;</span></b>
+                        </p>
+                        <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US>Total</span></b>
+                        </p>
+                        <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US>&nbsp;</span></b>
+                        </p>
+                    </td>
+                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt; background-color: #f8f9fa;'>
+                        <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US id="col-2-total"
+                                    style="color: #2563eb; font-size: 14pt;">0</span></b></p>
+                    </td>
+                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt; background-color: #f8f9fa;'>
+                        <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US id="col-3-total"
+                                    style="color: #2563eb; font-size: 14pt;">0</span></b></p>
+                    </td>
+                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt; background-color: #f8f9fa;'>
+                        <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US id="col-4-total"
+                                    style="color: #2563eb; font-size: 14pt;">0</span></b></p>
+                    </td>
+                    <td width=131 valign=top style='width:98.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt; background-color: #f8f9fa;'>
+                        <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US id="col-5-total"
+                                    style="color: #2563eb; font-size: 14pt;">0</span></b></p>
+                    </td>
+                </tr>
+            </table>
+
+            <p class=MsoNormal style='line-height:150%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal style='line-height:150%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal style='line-height:150%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US> Examiners
+                    Signature - 1)</span><span lang=EN-US style='font-size:10.0pt;line-height:
+115%'> </span><b><span lang=EN-US><span class="examiner-display"
+                            style="font-weight: bold; border-bottom: 1px dashed #000; min-width: 200px; display: inline-block; padding: 0 5px;"></span></span></b><span
+                    lang=EN-US style='font-size:10.0pt;line-height:115%'> </span><b><span lang=EN-US></span></b><span
+                    lang=EN-US style='font-size:10.0pt;
+line-height:115%'></span><b><span lang=EN-US></span></b><span lang=EN-US>2) <b><u><span class="examiner2-display"
+                                style="font-weight: bold; border-bottom: 1px dashed #000; min-width: 200px; display: inline-block; padding: 0 5px;"></span></u>
+                    </b></span></p>
+
+            <p class=MsoNormal style='line-height:115%'><b><u><span lang=EN-US><span
+                                style='text-decoration:none'>&nbsp;</span></span></u></b></p>
+
+            <p class=MsoNormal style='line-height:115%'><b><u><span lang=EN-US><span
+                                style='text-decoration:none'>&nbsp;</span></span></u></b></p>
+
+            <p class=MsoNormal style='line-height:115%'><b><u><span lang=EN-US><span
+                                style='text-decoration:none'>&nbsp;</span></span></u></b></p>
+
+            <p class=MsoNormal style='line-height:115%'><b><u><span lang=EN-US><span
+                                style='text-decoration:none'>&nbsp;</span></span></u></b></p>
+
+            <p class=MsoNormal style='line-height:115%'><b><u><span lang=EN-US><span
+                                style='text-decoration:none'>&nbsp;</span></span></u></b></p>
+
+            <p class=MsoNormal style='line-height:115%'><b><u><span lang=EN-US><span
+                                style='text-decoration:none'>&nbsp;</span></span></u></b></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+
+
+        </div>
+        <div class="page" id="page2">
+            <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US
+                        style='font-size:26.0pt'>Willingdon College, Sangli. </span></b></p>
+
+            <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US
+                        style='font-size:18.0pt'>Autonomous</span></b></p>
+
+            <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+                    style='font-size:16.0pt'>LABORATORY
+                    CERTIFICATE</span><span lang=EN-US style='font-size:26.0pt'> </span></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>This is to certify
+                    that :</span></p>
+
+            <p class=MsoListParagraphCxSpFirst style='margin-left:54.0pt;text-indent:-36.0pt;
+line-height:115%'><span lang=EN-US>i)<span
+                        style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </span></span><span lang=EN-US>Non of the person engaged for this examination
+                    has any relative appearing for this examination </span></p>
+
+            <p class=MsoListParagraphCxSpMiddle style='margin-left:54.0pt;text-indent:-36.0pt;
+line-height:115%'><span lang=EN-US>ii)<span
+                        style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </span></span><span lang=EN-US>All weights, instruments and apparatus are
+                    calibrated.</span></p>
+
+            <p class=MsoListParagraphCxSpLast style='margin-left:54.0pt;text-indent:-36.0pt;
+line-height:115%'><span lang=EN-US>iii)<span
+                        style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </span></span><span lang=EN-US>All chemicals supplied are pure </span></p>
+
+            <p class=MsoNormal style='margin-left:18.0pt;line-height:115%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal style='margin-left:288.0pt;line-height:115%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal style='margin-left:288.0pt;line-height:115%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal align=right style='margin-left:288.0pt;text-align:right;
+line-height:115%'><span lang=EN-US>Signature and name of the </span></p>
+
+            <p class=MsoNormal align=right style='margin-left:288.0pt;text-align:right;
+line-height:115%'><span lang=EN-US> Laboratory supervisor </span></p>
+
+            <p class=MsoNormal align=right style='margin-left:288.0pt;text-align:right;
+line-height:115%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>Name of the
+                    College : Willingdon college, Sangli </span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>Name of the
+                    Subject : </span><b><span lang=EN-US style='font-size:10.0pt;line-height:
+115%'><span class="subject-display"
+                            style="font-weight: bold; border-bottom: 1px dashed #000; min-width: 200px; display: inline-block; padding: 0 5px;">BSc
+                            IT C Programing And HTML</span>
+                    </span></b></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>Name of the Examination : <span
+                        class="course-display">B.SC.IT</span> - <span class="part-display">Part - I</span> <span
+                        class="month-display">March</span> <span class="year-display">2025</span></span>
+            </p>
+
+            <p class=MsoNormal><span lang=EN-US>Date of Inspection : <input type="date" class="inspection-date-input"
+                        value="2025-10-08"
+                        style="font-family: inherit; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; padding: 2px; background: white;"></span>
+            </p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>Time of Inspection
+                    : 11.00 Am </span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>
+                    1)</span><span lang=EN-US style='font-size:10.0pt;line-height:115%'> </span><b><span
+                        lang=EN-US><span class="examiner-display"
+                            style="font-weight: bold; border-bottom: 1px dashed #000; min-width: 200px; display: inline-block; padding: 0 5px;"></span></span></b><span
+                    lang=EN-US style='font-size:10.0pt;
+line-height:115%'> </span><b><span lang=EN-US></span></b><span lang=EN-US
+                    style='font-size:10.0pt;line-height:115%'></span><b><span lang=EN-US></span></b><span lang=EN-US>2)
+                    <b><u><span class="examiner2-display"
+                                style="font-weight: bold; border-bottom: 1px dashed #000; min-width: 200px; display: inline-block; padding: 0 5px;"></span></u></b>
+                </span></p>
+
+            <p class=MsoNormal align=right style='margin-left:288.0pt;text-align:right;
+line-height:115%'><span lang=EN-US>Signature and name of the </span></p>
+
+            <p class=MsoNormal align=center style='margin-left:324.0pt;text-align:center;
+text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>&nbsp;</span></p>
+
+
+            <p class=MsoNormal style='line-height:115%;border:none;padding:0cm'><span lang=EN-US>&nbsp;</span></p>
+
+
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>To be handed over
+                    to the Chairman on or before the date of mark-settling meeting </span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span
+                    lang=EN-US>---------------------------------------------------------------------------------------------------------------------------------------</span>
+            </p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>*strike-out if not
+                    applicable </span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal><span lang=EN-US> </span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US>&nbsp;</span></p>
+
+
+
+        </div>
+        <div class="page" id="page3">
+            <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US
+                        style='font-size:26.0pt'>Willingdon College, Sangli. </span></b></p>
+
+            <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US
+                        style='font-size:18.0pt'>Autonomous</span></b></p>
+
+            <p class=MsoNormal><span lang=EN-US style='font-size:16.0pt'>..........</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>WILLINGDON COLLEGE </span><b><span lang=EN-US
+                        style='font-size:14.0pt'><span class="course-display">B.SC.IT</span>- <span
+                            class="part-display">Part - I</span> <span class="month-display">March</span> <span
+                            class="year-display">2025</span></span></b></p>
+
+            <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+                    style='font-size:14.0pt'>CIRTIFICATE
+                    REGARDING THE ARRANGEMENTS OF PRACTICAL</span></p>
+
+            <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+                    style='font-size:14.0pt'>&nbsp;</span></p>
+
+            <p class=MsoNormal style='line-height:115%'><span lang=EN-US style='font-size:
+11.0pt;line-height:115%'>.. FOR THE . <b></b></span></p>
+
+            <p class=MsoNormal style='line-height:115%'><b><span lang=EN-US style='font-size:11.0pt;line-height:115%'>
+                    </span></b><b><span lang=EN-US style='font-size:10.0pt;line-height:115%'><span
+                            class="subject-display"
+                            style="font-weight: bold; border-bottom: 1px dashed #000; min-width: 200px; display: inline-block; padding: 0 5px;">BSc
+                            IT C Programing And HTML</span>
+                        EXAMINATION</span></b><span lang=EN-US style='font-size:11.0pt;line-height:
+115%'> OF <b><u><span lang=EN-US class="month-display">March</span></u></b> <b><u><span lang=EN-US
+                                style='font-size:11.0pt;line-height:115%' class="year-display">2025</span></u></b></p>
+
+            <p class=MsoNormal><span lang=EN-US style='font-size:11.0pt'>&nbsp;</span></p>
+
+            <p class=MsoNormal style='margin-left:36.0pt'><span lang=EN-US>Certified that
+                    All Experiments from the supplied question papers are simultaneously arranged
+                    in the laboratory, at the time of the practical examination.</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>The following experiments have not been
+                    arranged for the reasons shown below: - </span></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>Sr no. Experiments Reason</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>1. __________________________ ______________________________</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>2. __________________________ ______________________________</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>3. __________________________ ______________________________</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>4. __________________________ ______________________________</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>5. __________________________ ______________________________</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>6. __________________________ ______________________________</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>Date :- </span><span lang=EN-US class="date-display">23/09/2026</span>
+                <input type="date" class="page-date-sync-input" value="2026-09-23" title="Change date via calendar"
+                    style="font-size: 11px; padding: 1px 3px; border: 1px solid #ccc; border-radius: 3px; cursor: pointer; vertical-align: middle;">
+            </p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal align=right style='text-align:right'><span lang=EN-US>Laboratory
+                    supervisor </span></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
+                    style='font-size:14.0pt'>Examiners
+                    Remark</span></p>
+
+
+
+            <p class=MsoNormal style='border:none;padding:0cm'><span lang=EN-US>&nbsp;</span></p>
+
+
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>______________<u>ALL EXPERIMENTS WERE
+                        ARRENGED ____________</u>_________________________</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>Date and time of Inspection of Laboratory : </span></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>
+                    1)</span><span lang=EN-US style='font-size:10.0pt'> </span><b><span lang=EN-US><span
+                            class="examiner-display"
+                            style="font-weight: bold; border-bottom: 1px dashed #000; min-width: 200px; display: inline-block; padding: 0 5px;"></span></span></b><span
+                    lang=EN-US style='font-size:10.0pt'>
+                </span><b><span lang=EN-US></span></b><span lang=EN-US style='font-size:
+10.0pt'></span><b><span lang=EN-US></span></b><span lang=EN-US>2)
+                    <b><u><span class="examiner2-display"
+                                style="font-weight: bold; border-bottom: 1px dashed #000; min-width: 200px; display: inline-block; padding: 0 5px;"></span></u></b>
+                </span></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal align=right style='text-align:right'><span lang=EN-US>Examiner
+                    sign </span></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>(The examiners are requested to inspect the
+                    Laboratory if required between 7.30 am and 6.00 pm only)</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+            <p class=MsoNormal><span lang=EN-US>
+                </span></p>
+
+
+
+        </div>
+        <div class="page" id="page4">
+            <div style="position: relative;">
+                <p class="MsoNormal" style="text-align: right; margin-bottom: 20px;">
+                    <span lang="EN-US" style="font-size: 10.0pt;">Exam. Pract. : 4</span>
+                </p>
+
+                <p class="MsoNormal" align="center" style="text-align:center"><b><span lang="EN-US"
+                            style="font-size:24.0pt">Willingdon College, Sangli. </span></b></p>
+                <p class="MsoNormal" align="center" style="text-align:center"><b><span lang="EN-US"
+                            style="font-size:18.0pt">Autonomous</span></b></p>
+
+                <p class="MsoNormal" style="margin-top: 20px; text-align: center;">
+                    <b><span lang="EN-US" style="font-size: 14.0pt;">CERTIFICATE OF VERIFICATION OF MARKS</span></b><br>
+                    <span lang="EN-US" style="font-size: 11.0pt;">(To be signed by the Examiner)</span>
+                </p>
+
+                <p class="MsoNormal" style="margin-top: 20px; font-size: 10.0pt;">
+                    <span lang="EN-US">To be prepared duplicate One copy to be attached to the mark-list, second copy to
+                        be
+                        sent to Chairman along with other paper.</span>
+                </p>
+
+                <p class="MsoNormal" style="margin-top: 20px; line-height: 1.6;">
+                    <span lang="EN-US">We hereby certify that we have verified the entries of marks in the mark-sheets
+                        with
+                        the entry of marks in the Answer books in the subject of <b><u><span class="subject-display">BSc
+                                    IT C Programing And HTML</span></u></b> practical. At the <b><u><span
+                                    class="course-display"></span> <span class="part-display"></span></u></b>.
+                        Examination
+                        held in <b><u><span class="month-display"></span></u></b> <b><u><span
+                                    class="year-display"></span></u></b> and have found them correct.</span>
+                </p>
+
+                <p class="MsoNormal" style="margin-top: 10px;">
+                    <span lang="EN-US">We further certify that the totals entered in these mark-sheet have been checked
+                        by
+                        us and have been found correct.</span>
+                </p>
+
+                <table style="width: 100%; border-collapse: collapse; margin-top: 30px; border: none;">
+                    <thead>
+                        <tr>
+                            <th style="text-align: left; border: none; padding: 5px;">Name of center</th>
+                            <th style="text-align: center; border: none; padding: 5px;">No. of candidates Examined</th>
+                            <th style="text-align: right; border: none; padding: 5px;">Total No. of Candidates examined
+                                by
+                                us</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 5px; border: none;">1. WILLINGDON COLLEGE SANGLI</td>
+                            <td style="text-align: center; padding: 5px; border: none;"><b><span
+                                        class="page4-total-present">0</span></b></td>
+                            <td style="text-align: right; padding: 5px; border: none;"><b><span
+                                        class="page4-total-present">0</span></b></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 5px; border: none;">2.</td>
+                            <td style="text-align: center; padding: 5px; border: none;">__________</td>
+                            <td style="text-align: right; padding: 5px; border: none;">__________</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 5px; border: none;">3.</td>
+                            <td style="text-align: center; padding: 5px; border: none;">__________</td>
+                            <td style="text-align: right; padding: 5px; border: none;">__________</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p class="MsoNormal" style="margin-top: 20px;">
+                    <span lang="EN-US">The total no. of candidates assessed by us :- <b><span
+                                class="page4-total-present">0</span></b> only</span>
+                </p>
+
+                <p class="MsoNormal" style="margin-top: 30px;">
+                    <span lang="EN-US">Date: - <b><span class="date-display">23/09/2026</span></b> <input type="date"
+                            class="page-date-sync-input" value="2026-09-23" title="Change date via calendar"
+                            style="font-size: 11px; padding: 1px 3px; border: 1px solid #ccc; border-radius: 3px; cursor: pointer; vertical-align: middle;"></span><br>
+                    <span lang="EN-US">Place :- <b>SANGLI</b></span>
+                </p>
+
+                <table style="width: 100%; border-collapse: collapse; margin-top: 40px; border: none;">
+                    <thead>
+                        <tr>
+                            <th style="text-align: left; border: none; width: 40%;">Examiners Names</th>
+                            <th style="text-align: left; border: none; width: 40%;">College</th>
+                            <th style="text-align: left; border: none; width: 20%;">Signature</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="height: 60px; vertical-align: bottom;">
+                            <td style="padding: 5px; border: none;">1. <b><span class="examiner-display"></span></b>
+                            </td>
+                            <td style="padding: 5px; border: none;"><span class="college-display"></span></td>
+                            <td style="padding: 5px; border: none;"></td>
+                        </tr>
+                        <tr style="height: 60px; vertical-align: bottom;">
+                            <td style="padding: 5px; border: none;">2. <b><span class="examiner2-display"></span></b>
+                            </td>
+                            <td style="padding: 5px; border: none;"><span class="college2-display"></span></td>
+                            <td style="padding: 5px; border: none;"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="page" id="page5">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2 style="margin: 0;">Willingdon College, Sangli (Autonomous)</h2>
+                <h3 style="margin: 5px 0;">REMUNERATION BILL FORM (EXTERNAL/INTERNAL)</h3>
+            </div>
+
+            <p class="MsoNormal">परीक्षकाचे नाव ................... <span class="examiner-display"></span>
+                ..................<strong>बी.एस्सी आयटी/</strong>बी. सी. एस. भाग -<strong><span
+                        class="part-display"></span></strong> परीक्षा</p>
+            <p class="MsoNormal">विषय ........................ <strong><span class="subject-display">BSc IT C Programing
+                        And HTML</span></strong>
+                ....................प्रात्यक्षिक परीक्षेचे मानधन देयक.</p>
+            <p class="MsoNormal"><strong>रसायनशास्त्राखेरीज अन्य सर्व विषयांचे मानधन अदा करण्याचे कोष्टक</strong></p>
+
+            <table style="width:100%; border-collapse: collapse; border: 1px solid black;">
+                <tr style="text-align: center; font-weight: bold;">
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>परीक्षा</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>प्रती विद्यार्थी दर</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>परीक्षक संख्या</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>(pair) द्वायीमधील प्रत्येक परीक्षकास प्रतिविद्यार्थी दिले जाणारे मानधन रुपये</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>परीक्षकाने असेस केलेली विद्यार्थी संख्या</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>अदा करण्यात आलेले एकूण मानधन</p>
+                        <p>(column no 4 * column no. 5= Remuneration for examiner )</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>Total</p>
+                    </td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="border: 1px solid black; padding: 2px;">
+                        <p>1</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 2px;">
+                        <p>2</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 2px;">
+                        <p>3</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 2px;">
+                        <p>4</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 2px;">
+                        <p>5</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 2px;">
+                        <p>6</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 2px;">
+                        <p>7</p>
+                    </td>
+                </tr>
+                <tr id="remun-row-part1" style="text-align: center;">
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>B.Sc./B.C.S. Part I</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="17.00"
+                            class="remun-input rate-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="2"
+                            class="remun-input examiners-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="14.00"
+                            class="remun-input per-student-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="student-count">0</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="remun-calc">0</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="total-remun">0</p>
+                    </td>
+                </tr>
+                <tr id="remun-row-part2" style="text-align: center;">
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>B.Sc./B.C.S. Part II</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="25.00"
+                            class="remun-input rate-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="2"
+                            class="remun-input examiners-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="14.00"
+                            class="remun-input per-student-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="student-count">0</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="remun-calc">0</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="total-remun">0</p>
+                    </td>
+                </tr>
+                <tr id="remun-row-part3" style="text-align: center;">
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>B.Sc./B.C.S. Part III</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="40.00"
+                            class="remun-input rate-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="2"
+                            class="remun-input examiners-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="21.00"
+                            class="remun-input per-student-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="student-count">0</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="remun-calc">0</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="total-remun">0</p>
+                    </td>
+                </tr>
+                <tr id="remun-row-extra" style="text-align: center;">
+                    <td colspan="6" style="border: 1px solid black; padding: 5px; text-align: right;">
+                        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
+                            <input type="text" placeholder="Remarks (optional)" style="flex: 1; border: none; text-align: right; background: transparent; font-family: inherit; font-size: 13px;">
+                            <label style="font-weight: bold; font-size: 13px; white-space: nowrap;">Date / दिनांक :</label>
+                            <span class="date-display print-date-display" style="display: none; font-weight: bold;">23/09/2026</span>
+                            <input type="date" value="2026-09-23" class="page-date-sync-input remun-date-input no-print-date" title="Select Date" style="font-size: 13px; font-weight: bold; cursor: pointer; vertical-align: middle;">
+                        </div>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <input type="number" step="0.01" id="remun-extra-p5" class="remun-input remun-extra-input" placeholder="0" style="width: 100%; border: none; text-align: center; font-size: 14px; font-weight: bold; background: transparent;">
+                    </td>
+                </tr>
+                <tr id="remun-row-total" style="text-align: center; font-weight: bold; background-color: #f8f9fa;">
+                    <td colspan="6" style="border: 1px solid black; padding: 5px; text-align: right;">
+                        Total :
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p id="remun-total-p5" class="remun-vertical-total" style="margin: 0; font-weight: bold;">0</p>
+                    </td>
+                </tr>
+            </table>
+
+            <p class="MsoNormal"><strong>पोहोच पावती</strong></p>
+            <p class="MsoNormal">मी <span class="examiner-display"></span> पोहोच पावती लिहून देतो/देते कि
+                <strong>WILLINGDON
+                    COLLEGE SANGLI</strong> या महाविद्यालयात प्रात्यक्षिक परीक्षेचे -----<span
+                    class="page4-total-present">0</span>----- इतके विद्यार्थी असेस केलेले आहेत मा. वित्त व लेखा अधिकारी,
+                विलिंग्डन महाविद्यालय, सांगली. Autonomous यांचे कडून मला त्याचे मानधन रुपये --- <span
+                    class="total-remun-display">0</span> ---- इतके रोखीने प्राप्त झाले.
+            </p>
+
+            <p class="MsoNormal">दिनांक : <span class="date-display">23/09/2026</span> <input type="date"
+                    class="page-date-sync-input" value="2026-09-23" title="Change date via calendar"
+                    style="font-size: 11px; padding: 1px 3px; border: 1px solid #ccc; border-radius: 3px; cursor: pointer; vertical-align: middle;">
+            </p>
+            <p class="MsoNormal">देयक अदा करणाऱ्या कर्मचारी स्वाक्षरी परीक्षकाची स्वाक्षरी</p>
+
+            <p class="MsoNormal"><strong>परीक्षकाचे नाव व महाविद्यालयाचा व पत्र व्यवहाराचा संपूर्ण पत्ता</strong></p>
+            <p class="MsoNormal"><span class="examiner-display"></span> <span class="college-display">WILLINGDON COLLEGE
+                    SANGLI</span></p>
+
+            <p class="MsoNormal"><strong>संबंधित परीक्षा केंद्रावरील सहपरीक्षक व विभाग प्रमुखांचे प्रमाणपत्र</strong>
+            </p>
+            <p class="MsoNormal">प्रमाणित करण्यात येते कि , श्री./ श्रीमती ............................................
+                <span class="examiner-display"></span> ........................................
+            </p>
+            <p class="MsoNormal">यांनी <strong><span class="college-display">WILLINGDON COLLEGE SANGLI</span></strong>
+                महाविद्यालयात वर उल्लेख केलेल्या
+                प्रात्यक्षिक परीक्षेचे ... <span class="page4-total-present">0</span> ......</p>
+            <p class="MsoNormal">इतके विद्यार्थी असेस केलेले आहेत. सदरची माहिती सत्य आहे.</p>
+
+            <p class="MsoNormal">वरिष्ठ सह्पारीक्षक सही संबंधित परीक्षा केंद्रावरील विभाग प्रमुखांची सही व शिक्का</p>
+
+            <table style="width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 20px;">
+                <tr>
+                    <td colspan="5" style="border: 1px solid black; padding: 5px; text-align: center;">
+                        <p><strong>FOR UNIVERSITY OFFICE ( EXAM SECTION ) USE ONLY</strong></p>
+                    </td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>Checked sign</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>Supdtt.</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>Asstt. Registrar</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>Dy. Registrar</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>C.O.E.</p>
+                    </td>
+                </tr>
+            </table>
+
+            <table style="width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 10px;">
+                <tr>
+                    <td style="border: 1px solid black; padding: 10px;">
+                        <p><strong>FOR UNIVERSITY ACCOUNT (Internal Audit Section) SECTION USE ONLY</strong></p>
+                        <p>TOTAL AMOUNT PASSED RS. ( )</p>
+                        <p>(IN WORDS ………………………………………………………………….)</p>
+                        <p>PASSED PAYMENT RS. ( )</p>
+                    </td>
+                </tr>
+            </table>
+
+            <table style="width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 10px;">
+                <tr style="text-align: center;">
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>Clerk</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>Supdtt..</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>Asstt.. Registrar</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>C.A.</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>Dy. Registrar</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>F.A. O.</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="page" id="page6">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2 style="margin: 0;">Willingdon College, Sangli (Autonomous)</h2>
+                <h3 style="margin: 5px 0;">REMUNERATION BILL FORM (EXTERNAL/INTERNAL)</h3>
+            </div>
+
+            <p class="MsoNormal">परीक्षकाचे नाव ................... <span class="examiner2-display"></span>
+                ..................<strong>बी.एस्सी आयटी/</strong>बी. सी. एस. भाग -<strong><span
+                        class="part-display"></span></strong> परीक्षा</p>
+            <p class="MsoNormal">विषय ........................ <strong><span class="subject-display">BSc IT C Programing
+                        And HTML</span></strong>
+                ....................प्रात्यक्षिक परीक्षेचे मानधन देयक.</p>
+            <p class="MsoNormal"><strong>रसायनशास्त्राखेरीज अन्य सर्व विषयांचे मानधन अदा करण्याचे कोष्टक</strong></p>
+
+            <table style="width:100%; border-collapse: collapse; border: 1px solid black;">
+                <tr style="text-align: center; font-weight: bold;">
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>परीक्षा</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>प्रती विद्यार्थी दर</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>परीक्षक संख्या</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>(pair) द्वायीमधील प्रत्येक परीक्षकास प्रतिविद्यार्थी दिले जाणारे मानधन रुपये</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>परीक्षकाने असेस केलेली विद्यार्थी संख्या</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>अदा करण्यात आलेले एकूण मानधन</p>
+                        <p>(column no 4 * column no. 5= Remuneration for examiner )</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>Total</p>
+                    </td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="border: 1px solid black; padding: 2px;">
+                        <p>1</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 2px;">
+                        <p>2</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 2px;">
+                        <p>3</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 2px;">
+                        <p>4</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 2px;">
+                        <p>5</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 2px;">
+                        <p>6</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 2px;">
+                        <p>7</p>
+                    </td>
+                </tr>
+                <tr id="remun2-row-part1" style="text-align: center;">
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>B.Sc./B.C.S. Part I</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="17.00"
+                            class="remun-input rate-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="2"
+                            class="remun-input examiners-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="14.00"
+                            class="remun-input per-student-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="student-count">0</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="remun-calc">0</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="total-remun">0</p>
+                    </td>
+                </tr>
+                <tr id="remun2-row-part2" style="text-align: center;">
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>B.Sc./B.C.S. Part II</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="25.00"
+                            class="remun-input rate-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="2"
+                            class="remun-input examiners-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="14.00"
+                            class="remun-input per-student-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="student-count">0</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="remun-calc">0</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="total-remun">0</p>
+                    </td>
+                </tr>
+                <tr id="remun2-row-part3" style="text-align: center;">
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>B.Sc./B.C.S. Part III</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="40.00"
+                            class="remun-input rate-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="2"
+                            class="remun-input examiners-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="21.00"
+                            class="remun-input per-student-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="student-count">0</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="remun-calc">0</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="total-remun">0</p>
+                    </td>
+                </tr>
+                <tr id="remun2-row-extra" style="text-align: center;">
+                    <td colspan="6" style="border: 1px solid black; padding: 5px; text-align: right;">
+                        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
+                            <input type="text" placeholder="Remarks (optional)" style="flex: 1; border: none; text-align: right; background: transparent; font-family: inherit; font-size: 13px;">
+                            <label style="font-weight: bold; font-size: 13px; white-space: nowrap;">Date / दिनांक :</label>
+                            <span class="date-display print-date-display" style="display: none; font-weight: bold;">23/09/2026</span>
+                            <input type="date" value="2026-09-23" class="page-date-sync-input remun-date-input no-print-date" title="Select Date" style="font-size: 13px; font-weight: bold; cursor: pointer; vertical-align: middle;">
+                        </div>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <input type="number" step="0.01" id="remun-extra-p6" class="remun-input remun-extra-input" placeholder="0" style="width: 100%; border: none; text-align: center; font-size: 14px; font-weight: bold; background: transparent;">
+                    </td>
+                </tr>
+                <tr id="remun2-row-total" style="text-align: center; font-weight: bold; background-color: #f8f9fa;">
+                    <td colspan="6" style="border: 1px solid black; padding: 5px; text-align: right;">
+                        Total :
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p id="remun-total-p6" class="remun-vertical-total" style="margin: 0; font-weight: bold;">0</p>
+                    </td>
+                </tr>
+            </table>
+
+            <p class="MsoNormal"><strong>पोहोच पावती</strong></p>
+            <p class="MsoNormal">मी <span class="examiner2-display"></span> पोहोच पावती लिहून देतो/देते कि
+                <strong><span class="college2-display">WILLINGDON COLLEGE SANGLI</span></strong> या महाविद्यालयात
+                प्रात्यक्षिक परीक्षेचे -----<span class="page4-total-present">0</span>----- इतके विद्यार्थी असेस केलेले
+                आहेत मा. वित्त व लेखा अधिकारी,
+                विलिंग्डन महाविद्यालय, सांगली. Autonomous यांचे कडून मला त्याचे मानधन रुपये --- <span
+                    class="total-remun-display">0</span> ---- इतके रोखीने प्राप्त झाले.
+            </p>
+
+            <p class="MsoNormal">दिनांक : <span class="date-display">23/09/2026</span> <input type="date"
+                    class="page-date-sync-input" value="2026-09-23" title="Change date via calendar"
+                    style="font-size: 11px; padding: 1px 3px; border: 1px solid #ccc; border-radius: 3px; cursor: pointer; vertical-align: middle;">
+            </p>
+            <p class="MsoNormal">देयक अदा करणाऱ्या कर्मचारी स्वाक्षरी परीक्षकाची स्वाक्षरी</p>
+
+            <p class="MsoNormal"><strong>परीक्षकाचे नाव व महाविद्यालयाचा व पत्र व्यवहाराचा संपूर्ण पत्ता</strong></p>
+            <p class="MsoNormal"><span class="examiner2-display"></span> <span class="college2-display">WILLINGDON
+                    COLLEGE SANGLI</span></p>
+
+            <p class="MsoNormal"><strong>संबंधित परीक्षा केंद्रावरील सहपरीक्षक व विभाग प्रमुखांचे प्रमाणपत्र</strong>
+            </p>
+            <p class="MsoNormal">प्रमाणित करण्यात येते कि , श्री./ श्रीमती ............................................
+                <span class="examiner2-display"></span> ........................................
+            </p>
+            <p class="MsoNormal">यांनी <strong><span class="college2-display">WILLINGDON COLLEGE SANGLI</span></strong>
+                महाविद्यालयात वर उल्लेख केलेल्या
+                प्रात्यक्षिक परीक्षेचे ... <span class="page4-total-present">0</span> ......</p>
+            <p class="MsoNormal">इतके विद्यार्थी असेस केलेले आहेत. सदरची माहिती सत्य आहे.</p>
+
+            <p class="MsoNormal">वरिष्ठ सह्पारीक्षक सही संबंधित परीक्षा केंद्रावरील विभाग प्रमुखांची सही व शिक्का</p>
+
+            <table style="width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 20px;">
+                <tr>
+                    <td colspan="5" style="border: 1px solid black; padding: 5px; text-align: center;">
+                        <p><strong>FOR UNIVERSITY OFFICE ( EXAM SECTION ) USE ONLY</strong></p>
+                    </td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>Checked sign</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>Supdtt.</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>Asstt. Registrar</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>Dy. Registrar</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>C.O.E.</p>
+                    </td>
+                </tr>
+            </table>
+
+            <table style="width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 10px;">
+                <tr>
+                    <td style="border: 1px solid black; padding: 10px;">
+                        <p><strong>FOR UNIVERSITY ACCOUNT (Internal Audit Section) SECTION USE ONLY</strong></p>
+                        <p>TOTAL AMOUNT PASSED RS. ( )</p>
+                        <p>(IN WORDS ………………………………………………………………….)</p>
+                        <p>PASSED PAYMENT RS. ( )</p>
+                    </td>
+                </tr>
+            </table>
+
+            <table style="width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 10px;">
+                <tr style="text-align: center;">
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>Clerk</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>Supdtt..</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>Asstt.. Registrar</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>C.A.</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>Dy. Registrar</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>F.A. O.</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="page landscape" id="page7">
+            <!-- Landscape Action Bar for Page 7 (Hidden when printing) -->
+            <div class="no-print"
+                style="display: flex; justify-content: space-between; align-items: center; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 6px 14px; margin-bottom: 12px;">
+                <span
+                    style="font-size: 13px; font-weight: bold; color: #1e40af; display: flex; align-items: center; gap: 6px;">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <rect x="2" y="5" width="20" height="14" rx="2" />
+                        <line x1="2" y1="10" x2="22" y2="10" />
+                    </svg>
+                    Page 7: Assistants & Servants Bill (A4 Landscape)
+                </span>
+                <button onclick="printPage('page7', 'landscape')" type="button"
+                    title="Print only Page 7 in Landscape orientation"
+                    style="background: #2563eb; color: white; border: none; padding: 5px 14px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: background 0.2s;">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path
+                            d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                        <rect x="6" y="14" width="12" height="8" />
+                    </svg>
+                    Print Page 7 (Landscape)
+                </button>
+            </div>
+            <div style="text-align: center; margin-bottom: 10px;">
+                <p class="MsoNormal" style="font-size: 16pt;"><strong>Willingdon College, Sangli.</strong></p>
+                <p class="MsoNormal" style="font-size: 12pt;"><strong>Autonomous</strong></p>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+                <p class="MsoNormal" style="width: 70%;">Name of the College : <strong>- Willingdon College,
+                        Sangli.</strong></p>
+                <p class="MsoNormal" style="width: 30%; text-align: right;">Register Folio : _________________</p>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+                <p class="MsoNormal" style="width: 70%;">Examination : <strong><span class="course-display"></span> –
+                        <span class="part-display"></span></strong></p>
+                <p class="MsoNormal" style="width: 30%; text-align: right;">Voucher No. : _________________</p>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+                <p class="MsoNormal" style="width: 50%;">Month : <strong><span class="month-display"></span></strong>
+                    Year <strong><span class="year-display"></span></strong></p>
+                <p class="MsoNormal" style="width: 50%; text-align: right;">Examination charges-assistants and servants
+                    :</p>
+            </div>
+
+            <p class="MsoNormal" style="margin-bottom: 10px;">Subject : <strong><span class="subject-display">BSc IT C
+                        Programing And HTML</span></strong></p>
+
+            <table border="1" cellspacing="0" cellpadding="0"
+                style="width:100%; border-collapse:collapse; margin-bottom: 10px; font-size: 9.5pt; font-family: 'Times New Roman', serif;">
+                <tr style="text-align: center; font-weight: bold; background-color: #f8f9fa;">
+                    <td style="padding: 3px; width: 3%;">Sr. No.</td>
+                    <td style="padding: 3px; width: 25%;">Name of Assistants and Servants</td>
+                    <td style="padding: 3px; width: 12%;">Designation (Expert Assistants Attendant) etc.</td>
+                    <td style="padding: 3px; width: 18%;">Date of Examination on which worked</td>
+                    <td style="padding: 3px; width: 6%;">Date of Preparation</td>
+                    <td style="padding: 3px; width: 6%;">Date of Cleaning</td>
+                    <td style="padding: 3px; width: 4%;">Total Exam Days (a)</td>
+                    <td style="padding: 3px; width: 4%;">Total Prep Days (b)</td>
+                    <td style="padding: 3px; width: 4%;">Total Clean Days (c)</td>
+                    <td style="padding: 3px; width: 4%;">Grand Total (a+b+c)</td>
+                    <td style="padding: 3px; width: 4%;">Rate</td>
+                    <td style="padding: 3px; width: 5%;">Amount (Rs.)</td>
+                    <td style="padding: 3px; width: 5%;">Signature</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">1.</td>
+                    <td style="padding: 1px;"><textarea id="p6-name-1" class="staff-input"
+                            style="width: 100%; border: none; padding: 2px; font-weight: bold; font-size: 10pt; resize: none; overflow: hidden; font-family: inherit; min-height: 30px;"
+                            rows="1"></textarea></td>
+                    <td style="padding: 1px;"><input type="text" id="p6-desig-1" value="Expert" class="staff-input"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td style="padding: 1px;">
+                        <div
+                            style="display: flex; align-items: center; justify-content: center; gap: 2px; position: relative; width: 100%; min-height: 30px;">
+                            <textarea class="staff-input staff-exam-date" placeholder="DD/MM/YYYY"
+                                style="width: calc(100% - 24px); border: none; padding: 2px; text-align: center; resize: none; overflow: hidden; font-family: inherit; font-size: 9pt; min-height: 28px; line-height: 1.2;"
+                                rows="1"></textarea>
+                            <div class="no-print"
+                                style="position: relative; width: 20px; height: 20px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;">
+                                <input type="date" class="staff-exam-date-picker" title="Select Date from Calendar"
+                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;">
+                                <svg width="15" height="15" fill="none" stroke="#2563eb" stroke-width="2"
+                                    viewBox="0 0 24 24" style="pointer-events: none; z-index: 1;">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="padding: 1px;"><input type="date" value="" class="staff-input staff-prep-date"
+                            title="Date of Preparation"
+                            style="width: 100%; border: none; padding: 2px; text-align: center; cursor: pointer; font-size: 11px;">
+                    </td>
+                    <td style="padding: 1px;"><input type="date" value="" class="staff-input staff-clean-date"
+                            title="Date of Cleaning"
+                            style="width: 100%; border: none; padding: 2px; text-align: center; cursor: pointer; font-size: 11px;">
+                    </td>
+                    <td style="padding: 1px;"><input type="number" value="" class="staff-input day-input"
+                            oninput="updateStaffTotals()"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td style="padding: 1px;"><input type="number" value="" class="staff-input day-input"
+                            oninput="updateStaffTotals()"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td style="padding: 1px;"><input type="number" value="" class="staff-input day-input"
+                            oninput="updateStaffTotals()"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td style="padding: 1px;"><input type="number" value="" class="staff-input total-days-input"
+                            style="width: 100%; border: none; padding: 2px; text-align: center; font-weight: bold;">
+                    </td>
+                    <td style="padding: 1px;"><input type="text" value="56/-" class="staff-input rate-input"
+                            oninput="updateStaffTotals()"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td style="padding: 1px;"><input type="text" id="p6-amt-1" value="" class="staff-input amount-input"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">2.</td>
+                    <td style="padding: 1px;"><textarea id="p6-name-2" class="staff-input"
+                            style="width: 100%; border: none; padding: 2px; font-weight: bold; font-size: 10pt; resize: none; overflow: hidden; font-family: inherit; min-height: 30px;"
+                            rows="1"></textarea></td>
+                    <td style="padding: 1px;"><input type="text" id="p6-desig-2" value="Lab. Attendant"
+                            class="staff-input" style="width: 100%; border: none; padding: 2px; text-align: center;">
+                    </td>
+                    <td style="padding: 1px;">
+                        <div
+                            style="display: flex; align-items: center; justify-content: center; gap: 2px; position: relative; width: 100%; min-height: 30px;">
+                            <textarea class="staff-input staff-exam-date" placeholder="DD/MM/YYYY"
+                                style="width: calc(100% - 24px); border: none; padding: 2px; text-align: center; resize: none; overflow: hidden; font-family: inherit; font-size: 9pt; min-height: 28px; line-height: 1.2;"
+                                rows="1"></textarea>
+                            <div class="no-print"
+                                style="position: relative; width: 20px; height: 20px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;">
+                                <input type="date" class="staff-exam-date-picker" title="Select Date from Calendar"
+                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;">
+                                <svg width="15" height="15" fill="none" stroke="#2563eb" stroke-width="2"
+                                    viewBox="0 0 24 24" style="pointer-events: none; z-index: 1;">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="padding: 1px;"><input type="date" value="" class="staff-input staff-prep-date"
+                            title="Date of Preparation"
+                            style="width: 100%; border: none; padding: 2px; text-align: center; cursor: pointer; font-size: 11px;">
+                    </td>
+                    <td style="padding: 1px;"><input type="date" value="" class="staff-input staff-clean-date"
+                            title="Date of Cleaning"
+                            style="width: 100%; border: none; padding: 2px; text-align: center; cursor: pointer; font-size: 11px;">
+                    </td>
+                    <td style="padding: 1px;"><input type="number" value="" class="staff-input day-input"
+                            oninput="updateStaffTotals()"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td style="padding: 1px;"><input type="number" value="" class="staff-input day-input"
+                            oninput="updateStaffTotals()"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td style="padding: 1px;"><input type="number" value="" class="staff-input day-input"
+                            oninput="updateStaffTotals()"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td style="padding: 1px;"><input type="number" value="" class="staff-input total-days-input"
+                            style="width: 100%; border: none; padding: 2px; text-align: center; font-weight: bold;">
+                    </td>
+                    <td style="padding: 1px;"><input type="text" value="21/-" class="staff-input rate-input"
+                            oninput="updateStaffTotals()"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td style="padding: 1px;"><input type="text" id="p6-amt-2" value="" class="staff-input amount-input"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">3.</td>
+                    <td style="padding: 1px;"><textarea id="p6-name-3" class="staff-input"
+                            style="width: 100%; border: none; padding: 2px; font-weight: bold; font-size: 10pt; resize: none; overflow: hidden; font-family: inherit; min-height: 30px;"
+                            rows="1"></textarea></td>
+                    <td style="padding: 1px;"><input type="text" id="p6-desig-3" value="Lab. Attendant"
+                            class="staff-input" style="width: 100%; border: none; padding: 2px; text-align: center;">
+                    </td>
+                    <td style="padding: 1px;">
+                        <div
+                            style="display: flex; align-items: center; justify-content: center; gap: 2px; position: relative; width: 100%; min-height: 30px;">
+                            <textarea class="staff-input staff-exam-date" placeholder="DD/MM/YYYY"
+                                style="width: calc(100% - 24px); border: none; padding: 2px; text-align: center; resize: none; overflow: hidden; font-family: inherit; font-size: 9pt; min-height: 28px; line-height: 1.2;"
+                                rows="1"></textarea>
+                            <div class="no-print"
+                                style="position: relative; width: 20px; height: 20px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;">
+                                <input type="date" class="staff-exam-date-picker" title="Select Date from Calendar"
+                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;">
+                                <svg width="15" height="15" fill="none" stroke="#2563eb" stroke-width="2"
+                                    viewBox="0 0 24 24" style="pointer-events: none; z-index: 1;">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="padding: 1px;"><input type="date" value="" class="staff-input staff-prep-date"
+                            title="Date of Preparation"
+                            style="width: 100%; border: none; padding: 2px; text-align: center; cursor: pointer; font-size: 11px;">
+                    </td>
+                    <td style="padding: 1px;"><input type="date" value="" class="staff-input staff-clean-date"
+                            title="Date of Cleaning"
+                            style="width: 100%; border: none; padding: 2px; text-align: center; cursor: pointer; font-size: 11px;">
+                    </td>
+                    <td style="padding: 1px;"><input type="number" value="" class="staff-input day-input"
+                            oninput="updateStaffTotals()"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td style="padding: 1px;"><input type="number" value="" class="staff-input day-input"
+                            oninput="updateStaffTotals()"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td style="padding: 1px;"><input type="number" value="" class="staff-input day-input"
+                            oninput="updateStaffTotals()"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td style="padding: 1px;"><input type="number" value="" class="staff-input total-days-input"
+                            style="width: 100%; border: none; padding: 2px; text-align: center; font-weight: bold;">
+                    </td>
+                    <td style="padding: 1px;"><input type="text" value="21/-" class="staff-input rate-input"
+                            oninput="updateStaffTotals()"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td style="padding: 1px;"><input type="text" id="p6-amt-3" value="" class="staff-input amount-input"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">4.</td>
+                    <td style="padding: 1px;"><textarea class="staff-input"
+                            style="width: 100%; border: none; padding: 2px; font-weight: bold; font-size: 10pt; resize: none; overflow: hidden; font-family: inherit; min-height: 30px;"
+                            rows="1"></textarea></td>
+                    <td style="padding: 1px;"><input type="text" class="staff-input"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td style="padding: 1px;">
+                        <div
+                            style="display: flex; align-items: center; justify-content: center; gap: 2px; position: relative; width: 100%; min-height: 30px;">
+                            <textarea class="staff-input staff-exam-date" placeholder="DD/MM/YYYY"
+                                style="width: calc(100% - 24px); border: none; padding: 2px; text-align: center; resize: none; overflow: hidden; font-family: inherit; font-size: 9pt; min-height: 28px; line-height: 1.2;"
+                                rows="1"></textarea>
+                            <div class="no-print"
+                                style="position: relative; width: 20px; height: 20px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;">
+                                <input type="date" class="staff-exam-date-picker" title="Select Date from Calendar"
+                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;">
+                                <svg width="15" height="15" fill="none" stroke="#2563eb" stroke-width="2"
+                                    viewBox="0 0 24 24" style="pointer-events: none; z-index: 1;">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="padding: 1px;"><input type="date" class="staff-input staff-prep-date"
+                            title="Date of Preparation"
+                            style="width: 100%; border: none; padding: 2px; text-align: center; cursor: pointer; font-size: 11px;">
+                    </td>
+                    <td style="padding: 1px;"><input type="date" class="staff-input staff-clean-date"
+                            title="Date of Cleaning"
+                            style="width: 100%; border: none; padding: 2px; text-align: center; cursor: pointer; font-size: 11px;">
+                    </td>
+                    <td style="padding: 1px;"><input type="number" class="staff-input day-input"
+                            oninput="updateStaffTotals()"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td style="padding: 1px;"><input type="number" class="staff-input day-input"
+                            oninput="updateStaffTotals()"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td style="padding: 1px;"><input type="number" class="staff-input day-input"
+                            oninput="updateStaffTotals()"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td style="padding: 1px;"><input type="number" class="staff-input total-days-input"
+                            style="width: 100%; border: none; padding: 2px; text-align: center; font-weight: bold;">
+                    </td>
+                    <td style="padding: 1px;"><input type="text" class="staff-input rate-input"
+                            oninput="updateStaffTotals()"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td style="padding: 1px;"><input type="text" class="staff-input amount-input"
+                            style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                    <td></td>
+                </tr>
+                <tr style="font-weight: bold;">
+                    <td colspan="4"></td>
+                    <td colspan="7" style="text-align: right; padding-right: 10px;">Rs. <input type="text" value=""
+                            class="staff-total-words" style="border: none; font-weight: bold; width: 250px;"> Total</td>
+                    <td style="text-align: center;"><input type="text" value="" class="staff-grand-total"
+                            style="width: 100%; border: none; text-align: center; font-weight: bold;"></td>
+                    <td></td>
+                </tr>
+            </table>
+
+            <p class="MsoNormal" style="margin-top: 5px; margin-bottom: 4px; font-size: 8.5pt;">We hereby certify the
+                above assistants and
+                servants rendered assistance to us at the above practical examination.</p>
+
+            <!-- Bottom Section: Left Side (Certification & Signatures) + Right Side (3 Office / Countersignature Boxes) -->
+            <div
+                style="display: flex; justify-content: space-between; align-items: stretch; gap: 10px; margin-top: 4px; font-family: 'Times New Roman', serif;">
+
+                <!-- Left Side: Examination Details & Examiner Signatures -->
+                <div
+                    style="width: 53%; font-size: 8pt; line-height: 1.25; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <p style="margin: 0 0 4px 0;">That the examination lasted for <strong><input type="text"
+                                    value="06"
+                                    style="width: 24px; border: none; border-bottom: 1px solid #000; text-align: center; font-weight: bold; font-size: 8pt;"></strong>
+                            days and that the work of preparation and cleaning in respect of the said examination was
+                            done on
+                            the days specified herein . We further certify that the examination commenced daily at hours
+                            and was
+                            over at <strong><input type="text" value="08"
+                                    style="width: 24px; border: none; border-bottom: 1px solid #000; text-align: center; font-weight: bold; font-size: 8pt;"></strong>
+                            hours. ( Please do not include the time spent in preparing and cleaning for the Examination.
+                            If any )
+                        </p>
+
+                        <p style="margin: 0 0 6px 0;">$ we also certify that the total number of Journals ( Term work )
+                            examined was
+                            <span style="display: inline-block; border-bottom: 1px solid #000; width: 100px;"></span>
+                            and the assessment
+                            daily started at <strong><input type="text" value="10.30 am"
+                                    style="width: 60px; border: none; border-bottom: 1px solid #000; text-align: center; font-weight: bold; font-size: 8pt;"></strong>
+                            hours and was over at <strong><input type="text" value="6.00 pm"
+                                    style="width: 60px; border: none; border-bottom: 1px solid #000; text-align: center; font-weight: bold; font-size: 8pt;"></strong>
+                            hours.
+                        </p>
+                    </div>
+
+                    <div
+                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; font-size: 8pt; margin-top: 4px;">
+                        <p style="margin: 0;">1) <span
+                                style="border-bottom: 1px solid #000; display: inline-block; width: 85%;"></span></p>
+                        <p style="margin: 0;">2) <span
+                                style="border-bottom: 1px solid #000; display: inline-block; width: 85%;"></span></p>
+                        <p style="margin: 0;">3) <span
+                                style="border-bottom: 1px solid #000; display: inline-block; width: 85%;"></span></p>
+                        <p style="margin: 0;">4) <span
+                                style="border-bottom: 1px solid #000; display: inline-block; width: 85%;"></span></p>
+                        <p style="margin: 0;">5) <strong><span class="examiner-display"
+                                    style="border-bottom: 1px solid #000; min-width: 130px; display: inline-block; text-align: center;"></span></strong>
+                        </p>
+                        <p style="margin: 0;">6) <strong><span class="examiner2-display"
+                                    style="border-bottom: 1px solid #000; min-width: 130px; display: inline-block; text-align: center;"></span></strong>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Right Side: The 3 Boxes from the Form (Countersignature, College Office, University Office) -->
+                <div
+                    style="width: 47%; display: flex; border: 1.5px solid #000; box-sizing: border-box; font-family: 'Times New Roman', serif; min-height: 160px; background: #fff;">
+
+                    <!-- Box 1: Countersignature of the Chairman or the Senior Examiner -->
+                    <div
+                        style="width: 28%; border-right: 1.5px solid #000; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box;">
+                        <!-- Top open/empty compartment matching original document shape -->
+                        <div style="height: 52px; border-bottom: 1.5px solid #000;"></div>
+                        <!-- Lower compartment with label and signature space -->
+                        <div
+                            style="padding: 4px; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start;">
+                            <p style="margin: 0; font-size: 8pt; line-height: 1.2; color: #000;">
+                                Countersignature<br>
+                                of the Chairman<br>
+                                or the <strong>Senior<br>Examiner.</strong>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Box 2: For College Office -->
+                    <div
+                        style="width: 37%; border-right: 1.5px solid #000; padding: 4px 6px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; font-size: 7.5pt; line-height: 1.2;">
+                        <div>
+                            <p style="margin: 0 0 3px 0; font-size: 8pt;">For <u>College &nbsp;Office</u></p>
+                            <p style="margin: 0 0 2px 0;">No. <span
+                                    style="border-bottom: 1px solid #000; display: inline-block; width: 68%;"></span>
+                            </p>
+                            <p style="margin: 0 0 3px 0;"><u>Date :</u> <span
+                                    style="border-bottom: 1px solid #000; display: inline-block; width: 60%;"><input
+                                        type="date" class="office-date-picker" title="Office Date"
+                                        style="border: none; font-size: 8pt; width: 100%; padding: 0; background: transparent; cursor: pointer; outline: none;"></span>
+                            </p>
+                            <p style="margin: 0; font-size: 7.5pt; line-height: 1.2;">Forwarded to the Registrar,
+                                Willingdon College, <span
+                                    style="text-decoration: underline wavy #e53e3e;">Sangli,</span> Autonomous. for
+                                necessary action.</p>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; margin-top: 10px; font-weight: bold; font-size: 8pt; padding: 0 2px;">
+                            <span>College</span>
+                            <span>Principal</span>
+                        </div>
+                    </div>
+
+                    <!-- Box 3: FOR USE IN THE UNIVERSITY OFFICE -->
+                    <div
+                        style="width: 35%; padding: 4px 6px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; font-size: 7.5pt; line-height: 1.2;">
+                        <div>
+                            <p style="margin: 0 0 3px 0; font-size: 7pt; line-height: 1.15;">( <u>FOR</u> USE IN THE
+                                UNIVERSITY<br>OFFICE</p>
+                            <p style="margin: 2px 0;">Cheque No. <span
+                                    style="border-bottom: 1px solid #000; display: inline-block; width: 44%;"></span>
+                            </p>
+                            <p style="margin: 2px 0;"><u>Date :</u> <span
+                                    style="border-bottom: 1px solid #000; display: inline-block; width: 60%;"><input
+                                        type="date" class="office-date-picker" title="Cheque Date"
+                                        style="border: none; font-size: 8pt; width: 100%; padding: 0; background: transparent; cursor: pointer; outline: none;"></span>
+                            </p>
+                            <p style="margin: 2px 0;">Passed for Rs. <span
+                                    style="border-bottom: 1px solid #000; display: inline-block; width: 28px;"></span>
+                                Ps. <span
+                                    style="border-bottom: 1px solid #000; display: inline-block; width: 16px;"></span>
+                            </p>
+                            <p style="margin: 2px 0;">Rupees <span
+                                    style="border-bottom: 1px solid #000; display: inline-block; width: 68%;"></span>
+                            </p>
+                            <p style="margin: 2px 0;"><span
+                                    style="border-bottom: 1px solid #000; display: inline-block; width: 26px;"></span>
+                                <u>date</u> <span
+                                    style="border-bottom: 1px solid #000; display: inline-block; width: 48px;"></span>
+                            </p>
+                        </div>
+                        <p
+                            style="margin: 8px 0 0 0; text-align: center; font-weight: bold; font-size: 7.5pt; line-height: 1.15; white-space: nowrap;">
+                            A.R. Chief <span style="text-decoration: underline wavy #e53e3e;">Acctt.</span> &nbsp; Dy
+                            Registrar.</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Footnotes at the bottom -->
+            <p style="margin-top: 5px; margin-bottom: 0; font-size: 6.8pt; line-height: 1.15; color: #333;">
+                * Wherever the practical programmers are drawn by the college, the bill should be invariably accompanied
+                by a copy of the same.<br>
+                + Please refer to the scale of remuneration for rates sanctioned by the Management Council. Where the
+                rates for the days of examinations and those of preparation & cleaning are different both the rates may
+                be indicates the in the column.<br>
+                # In case, the No. exceeds 12, another bill form may be used or a typed sheet in the form required with
+                the signatures of all the examiners thereon may attached to this form.<br>
+                $ For engineering examinations only.
+            </p>
+        </div>
+
+        <div class="page landscape" id="page8">
+            <!-- Landscape Action Bar for Page 8 (Hidden when printing) -->
+            <div class="no-print"
+                style="display: flex; justify-content: space-between; align-items: center; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 6px 14px; margin-bottom: 12px;">
+                <span
+                    style="font-size: 13px; font-weight: bold; color: #1e40af; display: flex; align-items: center; gap: 6px;">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <rect x="2" y="5" width="20" height="14" rx="2" />
+                        <line x1="2" y1="10" x2="22" y2="10" />
+                    </svg>
+                    Page 8: Final Bill & TA/DA (A4 Landscape)
+                </span>
+                <button onclick="printPage('page8', 'landscape')" type="button"
+                    title="Print only Page 8 in Landscape orientation"
+                    style="background: #2563eb; color: white; border: none; padding: 5px 14px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: background 0.2s;">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path
+                            d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                        <rect x="6" y="14" width="12" height="8" />
+                    </svg>
+                    Print Page 8 (Landscape)
+                </button>
+            </div>
+            <!-- Practical Examiners Rem. Bill Section -->
+            <div style="text-align: center; margin-bottom: 20px;">
+                <p class="MsoNormal" style="font-size: 16.0pt;"><b>D.E.Society's, Willingdon College, Sangli</b></p>
+                <p class="MsoNormal" style="font-size: 14.0pt;"><b>Autonomous College Practical Examination <span
+                            class="month-display">March</span> <span class="year-display">2025</span></b>
+                </p>
+                <p class="MsoNormal">(B.A., B.Sc.., BCS, B.Sc. IT Part I, M.A., M.Sc. Part I)</p>
+                <p class="MsoNormal" style="margin-top: 10px;"><b>Practical Examiners Rem. Bill (Viva) (A.3.P.25) :</b>
+                </p>
+                <p class="MsoNormal" style="margin-top: 6px; font-size: 11pt;">Subject : <b><u><span
+                                class="subject-display">BSc IT C Programing And HTML</span></u></b></p>
+            </div>
+
+            <table class="bill-table">
+                <thead>
+                    <tr>
+                        <th style="width: 3%;">NO.</th>
+                        <th style="width: 18%;">Name of Staff</th>
+                        <th style="width: 15%;">Class</th>
+                        <th style="width: 12%;">Designation</th>
+                        <th style="width: 7%;">Amount</th>
+                        <th style="width: 15%;">Bank</th>
+                        <th style="width: 15%;">Account No.</th>
+                        <th style="width: 15%;">IFSC code</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Expert -->
+                    <tr>
+                        <td colspan="8" class="bill-section-header">Expert</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">1</td>
+                        <td><input type="text" id="p7-exp-name" class="bill-input-cell" value=""></td>
+                        <td><input type="text" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p7-exp-desig" class="bill-input-cell" value="Expert"></td>
+                        <td><input type="number" id="p7-exp-amt" class="bill-input-cell exp-amt-input" value=""></td>
+                        <td><input type="text" id="p8-exp-bank" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p8-exp-acc" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p8-exp-ifsc" class="bill-input-cell" value=""></td>
+                    </tr>
+                    <tr class="bill-total-row">
+                        <td colspan="4" class="text-right">Total Expert:</td>
+                        <td class="text-center"><span id="exp-bill-total">0</span></td>
+                        <td colspan="3"></td>
+                    </tr>
+
+                    <!-- External Examiner -->
+                    <tr>
+                        <td colspan="8" class="bill-section-header">External Examiner</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">1</td>
+                        <td><input type="text" id="p7-ext-name" class="bill-input-cell" value=""></td>
+                        <td><input type="text" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p7-ext-desig" class="bill-input-cell" value="External Examiner"></td>
+                        <td><input type="number" id="p7-ext-amt" class="bill-input-cell ext-amt-input" value=""></td>
+                        <td><input type="text" id="p8-ext-bank" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p8-ext-acc" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p8-ext-ifsc" class="bill-input-cell" value=""></td>
+                    </tr>
+                    <tr class="bill-total-row">
+                        <td colspan="4" class="text-right">Total External:</td>
+                        <td class="text-center"><span id="ext-bill-total">0</span></td>
+                        <td colspan="3"></td>
+                    </tr>
+
+                    <!-- Internal Examiner -->
+                    <tr>
+                        <td colspan="8" class="bill-section-header">Internal Examiner</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">1</td>
+                        <td><input type="text" id="p7-int-name" class="bill-input-cell" value="">
+                        </td>
+                        <td><input type="text" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p7-int-desig" class="bill-input-cell" value="Internal Examiner"></td>
+                        <td><input type="number" id="p7-int-amt" class="bill-input-cell int-amt-input" value=""></td>
+                        <td><input type="text" id="p8-int-bank" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p8-int-acc" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p8-int-ifsc" class="bill-input-cell" value=""></td>
+                    </tr>
+                    <tr class="bill-total-row">
+                        <td colspan="4" class="text-right">Total Internal:</td>
+                        <td class="text-center"><span id="int-bill-total">0</span></td>
+                        <td colspan="3"></td>
+                    </tr>
+
+                    <!-- Lab Staff -->
+                    <tr>
+                        <td colspan="8" class="bill-section-header">Lab Staff</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">1</td>
+                        <td><input type="text" id="p7-lab-name-1" class="bill-input-cell" value=""></td>
+                        <td><input type="text" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p7-lab-desig-1" class="bill-input-cell" value="Lab. Attendent"></td>
+                        <td><input type="number" id="p7-lab-amt-1" class="bill-input-cell lab-amt-input" value="">
+                        </td>
+                        <td><input type="text" id="p8-lab1-bank" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p8-lab1-acc" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p8-lab1-ifsc" class="bill-input-cell" value=""></td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">2</td>
+                        <td><input type="text" id="p7-lab-name-2" class="bill-input-cell" value="">
+                        </td>
+                        <td><input type="text" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p7-lab-desig-2" class="bill-input-cell" value="Lab. Attendent"></td>
+                        <td><input type="number" id="p7-lab-amt-2" class="bill-input-cell lab-amt-input" value="">
+                        </td>
+                        <td><input type="text" id="p8-lab2-bank" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p8-lab2-acc" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p8-lab2-ifsc" class="bill-input-cell" value=""></td>
+                    </tr>
+                    <tr class="bill-total-row">
+                        <td colspan="4" class="text-right">Total Lab Staff:</td>
+                        <td class="text-center"><span id="lab-bill-total">0</span></td>
+                        <td colspan="3"></td>
+                    </tr>
+
+                    <!-- TA /DA External Examination Section -->
+                    <tr>
+                        <td colspan="8" class="bill-section-header">TA /DA External Examination</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">1</td>
+                        <td><input type="text" class="bill-input-cell" value=""></td>
+                        <td><input type="text" class="bill-input-cell" value=""></td>
+                        <td><input type="text" class="bill-input-cell" value="External Examiner"></td>
+                        <td><input type="number" class="bill-input-cell tada-amt-input" value=""></td>
+                        <td><input type="text" class="bill-input-cell" value=""></td>
+                        <td><input type="text" class="bill-input-cell" value=""></td>
+                        <td><input type="text" class="bill-input-cell" value=""></td>
+                    </tr>
+                    <tr class="bill-total-row">
+                        <td colspan="4" class="text-right">Total TA/DA (Combined):</td>
+                        <td class="text-center"><span id="tada-bill-total">0</span></td>
+                        <td colspan="3"></td>
+                    </tr>
+
+                    <!-- Grand Total -->
+                    <tr style="height: 40px; font-size: 11pt; background-color: #334155; color: white;">
+                        <td colspan="4" style="text-align: right; border: 1px solid #fff;"><b>BILL GRAND TOTAL:</b></td>
+                        <td class="text-center" style="border: 1px solid #fff;"><b><span
+                                    id="bill-grand-total">0</span></b></td>
+                        <td colspan="3" style="border: 1px solid #fff;"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- TA/DA Detailed Table Section -->
+            <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+                <p class="MsoNormal" style="font-size: 14.0pt;"><b>Practical Examiners TA/DA Details (A.3.P.29) :</b>
+                </p>
+            </div>
+
+            <table class="tada-table">
+                <thead>
+                    <tr>
+                        <th style="width: 3%;">NO.</th>
+                        <th style="width: 15%;">Name of External Examiner</th>
+                        <th style="width: 10%;">Designation</th>
+                        <th style="width: 15%;">Name of the College</th>
+                        <th style="width: 12%;">Practical/ Viva Date</th>
+                        <th style="width: 10%;">Class</th>
+                        <th style="width: 15%;">Details of TA</th>
+                        <th style="width: 5%;">TA</th>
+                        <th style="width: 5%;">Auto</th>
+                        <th style="width: 5%;">DA</th>
+                        <th style="width: 10%;">Total Bill Amt Rs.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align: center;">1</td>
+                        <td><input type="text" id="p8-ext-name" class="tada-input" value=""></td>
+                        <td><input type="text" class="tada-input" value="External Examiner"></td>
+                        <td><input type="text" id="p8-ext-college" class="tada-input" value=""></td>
+                        <td><input type="date" class="tada-input tada-date-picker" title="Practical/Viva Date"
+                                style="cursor: pointer; font-size: 11px; padding: 2px;" value=""></td>
+                        <td><input type="text" class="tada-input" value=""></td>
+                        <td><input type="text" class="tada-input" value=""></td>
+                        <td><input type="number" class="tada-input tada-val-input" data-row="1" data-type="ta" value="">
+                        </td>
+                        <td><input type="number" class="tada-input tada-val-input" data-row="1" data-type="auto"
+                                value=""></td>
+                        <td><input type="number" class="tada-input tada-val-input" data-row="1" data-type="da" value="">
+                        </td>
+                        <td style="text-align: center; font-weight: bold;"><span class="row-tada-total"
+                                id="tada-total-1">0</span></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">2</td>
+                        <td><input type="text" class="tada-input" value=""></td>
+                        <td><input type="text" class="tada-input" value=""></td>
+                        <td><input type="text" class="tada-input" value=""></td>
+                        <td><input type="date" class="tada-input tada-date-picker" title="Practical/Viva Date"
+                                style="cursor: pointer; font-size: 11px; padding: 2px;" value=""></td>
+                        <td><input type="text" class="tada-input" value=""></td>
+                        <td><input type="text" class="tada-input" value=""></td>
+                        <td><input type="number" class="tada-input tada-val-input" data-row="2" data-type="ta" value="">
+                        </td>
+                        <td><input type="number" class="tada-input tada-val-input" data-row="2" data-type="auto"
+                                value=""></td>
+                        <td><input type="number" class="tada-input tada-val-input" data-row="2" data-type="da" value="">
+                        </td>
+                        <td style="text-align: center; font-weight: bold;"><span class="row-tada-total"
+                                id="tada-total-2">0</span></td>
+                    </tr>
+                    <tr style="background-color: #f8fafc; font-weight: bold;">
+                        <td colspan="7" style="text-align: right; padding-right: 10px;">Total TA/DA Details:</td>
+                        <td style="text-align: center;"><span id="tada-ta-sum">0</span></td>
+                        <td style="text-align: center;"><span id="tada-auto-sum">0</span></td>
+                        <td style="text-align: center;"><span id="tada-da-sum">0</span></td>
+                        <td style="text-align: center; background-color: #334155; color: white;"><span
+                                id="tada-grand-total">0</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Final Summary List (Moved to Last) -->
+            <div style="margin-top: 40px; border-top: 2px solid #334155; padding-top: 20px;">
+                <table class="bill-table" style="width: 45%; margin-left: 0;">
+                    <thead>
+                        <tr>
+                            <th colspan="2" style="background-color: #334155; color: white; text-align: center;">FINAL
+                                SUMMARY LIST</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Expert</td>
+                            <td class="text-center"><span id="sum-exp">0</span></td>
+                        </tr>
+                        <tr>
+                            <td>Internal Examiner</td>
+                            <td class="text-center"><span id="sum-int">0</span></td>
+                        </tr>
+                        <tr>
+                            <td>External Examiner</td>
+                            <td class="text-center"><span id="sum-ext">0</span></td>
+                        </tr>
+                        <tr>
+                            <td>Lab. Staff</td>
+                            <td class="text-center"><span id="sum-lab">0</span></td>
+                        </tr>
+                        <tr>
+                            <td>Practical Paper Setting</td>
+                            <td class="text-center"><input type="number" class="bill-input-cell sum-manual-input"
+                                    value="0" style="text-align: center; border: 1px solid #cbd5e1; background: white;">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>External Examiner TA DA</td>
+                            <td class="text-center"><span id="sum-tada">0</span></td>
+                        </tr>
+                        <tr class="bill-total-row" style="background-color: #f1f5f9;">
+                            <td><b>GRAND TOTAL (ALL)</b></td>
+                            <td class="text-center"><b><span id="final-grand-total">0</span></b></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Signature Section -->
+            <div style="margin-top: 45px; display: flex; justify-content: space-between;">
+                <div style="text-align: center; width: 30%;">
+                    <p>___________________</p>
+                    <p><strong>Clerk</strong></p>
+                </div>
+                <div style="text-align: center; width: 30%;">
+                    <p>___________________</p>
+                    <p><strong>Head of Department</strong></p>
+                </div>
+                <div style="text-align: center; width: 30%;">
+                    <p>___________________</p>
+                    <p><strong>Principal</strong></p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Share Modal HTML -->
+        <div id="share-modal-backdrop" class="no-print share-backdrop" onclick="closeShareModal()">
+            <div id="share-modal" class="share-modal-content" onclick="event.stopPropagation()">
+                <div class="share-header">
+                    <h2>Share Website</h2>
+                    <button class="share-close-btn" onclick="closeShareModal()">&times;</button>
+                </div>
+
+                <div class="share-url-container">
+                    <input type="text" id="share-url-input" readonly>
+                    <button onclick="copyShareUrl()" id="copy-url-btn">Copy</button>
+                </div>
+
+                <div class="share-options-grid">
+                    <a href="#" id="share-whatsapp" target="_blank" class="share-btn whatsapp">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.977h.004c4.368 0 7.926-3.559 7.93-7.93a7.897 7.897 0 0 0-2.33-5.617q-.001-.005-.002-.01zm-5.604 11.947a6.578 6.578 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.69-4.98c-.204-.104-1.207-.596-1.394-.664-.189-.07-.327-.104-.465.103-.138.207-.534.664-.653.803-.12.139-.24.155-.444.053-2.01-1.002-3.323-2.083-4.088-3.4-.11-.189-.012-.292.087-.391.09-.088.204-.239.306-.359.1-.12.133-.2.2-.332.066-.133.033-.25-.017-.35-.05-.101-.465-1.12-.638-1.54-.168-.406-.339-.351-.465-.357h-.397a.882.882 0 0 0-.64.298c-.22.239-.84.822-.84 2.008 0 1.186.864 2.33 1.03 2.556.165.228 1.699 2.597 4.116 3.638.577.248 1.028.397 1.38.508.578.183 1.103.157 1.517.095.461-.069 1.425-.582 1.625-1.144.2-.562.2-1.044.14-1.144-.06-.1-.22-.157-.424-.26z" />
+                        </svg>
+                        WhatsApp
+                    </a>
+                    <a href="#" id="share-telegram" target="_blank" class="share-btn telegram">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.287 5.906q-1.168.486-4.666 2.01c-.56.223-.847.443-.86.661-.023.38.485.53 1.157.741.092.029.183.056.273.082l1.64.536.43 1.334q.06.182.122.35q.182.493.361.354c.224-.174.526-.47.907-.847l1.393 1.311q.38.358.742.34c.32-.016.48-.225.602-.416.315-.494 1.697-6.283 2.025-9.19q.036-.312-.224-.312q-.11 0-.352.098z" />
+                        </svg>
+                        Telegram
+                    </a>
+                    <a href="#" id="share-email" target="_blank" class="share-btn email">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741zM1 11.105l4.708-2.897L1 5.383z" />
+                        </svg>
+                        Email
+                    </a>
+                    <button id="share-native" onclick="shareNative()" class="share-btn native" style="display: none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5m-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3" />
+                        </svg>
+                        Share via...
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Download PDF Incomplete Confirmation Modal -->
+        <div id="download-confirm-modal-backdrop" class="download-modal-backdrop" style="display: none;">
+            <div class="download-modal-content">
+                <div class="download-modal-header">
+                    <div class="download-modal-title-box">
+                        <span class="download-modal-badge warning">Form Incomplete</span>
+                        <h2 style="margin: 6px 0 0 0; font-size: 1.25rem; color: #0f172a;">Missing Required Bill Details</h2>
+                    </div>
+                    <button type="button" class="download-modal-close" onclick="closeDownloadConfirmModal()">&times;</button>
+                </div>
+                <div class="download-modal-body">
+                    <p style="margin: 0 0 12px 0; color: #475569; font-size: 0.92rem; line-height: 1.5;">
+                        To generate an official and complete college examination bill, all key fields should be filled before downloading. The following field(s) are currently empty:
+                    </p>
+                    <div id="missing-fields-list" class="missing-fields-list">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                    <p style="margin: 12px 0 0 0; color: #64748b; font-size: 0.85rem;">
+                        Would you like to complete these details or download the PDF with current data?
+                    </p>
+                </div>
+                <div class="download-modal-footer">
+                    <button type="button" id="btn-fill-missing" class="modal-btn modal-btn-secondary" onclick="focusFirstMissingField()">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M12 20h9"/>
+                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                        </svg>
+                        <span>Fill Missing Details</span>
+                    </button>
+                    <button type="button" class="modal-btn modal-btn-primary" onclick="startPdfDownload(true)">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        <span>Download PDF Anyway</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Download PDF Progress Modal -->
+        <div id="download-progress-modal-backdrop" class="download-modal-backdrop" style="display: none;">
+            <div class="download-modal-content progress-modal-content">
+                <div class="progress-spinner-wrapper">
+                    <div class="download-spinner"></div>
+                </div>
+                <h3 id="pdf-progress-title" style="margin: 12px 0 6px 0; font-size: 1.2rem; color: #0f172a; text-align: center;">Generating Official PDF</h3>
+                <p id="pdf-progress-subtitle" style="margin: 0 0 16px 0; font-size: 0.88rem; color: #64748b; text-align: center;">Rendering high-resolution multi-page bill document...</p>
+                <div class="download-progress-bar-container">
+                    <div id="download-progress-bar-fill" class="download-progress-bar-fill" style="width: 0%;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 0.82rem; color: #64748b;">
+                    <span id="pdf-progress-step-text">Initializing PDF engine...</span>
+                    <span id="pdf-progress-percent-text">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast-notification" class="toast-message">
+            <span class="toast-icon">&#10003;</span>
+            <span id="toast-text">Copied to clipboard!</span>
+        </div>
+
+    </div><!-- /#app-container -->
+
+    <script src="jspdf.umd.min.js"></script>
+    <script src="html2canvas.min.js"></script>
+    <script src="login-3d.js?v=8.0"></script>
+    <script src="script.js?v=8.0"></script>
+</body>
+
+</html>
