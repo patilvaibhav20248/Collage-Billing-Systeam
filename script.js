@@ -413,14 +413,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const rows = {
             'Part - I': 'remun-row-part1',
             'Part - II': 'remun-row-part2',
-            'Part - III': 'remun-row-part3'
+            'Part - III': 'remun-row-part3',
+            'OGT/Projects': 'remun-row-ogt',
+            'Part - IV': 'remun-row-ogt'
         };
 
         // --- Calculate Remuneration for Page 5 (Examiner 1) ---
         const rows1 = {
             'Part - I': 'remun-row-part1',
             'Part - II': 'remun-row-part2',
-            'Part - III': 'remun-row-part3'
+            'Part - III': 'remun-row-part3',
+            'OGT/Projects': 'remun-row-ogt',
+            'Part - IV': 'remun-row-ogt'
         };
 
         let verticalTotal1 = 0;
@@ -475,7 +479,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const rows2 = {
             'Part - I': 'remun2-row-part1',
             'Part - II': 'remun2-row-part2',
-            'Part - III': 'remun2-row-part3'
+            'Part - III': 'remun2-row-part3',
+            'OGT/Projects': 'remun2-row-ogt',
+            'Part - IV': 'remun2-row-ogt'
         };
 
         let verticalTotal2 = 0;
@@ -553,8 +559,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Listen for Part dropdown change to update active remuneration
+    // Listen for Part and Course dropdown changes to update active remuneration
     document.getElementById('part-dropdown')?.addEventListener('change', updateTableTotals);
+    document.getElementById('course-dropdown')?.addEventListener('change', updateTableTotals);
 
     // Navigation Tab Highlighting
     const navTabs = document.querySelectorAll('.nav-tab');
@@ -753,7 +760,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const ext = parseFloat(document.getElementById('ext-bill-total')?.textContent) || 0;
         const int = parseFloat(document.getElementById('int-bill-total')?.textContent) || 0;
         const lab = parseFloat(document.getElementById('lab-bill-total')?.textContent) || 0;
-        const tada = parseFloat(document.getElementById('tada-grand-total')?.textContent) || 0;
+        const taSum = parseFloat(document.getElementById('tada-ta-sum')?.textContent) || 0;
+        const autoSum = parseFloat(document.getElementById('tada-auto-sum')?.textContent) || 0;
+        const daSum = parseFloat(document.getElementById('tada-da-sum')?.textContent) || 0;
+        const tadaUpperSum = parseFloat(document.getElementById('tada-bill-total')?.textContent) || 0;
+
+        // TA is TA + Auto from the lower TA/DA table, or falls back to upper TA/DA amount if entered there
+        const taVal = (taSum + autoSum) > 0 ? (taSum + autoSum) : (daSum === 0 ? tadaUpperSum : 0);
+        const daVal = daSum;
         const paper = parseFloat(document.querySelector('.sum-manual-input')?.value) || 0;
 
         const setVal = (id, val) => {
@@ -765,9 +779,10 @@ document.addEventListener('DOMContentLoaded', () => {
         setVal('sum-ext', ext);
         setVal('sum-int', int);
         setVal('sum-lab', lab);
-        setVal('sum-tada', tada);
+        setVal('sum-ta', taVal);
+        setVal('sum-da', daVal);
 
-        const total = exp + ext + int + lab + tada + paper;
+        const total = exp + ext + int + lab + taVal + daVal + paper;
         setVal('final-grand-total', total);
         setVal('bill-grand-total', total);
     };
@@ -847,13 +862,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const id = e.target.id;
         if (!id) return;
 
-        // Global Examiner Sync (From Page 1 to others)
+        // Global Examiner & Remuneration Sync
         const examinerMappings = {
             'p1-ext-name': ['p7-ext-name', 'p8-ext-name'],
             'p1-int-name': ['p7-int-name'],
             'p1-ext-college': ['p8-ext-college'],
             'p1-ext-desig': ['p7-ext-desig'],
-            'p1-int-desig': ['p7-int-desig']
+            'p1-int-desig': ['p7-int-desig'],
+            'p5-exam-title-1': ['p6-exam-title-1'],
+            'p6-exam-title-1': ['p5-exam-title-1'],
+            'p5-exam-title-2': ['p6-exam-title-2'],
+            'p6-exam-title-2': ['p5-exam-title-2'],
+            'p5-exam-title-3': ['p6-exam-title-3'],
+            'p6-exam-title-3': ['p5-exam-title-3']
         };
 
         if (examinerMappings[id]) {
@@ -1159,6 +1180,20 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             updateSubjectDisplays('BSc IT C Programing And HTML');
 
+            // Reset exam title text boxes to default (Page 5 & 6)
+            const defaultExamTitles = {
+                'p5-exam-title-1': 'B.Sc./B.C.S. Part I',
+                'p5-exam-title-2': 'B.Sc./B.C.S. Part II',
+                'p5-exam-title-3': 'B.Sc./B.C.S. Part III',
+                'p6-exam-title-1': 'B.Sc./B.C.S. Part I',
+                'p6-exam-title-2': 'B.Sc./B.C.S. Part II',
+                'p6-exam-title-3': 'B.Sc./B.C.S. Part III'
+            };
+            Object.keys(defaultExamTitles).forEach(titleId => {
+                const tel = document.getElementById(titleId);
+                if (tel) tel.value = defaultExamTitles[titleId];
+            });
+
             document.querySelectorAll('.examiner-display, .examiner-name-display').forEach(d => d.textContent = '__________________________________');
             document.querySelectorAll('.examiner2-display, .examiner2-name-display').forEach(d => d.textContent = '__________________________________');
             document.querySelectorAll('.college-display').forEach(d => d.textContent = 'WILLINGDON COLLEGE SANGLI');
@@ -1210,7 +1245,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Reset final summary list
-            ['sum-exp', 'sum-int', 'sum-ext', 'sum-lab', 'sum-tada', 'final-grand-total'].forEach(id => {
+            ['sum-exp', 'sum-int', 'sum-ext', 'sum-lab', 'sum-ta', 'sum-da', 'final-grand-total'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.textContent = '0';
             });

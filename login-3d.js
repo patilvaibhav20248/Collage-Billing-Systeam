@@ -15,13 +15,15 @@
     let gridOffset = 0;
     let coreRotation = 0;
     let logoRotation = 0;
+    let logoFlipAngle = 0;
+    let flipAxis = 'y'; // Horizontal 3D coin spin (front to back, never upper to lower)
     let scanAngle = 0;
     let stateTimer = 0;
     let pulseScale = 1;
 
-    // College / Deccan Education Society Rotating Emblem Logo
-    const LOGO_SRC = 'https://th.bing.com/th/id/OIP.s-VkdMxzUHqHXTL7M_UqiwAAAA?w=100&h=100&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3';
+    // College / Deccan Education Society 3D Rotating Emblem Logo
     const LOGO_LOCAL_BACKUP = 'college-logo.webp';
+    const LOGO_REMOTE_SRC = 'https://th.bing.com/th/id/OIP.s-VkdMxzUHqHXTL7M_UqiwAAAA?w=100&h=100&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3';
     const logoImg = new Image();
     let isLogoLoaded = false;
 
@@ -30,11 +32,12 @@
         isLogoLoaded = true;
     };
     logoImg.onerror = function () {
-        if (logoImg.src !== LOGO_LOCAL_BACKUP && !logoImg.src.endsWith(LOGO_LOCAL_BACKUP)) {
-            logoImg.src = LOGO_LOCAL_BACKUP;
+        if (logoImg.src !== LOGO_REMOTE_SRC && !logoImg.src.includes('bing.com')) {
+            logoImg.src = LOGO_REMOTE_SRC;
         }
     };
-    logoImg.src = LOGO_SRC;
+    // Prioritize instant local load
+    logoImg.src = LOGO_LOCAL_BACKUP;
 
     // Theme Color Palettes for States
     const CYBER_THEMES = {
@@ -211,14 +214,15 @@
 
         coreCanvas = document.createElement('canvas');
         coreCanvas.className = 'cyber-emblem-canvas';
-        coreCanvas.style.width = '120px';
-        coreCanvas.style.height = '120px';
+        coreCanvas.style.width = '170px';
+        coreCanvas.style.height = '170px';
         coreCanvas.style.display = 'block';
         coreCanvas.style.margin = '0 auto';
+        coreCanvas.title = 'Willingdon College 3D Emblem';
 
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        coreCanvas.width = 120 * dpr;
-        coreCanvas.height = 120 * dpr;
+        coreCanvas.width = 170 * dpr;
+        coreCanvas.height = 170 * dpr;
         coreCtx = coreCanvas.getContext('2d');
         coreCtx.scale(dpr, dpr);
 
@@ -228,193 +232,319 @@
     function drawCyberCore(time) {
         if (!coreCtx || !coreCanvas) return;
         const ctx = coreCtx;
-        const size = 120;
+        const size = 170;
         const cx = size * 0.5;
         const cy = size * 0.5;
 
         ctx.clearRect(0, 0, size, size);
 
-        coreRotation += 0.015 * activeTheme.speed;
-        logoRotation += 0.012 * activeTheme.speed;
-        scanAngle = (scanAngle + 0.035 * activeTheme.speed) % (Math.PI * 2);
-        pulseScale = 1 + 0.04 * Math.sin(time * 0.003);
+        // Reduced speed: smooth, slow, and graceful rotation
+        logoFlipAngle += 0.009 * activeTheme.speed;
+        pulseScale = 1 + 0.025 * Math.sin(time * 0.003);
 
         ctx.save();
         ctx.translate(cx, cy);
 
-        // 1. Ambient Glow Aura
-        const aura = ctx.createRadialGradient(0, 0, 10, 0, 0, 55);
+        // 1. Soft Ambient Holographic Aura behind the coin
+        const aura = ctx.createRadialGradient(0, 0, 15, 0, 0, 84);
         aura.addColorStop(0, activeTheme.glow);
+        aura.addColorStop(0.65, 'rgba(0, 240, 255, 0.08)');
         aura.addColorStop(1, 'rgba(0, 240, 255, 0)');
         ctx.fillStyle = aura;
         ctx.beginPath();
-        ctx.arc(0, 0, 55, 0, Math.PI * 2);
+        ctx.arc(0, 0, 84, 0, Math.PI * 2);
         ctx.fill();
 
-        // 2. Outer Segmented Tech Ring (Clockwise)
-        ctx.save();
-        ctx.rotate(coreRotation);
-        ctx.lineWidth = 1.5;
-        ctx.strokeStyle = activeTheme.primary;
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = activeTheme.primary;
-
-        const segments = 4;
-        for (let i = 0; i < segments; i++) {
-            const start = (i * Math.PI * 2) / segments + 0.15;
-            const end = start + (Math.PI * 2) / segments - 0.3;
+        // 2. High-tech Shield / Lock Icon in Core for Errors / Success
+        if (currentState === 'angry' || currentState === 'error') {
+            const hexRadius = 50;
             ctx.beginPath();
-            ctx.arc(0, 0, 50, start, end);
+            for (let h = 0; h < 6; h++) {
+                const angle = (h * Math.PI) / 3;
+                const x = Math.cos(angle) * hexRadius;
+                const y = Math.sin(angle) * hexRadius;
+                if (h === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(10, 20, 38, 0.92)';
+            ctx.fill();
+            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = activeTheme.primary;
             ctx.stroke();
 
-            // Accent tech notch on ring
-            const notchX = Math.cos(start) * 50;
-            const notchY = Math.sin(start) * 50;
-            ctx.beginPath();
-            ctx.arc(notchX, notchY, 2, 0, Math.PI * 2);
-            ctx.fillStyle = activeTheme.primary;
-            ctx.fill();
-        }
-        ctx.restore();
-
-        // 3. Middle Counter-Rotating Dashed Tech Ring
-        ctx.save();
-        ctx.rotate(-coreRotation * 1.3);
-        ctx.lineWidth = 1.2;
-        ctx.setLineDash([4, 6]);
-        ctx.strokeStyle = activeTheme.secondary;
-        ctx.beginPath();
-        ctx.arc(0, 0, 40, 0, Math.PI * 2);
-        ctx.stroke();
-
-        // Data blip packet orbiting ring
-        const blipAngle = time * 0.004 * activeTheme.speed;
-        const blipX = Math.cos(blipAngle) * 40;
-        const blipY = Math.sin(blipAngle) * 40;
-        ctx.beginPath();
-        ctx.arc(blipX, blipY, 3, 0, Math.PI * 2);
-        ctx.fillStyle = '#ffffff';
-        ctx.shadowBlur = 12;
-        ctx.shadowColor = '#ffffff';
-        ctx.fill();
-        ctx.restore();
-
-        // 4. Center Glowing Cyber Insignia / Rotating College Logo Core
-        ctx.save();
-        ctx.scale(pulseScale, pulseScale);
-
-        // Hexagonal Cyber Frame
-        const hexRadius = 26;
-        ctx.beginPath();
-        for (let h = 0; h < 6; h++) {
-            const angle = (h * Math.PI) / 3;
-            const x = Math.cos(angle) * hexRadius;
-            const y = Math.sin(angle) * hexRadius;
-            if (h === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-        }
-        ctx.closePath();
-        ctx.fillStyle = 'rgba(10, 20, 38, 0.9)';
-        ctx.fill();
-        ctx.lineWidth = 1.8;
-        ctx.strokeStyle = activeTheme.primary;
-        ctx.shadowBlur = 12;
-        ctx.shadowColor = activeTheme.primary;
-        ctx.stroke();
-
-        // High-tech Shield / Lock Icon in Core for Errors / Success
-        if (currentState === 'angry' || currentState === 'error') {
             // Cyber Lock Icon (Warning)
             ctx.fillStyle = activeTheme.primary;
             ctx.beginPath();
-            ctx.rect(-6, -2, 12, 11);
+            ctx.rect(-12, -5, 24, 22);
             ctx.fill();
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 3.5;
             ctx.strokeStyle = activeTheme.primary;
             ctx.beginPath();
-            ctx.arc(0, -3, 5, Math.PI, 0);
+            ctx.arc(0, -7, 9, Math.PI, 0);
             ctx.stroke();
         } else if (currentState === 'success') {
-            // Cyber Checkmark / Unlocked
+            const hexRadius = 50;
+            ctx.beginPath();
+            for (let h = 0; h < 6; h++) {
+                const angle = (h * Math.PI) / 3;
+                const x = Math.cos(angle) * hexRadius;
+                const y = Math.sin(angle) * hexRadius;
+                if (h === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(10, 20, 38, 0.92)';
+            ctx.fill();
             ctx.lineWidth = 2.5;
             ctx.strokeStyle = activeTheme.primary;
+            ctx.stroke();
+
+            // Cyber Checkmark / Unlocked
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = activeTheme.primary;
             ctx.beginPath();
-            ctx.moveTo(-7, 0);
-            ctx.lineTo(-2, 5);
-            ctx.lineTo(8, -5);
+            ctx.moveTo(-13, 0);
+            ctx.lineTo(-4, 10);
+            ctx.lineTo(14, -10);
             ctx.stroke();
         } else {
-            // ROTATING IMAGE INSIDE THE ANIMATION
-            if (isLogoLoaded) {
-                ctx.save();
-                ctx.rotate(logoRotation);
+            // ==========================================
+            // WHOLE 3D COIN REVOLVING HORIZONTALLY (FRONT TO BACK)
+            // Never upper to lower, slow smooth speed
+            // ==========================================
+            const coinRadius = 65; // Whole coin radius (diameter 130px!)
+            const coinThickness = 12; // 3D edge thickness
 
-                // Circular clipping mask for the emblem
-                const imgR = 21.5;
-                ctx.beginPath();
-                ctx.arc(0, 0, imgR, 0, Math.PI * 2);
-                ctx.clip();
+            const theta = logoFlipAngle;
+            const cosT = Math.cos(theta);
+            const sinT = Math.sin(theta);
+            const isFront = cosT >= 0;
 
-                // Crisp clean backdrop
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(-imgR, -imgR, imgR * 2, imgR * 2);
+            ctx.save();
+            ctx.scale(pulseScale, pulseScale);
 
-                // Draw the rotating logo image
-                ctx.drawImage(logoImg, -imgR, -imgR, imgR * 2, imgR * 2);
-                ctx.restore();
+            drawWholeCoin(ctx, coinRadius, coinThickness, cosT, sinT, isFront, time);
 
-                // Glowing circular ring & rotating tech notches
-                ctx.save();
-                ctx.rotate(logoRotation);
-                ctx.strokeStyle = activeTheme.primary;
-                ctx.lineWidth = 1.6;
-                ctx.shadowBlur = 8;
-                ctx.shadowColor = activeTheme.primary;
-                ctx.beginPath();
-                ctx.arc(0, 0, 22.5, 0, Math.PI * 2);
-                ctx.stroke();
+            ctx.restore();
+        }
 
-                // 4 Orbiting micro-tech notches
-                for (let i = 0; i < 4; i++) {
-                    const notchA = (i * Math.PI) / 2;
-                    ctx.beginPath();
-                    ctx.arc(0, 0, 24.5, notchA, notchA + 0.4);
-                    ctx.stroke();
-                }
-                ctx.restore();
+        ctx.restore();
+    }
+
+    function drawWholeCoin(ctx, R, thickness, cosT, sinT, isFront, time) {
+        const absCos = Math.max(0.012, Math.abs(cosT));
+        const absSin = Math.abs(sinT);
+
+        // Subtle 3D perspective foreshortening
+        const pFactor = 1 + 0.06 * (isFront ? absSin : -absSin);
+
+        ctx.save();
+
+        // ==========================================
+        // HORIZONTAL 3D COIN SPIN (Revolve along Y-axis, front to back)
+        // ==========================================
+        const xOffset = (thickness * 0.5) * sinT;
+
+        // 1. 3D Extruded Cylindrical Rim (Milled Edge Teeth & Metallic Thickness)
+        if (absCos < 0.96) {
+            ctx.save();
+
+            const rimGrad = ctx.createLinearGradient(0, -R, 0, R);
+            rimGrad.addColorStop(0, 'rgba(10, 25, 48, 0.95)');
+            rimGrad.addColorStop(0.2, activeTheme.primary);
+            rimGrad.addColorStop(0.5, '#ffffff'); // bright light gleam on coin rim
+            rimGrad.addColorStop(0.8, activeTheme.secondary);
+            rimGrad.addColorStop(1, 'rgba(10, 25, 48, 0.95)');
+
+            ctx.fillStyle = rimGrad;
+            ctx.beginPath();
+            if (sinT >= 0) {
+                ctx.ellipse(-xOffset, 0, R * absCos, R, 0, Math.PI * 0.5, Math.PI * 1.5, false);
+                ctx.ellipse(xOffset, 0, R * absCos, R, 0, Math.PI * 1.5, Math.PI * 0.5, true);
             } else {
-                // College Academic Cyber Star / Diamond fallback
-                ctx.fillStyle = activeTheme.primary;
-                ctx.beginPath();
-                ctx.moveTo(0, -11);
-                ctx.lineTo(8, 0);
-                ctx.lineTo(0, 11);
-                ctx.lineTo(-8, 0);
-                ctx.closePath();
-                ctx.fill();
-
-                ctx.fillStyle = '#ffffff';
-                ctx.beginPath();
-                ctx.arc(0, 0, 2.5, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.ellipse(xOffset, 0, R * absCos, R, 0, Math.PI * 0.5, Math.PI * 1.5, false);
+                ctx.ellipse(-xOffset, 0, R * absCos, R, 0, Math.PI * 1.5, Math.PI * 0.5, true);
             }
+            ctx.closePath();
+            ctx.fill();
+
+            // Milled coin ridges on rim (reeding teeth)
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.lineWidth = 1.3;
+            const teethCount = 38;
+            for (let i = 0; i <= teethCount; i++) {
+                const ty = -R + (i / teethCount) * (R * 2);
+                const archX = Math.sqrt(Math.max(0, R * R - ty * ty)) * absCos;
+                const baseX = sinT >= 0 ? archX : -archX;
+                ctx.beginPath();
+                ctx.moveTo(baseX - xOffset, ty);
+                ctx.lineTo(baseX + xOffset, ty);
+                ctx.stroke();
+            }
+
+            ctx.restore();
+        }
+
+        // 2. Active Coin Face (Front or Back)
+        ctx.save();
+        ctx.translate(xOffset, 0);
+        ctx.scale(cosT * pFactor, pFactor);
+        drawCoinFace(ctx, R, isFront, time, sinT);
+        ctx.restore();
+
+        ctx.restore();
+    }
+
+    function drawCoinFace(ctx, R, isFront, time, sinT) {
+        const logoR = 49; // Emblem radius (diameter 98px!)
+
+        // 1. Outer Coin Base & Raised Metallic Rim
+        const rimGrad = ctx.createRadialGradient(0, 0, R - 12, 0, 0, R);
+        rimGrad.addColorStop(0, '#0a1628');
+        rimGrad.addColorStop(0.55, activeTheme.primary);
+        rimGrad.addColorStop(0.85, '#ffffff'); // Chamfer highlight
+        rimGrad.addColorStop(1, activeTheme.secondary);
+
+        ctx.fillStyle = rimGrad;
+        ctx.beginPath();
+        ctx.arc(0, 0, R, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 2. Milled Coin Serrations (Circumferential Ridges / Coin Teeth)
+        ctx.save();
+        ctx.strokeStyle = activeTheme.primary;
+        ctx.lineWidth = 1.8;
+        const notches = 42;
+        for (let i = 0; i < notches; i++) {
+            const a = (i * Math.PI * 2) / notches;
+            const x1 = Math.cos(a) * (R - 5);
+            const y1 = Math.sin(a) * (R - 5);
+            const x2 = Math.cos(a) * (R - 1);
+            const y2 = Math.sin(a) * (R - 1);
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
         }
         ctx.restore();
 
-        // 5. Radar / Scanline Sweep
+        // 3. Inner Stepped Bevel Ring
         ctx.save();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.lineWidth = 1.5;
         ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.arc(0, 0, 52, scanAngle, scanAngle + 0.4);
-        ctx.closePath();
-        const sweepGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, 52);
-        sweepGrad.addColorStop(0, 'rgba(0, 240, 255, 0)');
-        sweepGrad.addColorStop(1, activeTheme.glow);
-        ctx.fillStyle = sweepGrad;
-        ctx.fill();
+        ctx.arc(0, 0, R - 6, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.strokeStyle = activeTheme.primary;
+        ctx.lineWidth = 2.2;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = activeTheme.primary;
+        ctx.beginPath();
+        ctx.arc(0, 0, logoR + 2, 0, Math.PI * 2);
+        ctx.stroke();
         ctx.restore();
 
-        ctx.restore();
+        // 4. Coin Field Content (Front vs Back)
+        if (isFront) {
+            // ==========================================
+            // FRONT FACE: Willingdon College Crest
+            // ==========================================
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(0, 0, logoR + 1.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            if (isLogoLoaded) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(0, 0, logoR, 0, Math.PI * 2);
+                ctx.clip();
+                ctx.drawImage(logoImg, -logoR, -logoR, logoR * 2, logoR * 2);
+                ctx.restore();
+            } else {
+                ctx.fillStyle = activeTheme.primary;
+                ctx.beginPath();
+                ctx.moveTo(0, -22); ctx.lineTo(16, 0); ctx.lineTo(0, 22); ctx.lineTo(-16, 0);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            // Dynamic Specular Light Gleam on Front
+            const gleam = ctx.createLinearGradient(-R, -R, R, R);
+            const gPos = (sinT + 1) * 0.5;
+            gleam.addColorStop(Math.max(0, gPos - 0.25), 'rgba(255, 255, 255, 0)');
+            gleam.addColorStop(Math.min(1, Math.max(0, gPos)), 'rgba(255, 255, 255, 0.45)');
+            gleam.addColorStop(Math.min(1, gPos + 0.25), 'rgba(255, 255, 255, 0)');
+            ctx.fillStyle = gleam;
+            ctx.beginPath();
+            ctx.arc(0, 0, R, 0, Math.PI * 2);
+            ctx.fill();
+
+        } else {
+            // ==========================================
+            // BACK FACE: Minted Metallic Coin Reverse (Un-mirrored)
+            // ==========================================
+            ctx.save();
+            ctx.scale(-1, 1); // Un-mirror so text and crest are upright and legible!
+
+            const backGrad = ctx.createRadialGradient(0, 0, 5, 0, 0, logoR);
+            backGrad.addColorStop(0, '#0a1a32');
+            backGrad.addColorStop(0.7, '#071224');
+            backGrad.addColorStop(1, '#030812');
+            ctx.fillStyle = backGrad;
+            ctx.beginPath();
+            ctx.arc(0, 0, logoR + 1.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            if (isLogoLoaded) {
+                // Embossed emblem on the reverse with cyber holographic finish
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(0, 0, logoR, 0, Math.PI * 2);
+                ctx.clip();
+                ctx.globalAlpha = 0.86;
+                ctx.drawImage(logoImg, -logoR, -logoR, logoR * 2, logoR * 2);
+                ctx.restore();
+
+                const holoGrad = ctx.createLinearGradient(-logoR, -logoR, logoR, logoR);
+                holoGrad.addColorStop(0, 'rgba(0, 240, 255, 0.35)');
+                holoGrad.addColorStop(0.5, 'rgba(59, 130, 246, 0.2)');
+                holoGrad.addColorStop(1, 'rgba(0, 255, 157, 0.3)');
+                ctx.fillStyle = holoGrad;
+                ctx.beginPath();
+                ctx.arc(0, 0, logoR, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Engraved concentric medal rings
+            ctx.strokeStyle = activeTheme.primary;
+            ctx.lineWidth = 1.4;
+            ctx.beginPath();
+            ctx.arc(0, 0, logoR - 4, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Reverse Specular Gleam
+            const gleam = ctx.createLinearGradient(-R, R, R, -R);
+            const gPos = (sinT + 1) * 0.5;
+            gleam.addColorStop(Math.max(0, gPos - 0.25), 'rgba(0, 240, 255, 0)');
+            gleam.addColorStop(Math.min(1, Math.max(0, gPos)), 'rgba(255, 255, 255, 0.4)');
+            gleam.addColorStop(Math.min(1, gPos + 0.25), 'rgba(0, 240, 255, 0)');
+            ctx.fillStyle = gleam;
+            ctx.beginPath();
+            ctx.arc(0, 0, R, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        // 5. Outer Bezel Chamfer Ring
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.arc(0, 0, R - 1, 0, Math.PI * 2);
+        ctx.stroke();
     }
 
     // ==========================================
@@ -464,6 +594,12 @@
         if (progress > 0 && currentState !== 'angry' && currentState !== 'success') {
             activeTheme = progress >= 1.0 ? CYBER_THEMES.ready : CYBER_THEMES.password;
         }
+    };
+
+    window.setLogoFlipMode = function (mode) {
+        if (mode === 'x' || mode === 'vertical') flipAxis = 'x';
+        else if (mode === 'tilt' || mode === 'diagonal') flipAxis = 'tilt';
+        else flipAxis = 'y';
     };
 
     window.disableCursorTrail = function () {

@@ -606,15 +606,21 @@ body.logged-in .cursor-trail-canvas {
 }
 
 .login-3d-canvas-wrap {
-    width: 120px;
-    height: 120px;
-    margin: 0 auto 10px auto;
+    width: 170px;
+    height: 170px;
+    margin: 0 auto 8px auto;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    filter: drop-shadow(0 0 18px rgba(0, 240, 255, 0.45));
-    transition: filter 0.35s ease;
+    filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.5));
+    transition: filter 0.35s ease, transform 0.3s ease;
+    cursor: pointer;
+}
+
+.login-3d-canvas-wrap:hover {
+    filter: drop-shadow(0 0 26px rgba(0, 240, 255, 0.75));
+    transform: scale(1.02);
 }
 
 .login-3d-canvas-wrap canvas {
@@ -1697,6 +1703,29 @@ body.pdf-export-mode input[type="time"]::-webkit-calendar-picker-indicator {
     font-size: 11pt;
 }
 
+.remun-title-input {
+    width: 100%;
+    text-align: center;
+    border: 1px solid #ccc;
+    background: #ffffff;
+    padding: 5px 6px;
+    font-family: inherit;
+    font-size: 11pt;
+    border-radius: 3px;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.remun-title-input:hover {
+    border-color: #94a3b8;
+}
+
+.remun-title-input:focus {
+    border-color: #2563eb;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
 .staff-input {
     border: 1px solid #eee;
     background: white;
@@ -1753,6 +1782,10 @@ body.pdf-export-mode input[type="time"]::-webkit-calendar-picker-indicator {
     margin: 0;
 }
 
+.tada-val-input {
+    text-align: center;
+}
+
 .text-center {
     text-align: center;
 }
@@ -1807,10 +1840,13 @@ body.pdf-export-mode input[type="time"]::-webkit-calendar-picker-indicator {
     }
 
     .remun-input,
+    .remun-title-input,
     .staff-input {
         border: none !important;
         background: transparent !important;
         -moz-appearance: textfield;
+        box-shadow: none !important;
+        padding: 0 !important;
     }
 
     .remun-input::-webkit-outer-spin-button,

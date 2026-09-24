@@ -203,6 +203,7 @@
                     <option value="Part - I">Part - I</option>
                     <option value="Part - II">Part - II</option>
                     <option value="Part - III">Part - III</option>
+                    <option value="OGT/Projects">OGT/Projects</option>
                     <option value="Part - IV">Part - IV</option>
                     <option value="Part - V">Part - V</option>
                     <option value="Part - VI">Part - VI</option>
@@ -950,7 +951,7 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                 </tr>
                 <tr id="remun-row-part1" style="text-align: center;">
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p>B.Sc./B.C.S. Part I</p>
+                        <input type="text" id="p5-exam-title-1" class="remun-title-input" value="B.Sc./B.C.S. Part I">
                     </td>
                     <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="17.00"
                             class="remun-input rate-input"></td>
@@ -970,7 +971,7 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                 </tr>
                 <tr id="remun-row-part2" style="text-align: center;">
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p>B.Sc./B.C.S. Part II</p>
+                        <input type="text" id="p5-exam-title-2" class="remun-title-input" value="B.Sc./B.C.S. Part II">
                     </td>
                     <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="25.00"
                             class="remun-input rate-input"></td>
@@ -990,13 +991,33 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                 </tr>
                 <tr id="remun-row-part3" style="text-align: center;">
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p>B.Sc./B.C.S. Part III</p>
+                        <input type="text" id="p5-exam-title-3" class="remun-title-input" value="B.Sc./B.C.S. Part III">
                     </td>
                     <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="40.00"
                             class="remun-input rate-input"></td>
                     <td style="border: 1px solid black; padding: 5px;"><input type="number" value="2"
                             class="remun-input examiners-input"></td>
                     <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="21.00"
+                            class="remun-input per-student-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="student-count">0</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="remun-calc">0</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="total-remun">0</p>
+                    </td>
+                </tr>
+                <tr id="remun-row-ogt" style="text-align: center;">
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>OGT/Projects</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="50.00"
+                            class="remun-input rate-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="2"
+                            class="remun-input examiners-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="25.00"
                             class="remun-input per-student-input"></td>
                     <td style="border: 1px solid black; padding: 5px;">
                         <p class="student-count">0</p>
@@ -1185,7 +1206,7 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                 </tr>
                 <tr id="remun2-row-part1" style="text-align: center;">
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p>B.Sc./B.C.S. Part I</p>
+                        <input type="text" id="p6-exam-title-1" class="remun-title-input" value="B.Sc./B.C.S. Part I">
                     </td>
                     <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="17.00"
                             class="remun-input rate-input"></td>
@@ -1205,7 +1226,7 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                 </tr>
                 <tr id="remun2-row-part2" style="text-align: center;">
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p>B.Sc./B.C.S. Part II</p>
+                        <input type="text" id="p6-exam-title-2" class="remun-title-input" value="B.Sc./B.C.S. Part II">
                     </td>
                     <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="25.00"
                             class="remun-input rate-input"></td>
@@ -1225,13 +1246,33 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                 </tr>
                 <tr id="remun2-row-part3" style="text-align: center;">
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p>B.Sc./B.C.S. Part III</p>
+                        <input type="text" id="p6-exam-title-3" class="remun-title-input" value="B.Sc./B.C.S. Part III">
                     </td>
                     <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="40.00"
                             class="remun-input rate-input"></td>
                     <td style="border: 1px solid black; padding: 5px;"><input type="number" value="2"
                             class="remun-input examiners-input"></td>
                     <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="21.00"
+                            class="remun-input per-student-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="student-count">0</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="remun-calc">0</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p class="total-remun">0</p>
+                    </td>
+                </tr>
+                <tr id="remun2-row-ogt" style="text-align: center;">
+                    <td style="border: 1px solid black; padding: 5px;">
+                        <p>OGT/Projects</p>
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="50.00"
+                            class="remun-input rate-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="2"
+                            class="remun-input examiners-input"></td>
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="25.00"
                             class="remun-input per-student-input"></td>
                     <td style="border: 1px solid black; padding: 5px;">
                         <p class="student-count">0</p>
@@ -1843,19 +1884,20 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                 <thead>
                     <tr>
                         <th style="width: 3%;">NO.</th>
-                        <th style="width: 18%;">Name of Staff</th>
-                        <th style="width: 15%;">Class</th>
-                        <th style="width: 12%;">Designation</th>
+                        <th style="width: 16%;">Name of Staff</th>
+                        <th style="width: 12%;">Class</th>
+                        <th style="width: 11%;">Designation</th>
                         <th style="width: 7%;">Amount</th>
-                        <th style="width: 15%;">Bank</th>
-                        <th style="width: 15%;">Account No.</th>
-                        <th style="width: 15%;">IFSC code</th>
+                        <th style="width: 13%;">Bank</th>
+                        <th style="width: 14%;">Account No.</th>
+                        <th style="width: 12%;">IFSC code</th>
+                        <th style="width: 12%;">Local allowance</th>
                     </tr>
                 </thead>
                 <tbody>
                     <!-- Expert -->
                     <tr>
-                        <td colspan="8" class="bill-section-header">Expert</td>
+                        <td colspan="9" class="bill-section-header">Expert</td>
                     </tr>
                     <tr>
                         <td class="text-center">1</td>
@@ -1866,16 +1908,17 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                         <td><input type="text" id="p8-exp-bank" class="bill-input-cell" value=""></td>
                         <td><input type="text" id="p8-exp-acc" class="bill-input-cell" value=""></td>
                         <td><input type="text" id="p8-exp-ifsc" class="bill-input-cell" value=""></td>
+                        <td><input type="number" id="p8-exp-local" class="bill-input-cell" value=""></td>
                     </tr>
                     <tr class="bill-total-row">
                         <td colspan="4" class="text-right">Total Expert:</td>
                         <td class="text-center"><span id="exp-bill-total">0</span></td>
-                        <td colspan="3"></td>
+                        <td colspan="4"></td>
                     </tr>
 
                     <!-- External Examiner -->
                     <tr>
-                        <td colspan="8" class="bill-section-header">External Examiner</td>
+                        <td colspan="9" class="bill-section-header">External Examiner</td>
                     </tr>
                     <tr>
                         <td class="text-center">1</td>
@@ -1886,16 +1929,17 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                         <td><input type="text" id="p8-ext-bank" class="bill-input-cell" value=""></td>
                         <td><input type="text" id="p8-ext-acc" class="bill-input-cell" value=""></td>
                         <td><input type="text" id="p8-ext-ifsc" class="bill-input-cell" value=""></td>
+                        <td><input type="number" id="p8-ext-local" class="bill-input-cell" value=""></td>
                     </tr>
                     <tr class="bill-total-row">
                         <td colspan="4" class="text-right">Total External:</td>
                         <td class="text-center"><span id="ext-bill-total">0</span></td>
-                        <td colspan="3"></td>
+                        <td colspan="4"></td>
                     </tr>
 
                     <!-- Internal Examiner -->
                     <tr>
-                        <td colspan="8" class="bill-section-header">Internal Examiner</td>
+                        <td colspan="9" class="bill-section-header">Internal Examiner</td>
                     </tr>
                     <tr>
                         <td class="text-center">1</td>
@@ -1907,16 +1951,17 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                         <td><input type="text" id="p8-int-bank" class="bill-input-cell" value=""></td>
                         <td><input type="text" id="p8-int-acc" class="bill-input-cell" value=""></td>
                         <td><input type="text" id="p8-int-ifsc" class="bill-input-cell" value=""></td>
+                        <td><input type="number" id="p8-int-local" class="bill-input-cell" value=""></td>
                     </tr>
                     <tr class="bill-total-row">
                         <td colspan="4" class="text-right">Total Internal:</td>
                         <td class="text-center"><span id="int-bill-total">0</span></td>
-                        <td colspan="3"></td>
+                        <td colspan="4"></td>
                     </tr>
 
                     <!-- Lab Staff -->
                     <tr>
-                        <td colspan="8" class="bill-section-header">Lab Staff</td>
+                        <td colspan="9" class="bill-section-header">Lab Staff</td>
                     </tr>
                     <tr>
                         <td class="text-center">1</td>
@@ -1928,6 +1973,7 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                         <td><input type="text" id="p8-lab1-bank" class="bill-input-cell" value=""></td>
                         <td><input type="text" id="p8-lab1-acc" class="bill-input-cell" value=""></td>
                         <td><input type="text" id="p8-lab1-ifsc" class="bill-input-cell" value=""></td>
+                        <td><input type="number" id="p8-lab1-local" class="bill-input-cell" value=""></td>
                     </tr>
                     <tr>
                         <td class="text-center">2</td>
@@ -1940,16 +1986,17 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                         <td><input type="text" id="p8-lab2-bank" class="bill-input-cell" value=""></td>
                         <td><input type="text" id="p8-lab2-acc" class="bill-input-cell" value=""></td>
                         <td><input type="text" id="p8-lab2-ifsc" class="bill-input-cell" value=""></td>
+                        <td><input type="number" id="p8-lab2-local" class="bill-input-cell" value=""></td>
                     </tr>
                     <tr class="bill-total-row">
                         <td colspan="4" class="text-right">Total Lab Staff:</td>
                         <td class="text-center"><span id="lab-bill-total">0</span></td>
-                        <td colspan="3"></td>
+                        <td colspan="4"></td>
                     </tr>
 
                     <!-- TA /DA External Examination Section -->
                     <tr>
-                        <td colspan="8" class="bill-section-header">TA /DA External Examination</td>
+                        <td colspan="9" class="bill-section-header">TA /DA External Examination</td>
                     </tr>
                     <tr>
                         <td class="text-center">1</td>
@@ -1960,11 +2007,12 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                         <td><input type="text" class="bill-input-cell" value=""></td>
                         <td><input type="text" class="bill-input-cell" value=""></td>
                         <td><input type="text" class="bill-input-cell" value=""></td>
+                        <td><input type="number" class="bill-input-cell" value=""></td>
                     </tr>
                     <tr class="bill-total-row">
                         <td colspan="4" class="text-right">Total TA/DA (Combined):</td>
                         <td class="text-center"><span id="tada-bill-total">0</span></td>
-                        <td colspan="3"></td>
+                        <td colspan="4"></td>
                     </tr>
 
                     <!-- Grand Total -->
@@ -1972,7 +2020,7 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                         <td colspan="4" style="text-align: right; border: 1px solid #fff;"><b>BILL GRAND TOTAL:</b></td>
                         <td class="text-center" style="border: 1px solid #fff;"><b><span
                                     id="bill-grand-total">0</span></b></td>
-                        <td colspan="3" style="border: 1px solid #fff;"></td>
+                        <td colspan="4" style="border: 1px solid #fff;"></td>
                     </tr>
                 </tbody>
             </table>
@@ -1988,15 +2036,15 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                     <tr>
                         <th style="width: 3%;">NO.</th>
                         <th style="width: 15%;">Name of External Examiner</th>
-                        <th style="width: 10%;">Designation</th>
-                        <th style="width: 15%;">Name of the College</th>
-                        <th style="width: 12%;">Practical/ Viva Date</th>
-                        <th style="width: 10%;">Class</th>
-                        <th style="width: 15%;">Details of TA</th>
-                        <th style="width: 5%;">TA</th>
-                        <th style="width: 5%;">Auto</th>
-                        <th style="width: 5%;">DA</th>
-                        <th style="width: 10%;">Total Bill Amt Rs.</th>
+                        <th style="width: 9%;">Designation</th>
+                        <th style="width: 14%;">Name of the College</th>
+                        <th style="width: 11%;">Practical/ Viva Date</th>
+                        <th style="width: 8%;">Class</th>
+                        <th style="width: 14%;">Details of TA</th>
+                        <th style="width: 6%;">TA</th>
+                        <th style="width: 6%;">Auto</th>
+                        <th style="width: 6%;">DA</th>
+                        <th style="width: 8%;">Total Bill Amt Rs.</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -2080,8 +2128,12 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                             </td>
                         </tr>
                         <tr>
-                            <td>External Examiner TA DA</td>
-                            <td class="text-center"><span id="sum-tada">0</span></td>
+                            <td>External Examiner TA</td>
+                            <td class="text-center"><span id="sum-ta">0</span></td>
+                        </tr>
+                        <tr>
+                            <td>External Examiner DA</td>
+                            <td class="text-center"><span id="sum-da">0</span></td>
                         </tr>
                         <tr class="bill-total-row" style="background-color: #f1f5f9;">
                             <td><b>GRAND TOTAL (ALL)</b></td>
