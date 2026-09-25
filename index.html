@@ -5,13 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Willingdon College - Autonomous Exam Billing Portal</title>
-    <link rel="stylesheet" href="styles.css?v=8.1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/webp" href="college-logo.webp">
+    <link rel="stylesheet" href="styles.css?v=8.7">
 </head>
 
 <body style="word-wrap: break-word;">
-    <!-- Global Full-Screen Cursor Color Trail (covers all areas: background, card, inputs, buttons) -->
-    <canvas id="cursor-trail-canvas" class="cursor-trail-canvas"></canvas>
-
     <!-- Login Screen HTML -->
     <div id="login-screen" class="no-print login-backdrop">
         <canvas id="login-bg-canvas" class="login-bg-3d-canvas"></canvas>
@@ -51,7 +52,6 @@
 
                 <button type="submit" class="login-btn" id="login-btn">
                     <span id="login-btn-text">Sign In</span>
-                    <div class="login-btn-progress-bar" id="login-progress-bar"></div>
                 </button>
             </form>
         </div>
@@ -60,6 +60,14 @@
     <div id="app-container" style="display: none;">
         <nav id="main-nav" class="top-navbar no-print">
             <div class="nav-content-container">
+                <a href="#page1" class="nav-brand-group" title="Willingdon College Autonomous Exam Portal">
+                    <img src="college-logo.webp" alt="Willingdon College Crest" class="nav-brand-logo">
+                    <div class="nav-brand-info">
+                        <span class="nav-brand-title">Willingdon College</span>
+                        <span class="nav-brand-badge">Autonomous Portal</span>
+                    </div>
+                </a>
+
                 <div class="nav-tabs-group">
                     <a href="#page1" class="nav-tab active" style="--item-index: 1;">
                         <span class="nav-tab-badge">1</span>
@@ -118,8 +126,20 @@
                         </svg>
                         <span>Download PDF</span>
                     </button>
+                    <button type="button" onclick="downloadPage8Excel()" class="nav-btn btn-excel"
+                        title="Download Page 8 (Final Bill & TA/DA) as an Excel spreadsheet (.xlsx)" style="--item-index: 11;">
+                        <svg class="nav-btn-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            viewBox="0 0 24 24">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="8" y1="13" x2="16" y2="17" />
+                            <line x1="16" y1="13" x2="8" y2="17" />
+                        </svg>
+                        <span>Page 8 Excel</span>
+                    </button>
                     <button type="button" onclick="window.print()" class="nav-btn btn-print" title="Print All Pages"
-                        style="--item-index: 11;">
+                        style="--item-index: 12;">
                         <svg class="nav-btn-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             viewBox="0 0 24 24">
@@ -232,7 +252,7 @@
                         style='font-size:10.0pt;line-height:150%'><input type="text" class="subject-input"
                             placeholder="Enter Subject"
                             style="font-size: 14px; font-weight: bold; font-family: inherit; margin: 0 5px; padding: 2px; border: 1px solid #ccc; border-radius: 4px; width: 300px; background: white;"
-                            id="subject-input" value="BSc IT C Programing And HTML">
+                            id="subject-input" value="">
                     </span></b> Date :- <b><span class="date-display print-date-display" style="display: none;">23/09/2026</span><input type="date" class="date-input no-print-date"
                         value="2026-09-23"
                         title="Select Date via Calendar"
@@ -1011,7 +1031,7 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                 </tr>
                 <tr id="remun-row-ogt" style="text-align: center;">
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p>OGT/Projects</p>
+                        <input type="text" id="p5-exam-title-ogt" class="remun-title-input" value="OGT/Projects">
                     </td>
                     <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="50.00"
                             class="remun-input rate-input"></td>
@@ -1266,7 +1286,7 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                 </tr>
                 <tr id="remun2-row-ogt" style="text-align: center;">
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p>OGT/Projects</p>
+                        <input type="text" id="p6-exam-title-ogt" class="remun-title-input" value="OGT/Projects">
                     </td>
                     <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="50.00"
                             class="remun-input rate-input"></td>
@@ -1856,178 +1876,186 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                     </svg>
                     Page 8: Final Bill & TA/DA (A4 Landscape)
                 </span>
-                <button onclick="printPage('page8', 'landscape')" type="button"
-                    title="Print only Page 8 in Landscape orientation"
-                    style="background: #2563eb; color: white; border: none; padding: 5px 14px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: background 0.2s;">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path
-                            d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-                        <rect x="6" y="14" width="12" height="8" />
-                    </svg>
-                    Print Page 8 (Landscape)
-                </button>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button onclick="downloadPage8Excel()" type="button"
+                        title="Download Page 8 (Final Bill & TA/DA) as an Excel spreadsheet (.xlsx)"
+                        style="background: #15803d; color: white; border: none; padding: 5px 14px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); transition: all 0.2s;">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="8" y1="13" x2="16" y2="17" />
+                            <line x1="16" y1="13" x2="8" y2="17" />
+                        </svg>
+                        Download Page 8 (Excel)
+                    </button>
+                    <button onclick="printPage('page8', 'landscape')" type="button"
+                        title="Print only Page 8 in Landscape orientation"
+                        style="background: #2563eb; color: white; border: none; padding: 5px 14px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: background 0.2s;">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path
+                                d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                            <rect x="6" y="14" width="12" height="8" />
+                        </svg>
+                        Print Page 8 (Landscape)
+                    </button>
+                </div>
             </div>
             <!-- Practical Examiners Rem. Bill Section -->
-            <div style="text-align: center; margin-bottom: 20px;">
-                <p class="MsoNormal" style="font-size: 16.0pt;"><b>D.E.Society's, Willingdon College, Sangli</b></p>
-                <p class="MsoNormal" style="font-size: 14.0pt;"><b>Autonomous College Practical Examination <span
-                            class="month-display">March</span> <span class="year-display">2025</span></b>
+            <div style="text-align: center; margin-bottom: 8px;">
+                <p class="MsoNormal" style="font-size: 14.5pt; margin: 0; line-height: 1.15;">
+                    <b>D.E.Society's, Willingdon College, Sangli</b>
                 </p>
-                <p class="MsoNormal">(B.A., B.Sc.., BCS, B.Sc. IT Part I, M.A., M.Sc. Part I)</p>
-                <p class="MsoNormal" style="margin-top: 10px;"><b>Practical Examiners Rem. Bill (Viva) (A.3.P.25) :</b>
+                <p class="MsoNormal" style="font-size: 12.5pt; margin: 3px 0 0 0; line-height: 1.15; font-weight: bold;">
+                    Autonomous College Practical Examination <span class="month-display">March</span> <span class="year-display">2025</span>
                 </p>
-                <p class="MsoNormal" style="margin-top: 6px; font-size: 11pt;">Subject : <b><u><span
-                                class="subject-display">BSc IT C Programing And HTML</span></u></b></p>
+                <p class="MsoNormal" style="font-size: 9pt; margin: 3px 0 0 0;">
+                    (B.A., B.Sc.., BCS, B.Sc. IT Part I, M.A., M.Sc. Part I)
+                </p>
+                <p class="MsoNormal" style="margin: 4px 0 0 0; font-size: 10.5pt; font-weight: bold;">
+                    Practical Examiners Rem. Bill (Viva) (A.3.P.25) :
+                </p>
+                <p class="MsoNormal" style="margin: 4px 0 0 0; font-size: 10pt;">
+                    Subject : <b><u><span class="subject-display"></span></u></b>
+                </p>
             </div>
 
             <table class="bill-table">
                 <thead>
                     <tr>
                         <th style="width: 3%;">NO.</th>
-                        <th style="width: 16%;">Name of Staff</th>
-                        <th style="width: 12%;">Class</th>
-                        <th style="width: 11%;">Designation</th>
+                        <th style="width: 18%;">Name of Staff</th>
+                        <th style="width: 14%;">Class</th>
+                        <th style="width: 13%;">Designation</th>
                         <th style="width: 7%;">Amount</th>
-                        <th style="width: 13%;">Bank</th>
-                        <th style="width: 14%;">Account No.</th>
-                        <th style="width: 12%;">IFSC code</th>
-                        <th style="width: 12%;">Local allowance</th>
+                        <th style="width: 15%;">Bank</th>
+                        <th style="width: 15%;">Account No.</th>
+                        <th style="width: 15%;">IFSC code</th>
                     </tr>
                 </thead>
                 <tbody>
                     <!-- Expert -->
                     <tr>
-                        <td colspan="9" class="bill-section-header">Expert</td>
+                        <td colspan="8" class="bill-section-header">Expert</td>
                     </tr>
                     <tr>
                         <td class="text-center">1</td>
-                        <td><input type="text" id="p7-exp-name" class="bill-input-cell" value=""></td>
-                        <td><input type="text" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p7-exp-name" class="bill-input-cell" value="" placeholder="Expert Name"></td>
+                        <td><input type="text" id="p8-exp-class" class="bill-input-cell text-center" value="" placeholder="Class"></td>
                         <td><input type="text" id="p7-exp-desig" class="bill-input-cell" value="Expert"></td>
-                        <td><input type="number" id="p7-exp-amt" class="bill-input-cell exp-amt-input" value=""></td>
-                        <td><input type="text" id="p8-exp-bank" class="bill-input-cell" value=""></td>
-                        <td><input type="text" id="p8-exp-acc" class="bill-input-cell" value=""></td>
-                        <td><input type="text" id="p8-exp-ifsc" class="bill-input-cell" value=""></td>
-                        <td><input type="number" id="p8-exp-local" class="bill-input-cell" value=""></td>
+                        <td><input type="number" id="p7-exp-amt" class="bill-input-cell exp-amt-input text-center" value="" placeholder="0"></td>
+                        <td><input type="text" id="p8-exp-bank" class="bill-input-cell" value="" placeholder="Bank Name"></td>
+                        <td><input type="text" id="p8-exp-acc" class="bill-input-cell" value="" placeholder="Account Number"></td>
+                        <td><input type="text" id="p8-exp-ifsc" class="bill-input-cell" value="" placeholder="IFSC Code"></td>
                     </tr>
                     <tr class="bill-total-row">
-                        <td colspan="4" class="text-right">Total Expert:</td>
-                        <td class="text-center"><span id="exp-bill-total">0</span></td>
-                        <td colspan="4"></td>
+                        <td colspan="4" class="text-right"><b>Total Expert:</b></td>
+                        <td class="text-center"><b><span id="exp-bill-total">0</span></b></td>
+                        <td colspan="3"></td>
                     </tr>
 
                     <!-- External Examiner -->
                     <tr>
-                        <td colspan="9" class="bill-section-header">External Examiner</td>
+                        <td colspan="8" class="bill-section-header">External Examiner</td>
                     </tr>
                     <tr>
                         <td class="text-center">1</td>
-                        <td><input type="text" id="p7-ext-name" class="bill-input-cell" value=""></td>
-                        <td><input type="text" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p7-ext-name" class="bill-input-cell" value="" placeholder="External Examiner Name"></td>
+                        <td><input type="text" id="p8-ext-class" class="bill-input-cell text-center" value="" placeholder="Class"></td>
                         <td><input type="text" id="p7-ext-desig" class="bill-input-cell" value="External Examiner"></td>
-                        <td><input type="number" id="p7-ext-amt" class="bill-input-cell ext-amt-input" value=""></td>
-                        <td><input type="text" id="p8-ext-bank" class="bill-input-cell" value=""></td>
-                        <td><input type="text" id="p8-ext-acc" class="bill-input-cell" value=""></td>
-                        <td><input type="text" id="p8-ext-ifsc" class="bill-input-cell" value=""></td>
-                        <td><input type="number" id="p8-ext-local" class="bill-input-cell" value=""></td>
+                        <td><input type="number" id="p7-ext-amt" class="bill-input-cell ext-amt-input text-center" value="" placeholder="0"></td>
+                        <td><input type="text" id="p8-ext-bank" class="bill-input-cell" value="" placeholder="Bank Name"></td>
+                        <td><input type="text" id="p8-ext-acc" class="bill-input-cell" value="" placeholder="Account Number"></td>
+                        <td><input type="text" id="p8-ext-ifsc" class="bill-input-cell" value="" placeholder="IFSC Code"></td>
                     </tr>
                     <tr class="bill-total-row">
-                        <td colspan="4" class="text-right">Total External:</td>
-                        <td class="text-center"><span id="ext-bill-total">0</span></td>
-                        <td colspan="4"></td>
+                        <td colspan="4" class="text-right"><b>Total External:</b></td>
+                        <td class="text-center"><b><span id="ext-bill-total">0</span></b></td>
+                        <td colspan="3"></td>
                     </tr>
 
                     <!-- Internal Examiner -->
                     <tr>
-                        <td colspan="9" class="bill-section-header">Internal Examiner</td>
+                        <td colspan="8" class="bill-section-header">Internal Examiner</td>
                     </tr>
                     <tr>
                         <td class="text-center">1</td>
-                        <td><input type="text" id="p7-int-name" class="bill-input-cell" value="">
-                        </td>
-                        <td><input type="text" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p7-int-name" class="bill-input-cell" value="" placeholder="Internal Examiner Name"></td>
+                        <td><input type="text" id="p8-int-class" class="bill-input-cell text-center" value="" placeholder="Class"></td>
                         <td><input type="text" id="p7-int-desig" class="bill-input-cell" value="Internal Examiner"></td>
-                        <td><input type="number" id="p7-int-amt" class="bill-input-cell int-amt-input" value=""></td>
-                        <td><input type="text" id="p8-int-bank" class="bill-input-cell" value=""></td>
-                        <td><input type="text" id="p8-int-acc" class="bill-input-cell" value=""></td>
-                        <td><input type="text" id="p8-int-ifsc" class="bill-input-cell" value=""></td>
-                        <td><input type="number" id="p8-int-local" class="bill-input-cell" value=""></td>
+                        <td><input type="number" id="p7-int-amt" class="bill-input-cell int-amt-input text-center" value="" placeholder="0"></td>
+                        <td><input type="text" id="p8-int-bank" class="bill-input-cell" value="" placeholder="Bank Name"></td>
+                        <td><input type="text" id="p8-int-acc" class="bill-input-cell" value="" placeholder="Account Number"></td>
+                        <td><input type="text" id="p8-int-ifsc" class="bill-input-cell" value="" placeholder="IFSC Code"></td>
                     </tr>
                     <tr class="bill-total-row">
-                        <td colspan="4" class="text-right">Total Internal:</td>
-                        <td class="text-center"><span id="int-bill-total">0</span></td>
-                        <td colspan="4"></td>
+                        <td colspan="4" class="text-right"><b>Total Internal:</b></td>
+                        <td class="text-center"><b><span id="int-bill-total">0</span></b></td>
+                        <td colspan="3"></td>
                     </tr>
 
                     <!-- Lab Staff -->
                     <tr>
-                        <td colspan="9" class="bill-section-header">Lab Staff</td>
+                        <td colspan="8" class="bill-section-header">Lab Staff</td>
                     </tr>
                     <tr>
                         <td class="text-center">1</td>
-                        <td><input type="text" id="p7-lab-name-1" class="bill-input-cell" value=""></td>
-                        <td><input type="text" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p7-lab-name-1" class="bill-input-cell" value="" placeholder="Staff Name 1"></td>
+                        <td><input type="text" id="p8-lab1-class" class="bill-input-cell text-center" value="" placeholder="Class"></td>
                         <td><input type="text" id="p7-lab-desig-1" class="bill-input-cell" value="Lab. Attendent"></td>
-                        <td><input type="number" id="p7-lab-amt-1" class="bill-input-cell lab-amt-input" value="">
-                        </td>
-                        <td><input type="text" id="p8-lab1-bank" class="bill-input-cell" value=""></td>
-                        <td><input type="text" id="p8-lab1-acc" class="bill-input-cell" value=""></td>
-                        <td><input type="text" id="p8-lab1-ifsc" class="bill-input-cell" value=""></td>
-                        <td><input type="number" id="p8-lab1-local" class="bill-input-cell" value=""></td>
+                        <td><input type="number" id="p7-lab-amt-1" class="bill-input-cell lab-amt-input text-center" value="" placeholder="0"></td>
+                        <td><input type="text" id="p8-lab1-bank" class="bill-input-cell" value="" placeholder="Bank Name"></td>
+                        <td><input type="text" id="p8-lab1-acc" class="bill-input-cell" value="" placeholder="Account Number"></td>
+                        <td><input type="text" id="p8-lab1-ifsc" class="bill-input-cell" value="" placeholder="IFSC Code"></td>
                     </tr>
                     <tr>
                         <td class="text-center">2</td>
-                        <td><input type="text" id="p7-lab-name-2" class="bill-input-cell" value="">
-                        </td>
-                        <td><input type="text" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p7-lab-name-2" class="bill-input-cell" value="" placeholder="Staff Name 2"></td>
+                        <td><input type="text" id="p8-lab2-class" class="bill-input-cell text-center" value="" placeholder="Class"></td>
                         <td><input type="text" id="p7-lab-desig-2" class="bill-input-cell" value="Lab. Attendent"></td>
-                        <td><input type="number" id="p7-lab-amt-2" class="bill-input-cell lab-amt-input" value="">
-                        </td>
-                        <td><input type="text" id="p8-lab2-bank" class="bill-input-cell" value=""></td>
-                        <td><input type="text" id="p8-lab2-acc" class="bill-input-cell" value=""></td>
-                        <td><input type="text" id="p8-lab2-ifsc" class="bill-input-cell" value=""></td>
-                        <td><input type="number" id="p8-lab2-local" class="bill-input-cell" value=""></td>
+                        <td><input type="number" id="p7-lab-amt-2" class="bill-input-cell lab-amt-input text-center" value="" placeholder="0"></td>
+                        <td><input type="text" id="p8-lab2-bank" class="bill-input-cell" value="" placeholder="Bank Name"></td>
+                        <td><input type="text" id="p8-lab2-acc" class="bill-input-cell" value="" placeholder="Account Number"></td>
+                        <td><input type="text" id="p8-lab2-ifsc" class="bill-input-cell" value="" placeholder="IFSC Code"></td>
                     </tr>
                     <tr class="bill-total-row">
-                        <td colspan="4" class="text-right">Total Lab Staff:</td>
-                        <td class="text-center"><span id="lab-bill-total">0</span></td>
-                        <td colspan="4"></td>
+                        <td colspan="4" class="text-right"><b>Total Lab Staff:</b></td>
+                        <td class="text-center"><b><span id="lab-bill-total">0</span></b></td>
+                        <td colspan="3"></td>
                     </tr>
 
                     <!-- TA /DA External Examination Section -->
                     <tr>
-                        <td colspan="9" class="bill-section-header">TA /DA External Examination</td>
+                        <td colspan="8" class="bill-section-header">TA /DA External Examination</td>
                     </tr>
                     <tr>
                         <td class="text-center">1</td>
-                        <td><input type="text" class="bill-input-cell" value=""></td>
-                        <td><input type="text" class="bill-input-cell" value=""></td>
-                        <td><input type="text" class="bill-input-cell" value="External Examiner"></td>
-                        <td><input type="number" class="bill-input-cell tada-amt-input" value=""></td>
-                        <td><input type="text" class="bill-input-cell" value=""></td>
-                        <td><input type="text" class="bill-input-cell" value=""></td>
-                        <td><input type="text" class="bill-input-cell" value=""></td>
-                        <td><input type="number" class="bill-input-cell" value=""></td>
+                        <td><input type="text" id="p8-tada-ext-name" class="bill-input-cell" value="" placeholder="External Examiner Name"></td>
+                        <td><input type="text" id="p8-tada-upper-class" class="bill-input-cell text-center" value="" placeholder="Class"></td>
+                        <td><input type="text" id="p8-tada-upper-desig" class="bill-input-cell" value="External Examiner"></td>
+                        <td><input type="number" id="p8-tada-upper-amt" class="bill-input-cell tada-amt-input text-center" value="" placeholder="0"></td>
+                        <td><input type="text" id="p8-tada-bank" class="bill-input-cell" value="" placeholder="Bank Name"></td>
+                        <td><input type="text" id="p8-tada-acc" class="bill-input-cell" value="" placeholder="Account Number"></td>
+                        <td><input type="text" id="p8-tada-ifsc" class="bill-input-cell" value="" placeholder="IFSC Code"></td>
                     </tr>
                     <tr class="bill-total-row">
-                        <td colspan="4" class="text-right">Total TA/DA (Combined):</td>
-                        <td class="text-center"><span id="tada-bill-total">0</span></td>
-                        <td colspan="4"></td>
+                        <td colspan="4" class="text-right"><b>Total TA/DA (Combined):</b></td>
+                        <td class="text-center"><b><span id="tada-bill-total">0</span></b></td>
+                        <td colspan="3"></td>
                     </tr>
 
                     <!-- Grand Total -->
-                    <tr style="height: 40px; font-size: 11pt; background-color: #334155; color: white;">
+                    <tr style="height: 28px; font-size: 10pt; background-color: #334155; color: white;">
                         <td colspan="4" style="text-align: right; border: 1px solid #fff;"><b>BILL GRAND TOTAL:</b></td>
-                        <td class="text-center" style="border: 1px solid #fff;"><b><span
-                                    id="bill-grand-total">0</span></b></td>
-                        <td colspan="4" style="border: 1px solid #fff;"></td>
+                        <td class="text-center" style="border: 1px solid #fff;"><b><span id="bill-grand-total">0</span></b></td>
+                        <td colspan="3" style="border: 1px solid #fff;"></td>
                     </tr>
                 </tbody>
             </table>
 
             <!-- TA/DA Detailed Table Section -->
-            <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
-                <p class="MsoNormal" style="font-size: 14.0pt;"><b>Practical Examiners TA/DA Details (A.3.P.29) :</b>
+            <div style="text-align: center; margin-top: 10px; margin-bottom: 6px;">
+                <p class="MsoNormal" style="font-size: 11.5pt; margin: 0; font-weight: bold;">
+                    Practical Examiners TA/DA Details (A.3.P.29) :
                 </p>
             </div>
 
@@ -2037,125 +2065,134 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                         <th style="width: 3%;">NO.</th>
                         <th style="width: 15%;">Name of External Examiner</th>
                         <th style="width: 9%;">Designation</th>
-                        <th style="width: 14%;">Name of the College</th>
+                        <th style="width: 13%;">Name of the College</th>
                         <th style="width: 11%;">Practical/ Viva Date</th>
                         <th style="width: 8%;">Class</th>
-                        <th style="width: 14%;">Details of TA</th>
-                        <th style="width: 6%;">TA</th>
-                        <th style="width: 6%;">Auto</th>
-                        <th style="width: 6%;">DA</th>
+                        <th style="width: 13%;">Details of TA</th>
+                        <th style="width: 5.5%;">TA</th>
+                        <th style="width: 5.5%;">Auto</th>
+                        <th style="width: 5.5%;">DA</th>
+                        <th style="width: 6.5%;">Local</th>
                         <th style="width: 8%;">Total Bill Amt Rs.</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td style="text-align: center;">1</td>
-                        <td><input type="text" id="p8-ext-name" class="tada-input" value=""></td>
-                        <td><input type="text" class="tada-input" value="External Examiner"></td>
-                        <td><input type="text" id="p8-ext-college" class="tada-input" value=""></td>
+                        <td><input type="text" id="p8-ext-name" class="tada-input" value="" placeholder="Examiner Name"></td>
+                        <td><input type="text" id="p8-tada-desig-1" class="tada-input" value="External Examiner"></td>
+                        <td><input type="text" id="p8-ext-college" class="tada-input" value="" placeholder="College Name"></td>
                         <td><input type="date" class="tada-input tada-date-picker" title="Practical/Viva Date"
                                 style="cursor: pointer; font-size: 11px; padding: 2px;" value=""></td>
-                        <td><input type="text" class="tada-input" value=""></td>
-                        <td><input type="text" class="tada-input" value=""></td>
-                        <td><input type="number" class="tada-input tada-val-input" data-row="1" data-type="ta" value="">
-                        </td>
-                        <td><input type="number" class="tada-input tada-val-input" data-row="1" data-type="auto"
-                                value=""></td>
-                        <td><input type="number" class="tada-input tada-val-input" data-row="1" data-type="da" value="">
-                        </td>
-                        <td style="text-align: center; font-weight: bold;"><span class="row-tada-total"
-                                id="tada-total-1">0</span></td>
+                        <td><input type="text" id="p8-tada-class-1" class="tada-input text-center" value="" placeholder="Class"></td>
+                        <td><input type="text" id="p8-tada-details-1" class="tada-input" value="" placeholder="TA Route/Details"></td>
+                        <td><input type="number" class="tada-input tada-val-input" data-row="1" data-type="ta" value="" placeholder="0"></td>
+                        <td><input type="number" class="tada-input tada-val-input" data-row="1" data-type="auto" value="" placeholder="0"></td>
+                        <td><input type="number" class="tada-input tada-val-input" data-row="1" data-type="da" value="" placeholder="0"></td>
+                        <td><input type="number" class="tada-input tada-val-input" data-row="1" data-type="local" value="" placeholder="0"></td>
+                        <td style="text-align: center; font-weight: bold;"><span class="row-tada-total" id="tada-total-1">0</span></td>
                     </tr>
                     <tr>
                         <td style="text-align: center;">2</td>
-                        <td><input type="text" class="tada-input" value=""></td>
-                        <td><input type="text" class="tada-input" value=""></td>
-                        <td><input type="text" class="tada-input" value=""></td>
+                        <td><input type="text" id="p8-ext-name-2" class="tada-input" value="" placeholder="Examiner Name 2"></td>
+                        <td><input type="text" id="p8-tada-desig-2" class="tada-input" value="External Examiner"></td>
+                        <td><input type="text" id="p8-ext-college-2" class="tada-input" value="" placeholder="College Name 2"></td>
                         <td><input type="date" class="tada-input tada-date-picker" title="Practical/Viva Date"
                                 style="cursor: pointer; font-size: 11px; padding: 2px;" value=""></td>
-                        <td><input type="text" class="tada-input" value=""></td>
-                        <td><input type="text" class="tada-input" value=""></td>
-                        <td><input type="number" class="tada-input tada-val-input" data-row="2" data-type="ta" value="">
-                        </td>
-                        <td><input type="number" class="tada-input tada-val-input" data-row="2" data-type="auto"
-                                value=""></td>
-                        <td><input type="number" class="tada-input tada-val-input" data-row="2" data-type="da" value="">
-                        </td>
-                        <td style="text-align: center; font-weight: bold;"><span class="row-tada-total"
-                                id="tada-total-2">0</span></td>
+                        <td><input type="text" id="p8-tada-class-2" class="tada-input text-center" value="" placeholder="Class"></td>
+                        <td><input type="text" id="p8-tada-details-2" class="tada-input" value="" placeholder="TA Route/Details"></td>
+                        <td><input type="number" class="tada-input tada-val-input" data-row="2" data-type="ta" value="" placeholder="0"></td>
+                        <td><input type="number" class="tada-input tada-val-input" data-row="2" data-type="auto" value="" placeholder="0"></td>
+                        <td><input type="number" class="tada-input tada-val-input" data-row="2" data-type="da" value="" placeholder="0"></td>
+                        <td><input type="number" class="tada-input tada-val-input" data-row="2" data-type="local" value="" placeholder="0"></td>
+                        <td style="text-align: center; font-weight: bold;"><span class="row-tada-total" id="tada-total-2">0</span></td>
                     </tr>
                     <tr style="background-color: #f8fafc; font-weight: bold;">
                         <td colspan="7" style="text-align: right; padding-right: 10px;">Total TA/DA Details:</td>
                         <td style="text-align: center;"><span id="tada-ta-sum">0</span></td>
                         <td style="text-align: center;"><span id="tada-auto-sum">0</span></td>
                         <td style="text-align: center;"><span id="tada-da-sum">0</span></td>
-                        <td style="text-align: center; background-color: #334155; color: white;"><span
-                                id="tada-grand-total">0</span></td>
+                        <td style="text-align: center;"><span id="tada-local-sum">0</span></td>
+                        <td style="text-align: center; background-color: #334155; color: white;"><span id="tada-grand-total">0</span></td>
                     </tr>
                 </tbody>
             </table>
 
-            <!-- Final Summary List (Moved to Last) -->
-            <div style="margin-top: 40px; border-top: 2px solid #334155; padding-top: 20px;">
-                <table class="bill-table" style="width: 45%; margin-left: 0;">
-                    <thead>
-                        <tr>
-                            <th colspan="2" style="background-color: #334155; color: white; text-align: center;">FINAL
-                                SUMMARY LIST</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Expert</td>
-                            <td class="text-center"><span id="sum-exp">0</span></td>
-                        </tr>
-                        <tr>
-                            <td>Internal Examiner</td>
-                            <td class="text-center"><span id="sum-int">0</span></td>
-                        </tr>
-                        <tr>
-                            <td>External Examiner</td>
-                            <td class="text-center"><span id="sum-ext">0</span></td>
-                        </tr>
-                        <tr>
-                            <td>Lab. Staff</td>
-                            <td class="text-center"><span id="sum-lab">0</span></td>
-                        </tr>
-                        <tr>
-                            <td>Practical Paper Setting</td>
-                            <td class="text-center"><input type="number" class="bill-input-cell sum-manual-input"
-                                    value="0" style="text-align: center; border: 1px solid #cbd5e1; background: white;">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>External Examiner TA</td>
-                            <td class="text-center"><span id="sum-ta">0</span></td>
-                        </tr>
-                        <tr>
-                            <td>External Examiner DA</td>
-                            <td class="text-center"><span id="sum-da">0</span></td>
-                        </tr>
-                        <tr class="bill-total-row" style="background-color: #f1f5f9;">
-                            <td><b>GRAND TOTAL (ALL)</b></td>
-                            <td class="text-center"><b><span id="final-grand-total">0</span></b></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <!-- Final Summary List and Signatures Side-by-Side Section -->
+            <div style="margin-top: 10px; border-top: 2px solid #334155; padding-top: 8px; display: flex; justify-content: space-between; align-items: stretch; gap: 16px;">
+                <!-- Left: Final Summary List (width: 48%) -->
+                <div style="width: 48%;">
+                    <table class="bill-table" style="width: 100%; margin-bottom: 0;">
+                        <thead>
+                            <tr>
+                                <th colspan="2" style="background-color: #334155; color: white; text-align: center; font-size: 9pt;">FINAL SUMMARY LIST</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Expert</td>
+                                <td class="text-center"><span id="sum-exp">0</span></td>
+                            </tr>
+                            <tr>
+                                <td>Internal Examiner</td>
+                                <td class="text-center"><span id="sum-int">0</span></td>
+                            </tr>
+                            <tr>
+                                <td>External Examiner</td>
+                                <td class="text-center"><span id="sum-ext">0</span></td>
+                            </tr>
+                            <tr>
+                                <td>Lab. Staff</td>
+                                <td class="text-center"><span id="sum-lab">0</span></td>
+                            </tr>
+                            <tr>
+                                <td>Practical Paper Setting</td>
+                                <td class="text-center"><input type="number" class="bill-input-cell sum-manual-input text-center" value="0" style="font-weight: bold;"></td>
+                            </tr>
+                            <tr>
+                                <td>External Examiner TA</td>
+                                <td class="text-center"><span id="sum-ta">0</span></td>
+                            </tr>
+                            <tr>
+                                <td>External Examiner DA</td>
+                                <td class="text-center"><span id="sum-da">0</span></td>
+                            </tr>
+                            <tr>
+                                <td>Local Allowance</td>
+                                <td class="text-center"><span id="sum-local">0</span></td>
+                            </tr>
+                            <tr class="bill-total-row" style="background-color: #f1f5f9;">
+                                <td><b>GRAND TOTAL (ALL)</b></td>
+                                <td class="text-center"><b><span id="final-grand-total">0</span></b></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-            <!-- Signature Section -->
-            <div style="margin-top: 45px; display: flex; justify-content: space-between;">
-                <div style="text-align: center; width: 30%;">
-                    <p>___________________</p>
-                    <p><strong>Clerk</strong></p>
-                </div>
-                <div style="text-align: center; width: 30%;">
-                    <p>___________________</p>
-                    <p><strong>Head of Department</strong></p>
-                </div>
-                <div style="text-align: center; width: 30%;">
-                    <p>___________________</p>
-                    <p><strong>Principal</strong></p>
+                <!-- Right: Certification & Signatures (width: 49%) -->
+                <div style="width: 49%; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #cbd5e1; border-radius: 4px; padding: 10px 14px; background: #f8fafc; box-sizing: border-box;">
+                    <div>
+                        <p style="font-weight: bold; text-align: center; font-size: 9.5pt; color: #1e293b; margin: 0 0 6px 0; border-bottom: 1.5px solid #334155; padding-bottom: 4px;">
+                            EXAMINATION BILL CERTIFICATION & APPROVAL
+                        </p>
+                        <p style="font-size: 8pt; color: #475569; text-align: justify; margin: 0; line-height: 1.35;">
+                            Certified that the above examiners, experts, and lab staff have performed their examination duties and the amounts claimed are verified, calculated, and passed in accordance with autonomous college regulations.
+                        </p>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; padding-top: 14px;">
+                        <div style="text-align: center; width: 30%;">
+                            <p style="margin: 0; font-size: 9pt;">_________________</p>
+                            <p style="margin: 3px 0 0 0; font-size: 8.5pt;"><strong>Clerk</strong></p>
+                        </div>
+                        <div style="text-align: center; width: 38%;">
+                            <p style="margin: 0; font-size: 9pt;">_________________</p>
+                            <p style="margin: 3px 0 0 0; font-size: 8.5pt;"><strong>Head of Department</strong></p>
+                        </div>
+                        <div style="text-align: center; width: 30%;">
+                            <p style="margin: 0; font-size: 9pt;">_________________</p>
+                            <p style="margin: 3px 0 0 0; font-size: 8.5pt;"><strong>Principal</strong></p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -2240,13 +2277,55 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                         </svg>
                         <span>Fill Missing Details</span>
                     </button>
-                    <button type="button" class="modal-btn modal-btn-primary" onclick="startPdfDownload(true)">
+                    <button type="button" class="modal-btn modal-btn-primary" onclick="openDownloadFilenameModal()">
                         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                             <polyline points="7 10 12 15 17 10"/>
                             <line x1="12" y1="15" x2="12" y2="3"/>
                         </svg>
                         <span>Download PDF Anyway</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Download PDF Filename Modal -->
+        <div id="download-filename-modal-backdrop" class="download-modal-backdrop" style="display: none;" onclick="if(event.target===this) closeDownloadFilenameModal()">
+            <div class="download-modal-content" style="max-width: 500px;" onclick="event.stopPropagation()">
+                <div class="download-modal-header">
+                    <div class="download-modal-title-box">
+                        <span class="download-modal-badge" style="background: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe;">Save As</span>
+                        <h2 style="margin: 6px 0 0 0; font-size: 1.25rem; color: #0f172a;">Name Your PDF File</h2>
+                    </div>
+                    <button type="button" class="download-modal-close" onclick="closeDownloadFilenameModal()">&times;</button>
+                </div>
+                <div class="download-modal-body">
+                    <p style="margin: 0 0 12px 0; color: #475569; font-size: 0.92rem; line-height: 1.5;">
+                        Enter a custom file name for your college examination bill PDF:
+                    </p>
+                    <div style="position: relative; display: flex; align-items: center; width: 100%;">
+                        <input type="text" id="pdf-custom-filename-input" 
+                            placeholder="e.g. Willingdon_College_Java_Exam_Bill" 
+                            style="width: 100%; padding: 12px 64px 12px 14px; font-size: 0.98rem; border: 1.5px solid #cbd5e1; border-radius: 10px; outline: none; font-family: inherit; box-sizing: border-box; transition: border-color 0.2s, box-shadow 0.2s;"
+                            onkeydown="if(event.key==='Enter') confirmAndStartPdfDownload()">
+                        <span style="position: absolute; right: 12px; font-size: 0.85rem; font-weight: bold; color: #64748b; background: #e2e8f0; padding: 4px 8px; border-radius: 6px; pointer-events: none;">.pdf</span>
+                    </div>
+                    <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; color: #64748b;">
+                        <span>Auto-suggested from subject and exam date</span>
+                        <button type="button" onclick="resetDefaultPdfFilename()" style="background: none; border: none; color: #4f46e5; cursor: pointer; text-decoration: underline; font-size: 0.82rem; padding: 0; font-weight: 500;">Reset to default</button>
+                    </div>
+                </div>
+                <div class="download-modal-footer">
+                    <button type="button" class="modal-btn modal-btn-secondary" onclick="closeDownloadFilenameModal()">
+                        <span>Cancel</span>
+                    </button>
+                    <button type="button" id="btn-confirm-pdf-download" class="modal-btn modal-btn-primary" onclick="confirmAndStartPdfDownload()">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        <span>Download PDF</span>
                     </button>
                 </div>
             </div>
@@ -2276,12 +2355,20 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
             <span id="toast-text">Copied to clipboard!</span>
         </div>
 
+        <!-- Floating Back-to-Top Button -->
+        <button id="scroll-to-top-btn" class="scroll-to-top-btn no-print" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Scroll to Top">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+            </svg>
+        </button>
+
     </div><!-- /#app-container -->
 
     <script src="jspdf.umd.min.js"></script>
     <script src="html2canvas.min.js"></script>
-    <script src="login-3d.js?v=8.0"></script>
-    <script src="script.js?v=8.0"></script>
+    <script src="xlsx.full.min.js"></script>
+    <script src="login-3d.js?v=8.6"></script>
+    <script src="script.js?v=8.9"></script>
 </body>
 
 </html>

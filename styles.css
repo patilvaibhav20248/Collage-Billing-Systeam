@@ -1,6 +1,14 @@
 :root {
-    --bg-color: #f0f0f0;
-    --text-color: #000;
+    --bg-color: #f1f5f9;
+    --text-color: #0f172a;
+    --font-ui: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-heading: 'Outfit', -apple-system, sans-serif;
+    --font-doc: "Times New Roman", Times, serif;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 76px;
 }
 
 * {
@@ -10,7 +18,7 @@
 }
 
 body {
-    font-family: "Times New Roman", Times, serif;
+    font-family: var(--font-doc);
     background-color: var(--bg-color);
     color: var(--text-color);
     display: flex;
@@ -18,28 +26,58 @@ body {
     align-items: center;
     padding: 20px;
     gap: 40px;
+    -webkit-font-smoothing: antialiased;
 }
 
-/* A4 Page Container */
+/* Apply UI Font to UI Elements */
+.top-navbar,
+.download-modal-content,
+.share-modal-content,
+.login-card,
+.nav-tab,
+.nav-btn,
+.modal-btn,
+.toast-message,
+#persistence-status,
+.scroll-to-top-btn {
+    font-family: var(--font-ui) !important;
+}
+
+.login-logo,
+.nav-brand-title,
+.download-modal-header h2,
+.share-header h2 {
+    font-family: var(--font-heading) !important;
+}
+
+/* A4 Page Container with Refined Elevation */
 .page {
     width: 210mm;
     min-height: 297mm;
     padding: 20mm;
     background-color: white;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
     position: relative;
     line-height: 1.5;
+    transition: box-shadow 0.25s ease;
+}
+
+.page:hover {
+    box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.06);
 }
 
 /* Landscape Page Support */
 .page.landscape,
-#page7 {
+#page7,
+#page8 {
     width: 297mm !important;
     max-width: 297mm !important;
     min-height: 210mm !important;
-    padding: 12mm 16mm !important;
+    padding: 10mm 14mm !important;
     box-sizing: border-box !important;
 }
+
 
 .header-meta {
     display: flex;
@@ -205,7 +243,8 @@ ul.bullet-list li {
 
     /* Ensure landscape orientation during print */
     .page.landscape,
-    #page7 {
+    #page7,
+    #page8 {
         page: landscape-page !important;
         page-break-before: always !important;
         page-break-after: always !important;
@@ -444,21 +483,6 @@ ul.bullet-list li {
 }
 
 /* Login Screen Styling */
-/* Animations for Login */
-@keyframes gradientBG {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-
-    100% {
-        background-position: 0% 50%;
-    }
-}
-
 @keyframes slideUp {
     from {
         opacity: 0;
@@ -471,7 +495,6 @@ ul.bullet-list li {
     }
 }
 
-/* Login Screen Styling */
 .login-backdrop {
     position: fixed;
     top: 0;
@@ -486,8 +509,7 @@ ul.bullet-list li {
     transition: background 0.4s ease, box-shadow 0.4s ease, opacity 0.5s ease-out;
 }
 
-.login-bg-3d-canvas,
-.login-bg-cyber-canvas {
+.login-bg-3d-canvas {
     position: absolute;
     top: 0;
     left: 0;
@@ -495,24 +517,6 @@ ul.bullet-list li {
     height: 100%;
     pointer-events: none;
     z-index: 0;
-}
-
-/* Live Cursor Color Trail Canvas - covers entire screen and all UI layers while on login screen */
-.cursor-trail-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-    z-index: 9999999;
-}
-
-/* Strictly hide and eliminate cursor color trail after login inside the website */
-body.logged-in .cursor-trail-canvas {
-    display: none !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
 }
 
 /* Cyber HUD Corner Brackets for Login Card */
@@ -706,16 +710,16 @@ body.logged-in .cursor-trail-canvas {
     color: #00f0ff;
 }
 
-/* Progressive Revealing Login Button */
+/* Cyber Login Button */
 .login-btn {
     position: relative;
     width: 100%;
-    padding: 0 14px;
-    max-height: 0;
-    opacity: 0;
-    margin-top: 0;
+    padding: 13px 14px;
+    max-height: 58px;
+    opacity: 1;
+    margin-top: 18px;
     overflow: hidden;
-    pointer-events: none;
+    pointer-events: auto;
     background: linear-gradient(135deg, #0284c7 0%, #00f0ff 100%);
     color: #031422;
     border: 1px solid rgba(0, 240, 255, 0.5);
@@ -725,43 +729,8 @@ body.logged-in .cursor-trail-canvas {
     letter-spacing: 1px;
     cursor: pointer;
     box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
-    transform: translateY(14px) scale(0.94);
-    transition: max-height 0.35s ease,
-        margin-top 0.3s ease,
-        padding 0.3s ease,
-        opacity 0.25s ease,
-        transform 0.25s ease,
-        box-shadow 0.25s ease,
-        border-color 0.25s ease;
-}
-
-/* Little visible state - starts showing as user types correct password */
-.login-btn.btn-revealing {
-    max-height: 58px;
-    margin-top: 18px;
-    padding: 13px 14px;
-    pointer-events: auto;
-}
-
-/* Fully unlocked state - when password is 100% matched */
-.login-btn.btn-fully-unlocked {
-    opacity: 1 !important;
-    transform: translateY(0) scale(1) !important;
-    background: linear-gradient(135deg, #00f0ff 0%, #00ff88 100%);
-    color: #021a10;
-    border-color: #00ff88;
-    box-shadow: 0 0 25px rgba(0, 255, 136, 0.5), 0 0 45px rgba(0, 240, 255, 0.3);
-    animation: pulseReady 2s infinite alternate;
-}
-
-@keyframes pulseReady {
-    0% {
-        box-shadow: 0 0 20px rgba(0, 255, 136, 0.4), 0 0 35px rgba(0, 240, 255, 0.2);
-    }
-
-    100% {
-        box-shadow: 0 0 30px rgba(0, 255, 136, 0.7), 0 0 50px rgba(0, 240, 255, 0.45);
-    }
+    transform: translateY(0) scale(1);
+    transition: all 0.25s ease;
 }
 
 .login-btn:hover {
@@ -771,18 +740,6 @@ body.logged-in .cursor-trail-canvas {
 
 .login-btn:active {
     transform: translateY(0) scale(0.98);
-}
-
-/* Subtle progress fill along button base */
-.login-btn-progress-bar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #00f0ff, #00ff88);
-    width: 0%;
-    transition: width 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-    border-radius: 0 0 12px 12px;
 }
 
 .login-error {
@@ -938,6 +895,54 @@ body.logged-in {
     justify-content: space-between;
     gap: 16px;
     flex-wrap: wrap;
+}
+
+.nav-brand-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-right: 14px;
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.2s;
+    flex-shrink: 0;
+}
+
+.nav-brand-group:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+}
+
+.nav-brand-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    border: 1.5px solid rgba(56, 189, 248, 0.35);
+}
+
+.nav-brand-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-brand-title {
+    color: #ffffff;
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1.15;
+}
+
+.nav-brand-badge {
+    color: #38bdf8;
+    font-size: 9.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    line-height: 1;
 }
 
 .nav-tabs-group {
@@ -1161,6 +1166,17 @@ body.logged-in {
 .nav-btn.btn-download:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 18px rgba(124, 58, 237, 0.5), 0 0 16px rgba(167, 139, 250, 0.45);
+}
+
+/* Page 8 Excel Download Button (Excel Forest Green Gradient + Glow) */
+.nav-btn.btn-excel {
+    background: linear-gradient(135deg, #0d7a3e 0%, #15803d 100%);
+    box-shadow: 0 2px 10px rgba(21, 128, 61, 0.35);
+}
+
+.nav-btn.btn-excel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(21, 128, 61, 0.5), 0 0 16px rgba(74, 222, 128, 0.45);
 }
 
 /* Print Button (Crimson Gradient + Glow) */
@@ -1542,6 +1558,13 @@ input[type="time"]:focus {
     flex-shrink: 0;
 }
 
+#pdf-custom-filename-input:focus {
+    border-color: #4f46e5 !important;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15) !important;
+    background: #ffffff !important;
+}
+
+
 .download-modal-footer {
     display: flex;
     gap: 10px;
@@ -1649,6 +1672,92 @@ input[type="time"]:focus {
     animation: fieldPulseHighlight 1.6s ease 2 !important;
 }
 
+/* Toast Notification (Floating Glass Pill) */
+.toast-message {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-size: 0.92rem;
+    font-weight: 500;
+    font-family: var(--font-ui);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+    z-index: 10001;
+}
+
+.toast-message.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+
+.toast-message .toast-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #10b981;
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+/* Floating Back-to-Top Button */
+.scroll-to-top-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(15px) scale(0.9);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s, box-shadow 0.2s;
+    z-index: 9999;
+}
+
+.scroll-to-top-btn.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.scroll-to-top-btn:hover {
+    background: #4f46e5;
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.45);
+}
+
+.scroll-to-top-btn:active {
+    transform: translateY(0) scale(0.95);
+}
+
 /* PDF Export Mode (Applied to Body during HTML2Canvas capture) */
 body.pdf-export-mode {
     background: #ffffff !important;
@@ -1657,7 +1766,6 @@ body.pdf-export-mode {
 }
 
 body.pdf-export-mode .no-print,
-body.pdf-export-mode .cursor-trail-canvas,
 body.pdf-export-mode #login-screen,
 body.pdf-export-mode #main-nav,
 body.pdf-export-mode .download-modal-backdrop,
@@ -1678,7 +1786,8 @@ body.pdf-export-mode .page {
 }
 
 body.pdf-export-mode input,
-body.pdf-export-mode select {
+body.pdf-export-mode select,
+body.pdf-export-mode textarea {
     border: none !important;
     background: transparent !important;
     -webkit-appearance: none !important;
@@ -1771,15 +1880,173 @@ body.pdf-export-mode input[type="time"]::-webkit-calendar-picker-indicator {
     background-color: #f8fafc;
 }
 
-.bill-input-cell,
-.tada-input {
-    border: none;
+/* Page 8 Professional Text Box & Table Styling */
+#page8 .bill-table,
+#page8 .tada-table {
+    margin-bottom: 8px;
+    font-size: 8.5pt;
     width: 100%;
-    background: transparent;
+    border-collapse: collapse;
+}
+
+#page8 .bill-table th,
+#page8 .bill-table td,
+#page8 .tada-table th,
+#page8 .tada-table td {
+    padding: 2.5px 3.5px;
+    vertical-align: middle;
+}
+
+#page8 .bill-section-header {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+    font-size: 8.5pt;
+    background-color: #e2e8f0;
+}
+
+#page8 .bill-total-row td {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+    background-color: #f8fafc;
+}
+
+/* Page 8 Interactive Text Boxes (Inputs) */
+#page8 .bill-input-cell,
+#page8 .tada-input {
+    width: 100%;
+    box-sizing: border-box;
     font-family: inherit;
     font-size: inherit;
-    padding: 0;
+    color: #0f172a;
+    border: 1.2px solid #94a3b8;
+    background-color: #ffffff;
+    border-radius: 3px;
+    padding: 2.5px 5px;
     margin: 0;
+    transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+#page8 .bill-input-cell:hover,
+#page8 .tada-input:hover {
+    border-color: #64748b;
+    background-color: #f8fafc;
+}
+
+#page8 .bill-input-cell:focus,
+#page8 .tada-input:focus,
+.remun-input:focus,
+.staff-input:focus {
+    outline: none;
+    border-color: #2563eb !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.22) !important;
+}
+
+/* Page 8 Clean Number Inputs (No spin buttons crowding small columns) */
+#page8 input[type="number"]::-webkit-outer-spin-button,
+#page8 input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+#page8 input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* Page 8 Header Text Boxes */
+#page8 .p8-header-input {
+    border: 1.2px solid #94a3b8;
+    background-color: #ffffff;
+    border-radius: 4px;
+    padding: 2.5px 6px;
+    box-sizing: border-box;
+    font-family: inherit;
+    color: #0f172a;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+#page8 .p8-header-input:hover {
+    border-color: #64748b;
+    background-color: #f8fafc;
+}
+
+#page8 .p8-header-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.22);
+}
+
+/* Page 8 Table Header Inputs */
+#page8 .bill-table th input,
+#page8 .tada-table th input {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+    font-weight: bold;
+    color: #1e293b;
+    text-align: center;
+}
+
+/* Page 8 Section Headers */
+#page8 .bill-section-header input {
+    background-color: #e2e8f0 !important;
+    border-color: #cbd5e1 !important;
+    font-weight: bold;
+    color: #0f172a;
+}
+
+/* Page 8 Calculated / Total Inputs */
+#page8 .bill-total-row input,
+#page8 .row-tada-total,
+#page8 #tada-ta-sum,
+#page8 #tada-auto-sum,
+#page8 #tada-da-sum,
+#page8 #tada-local-sum,
+#page8 #sum-exp,
+#page8 #sum-int,
+#page8 #sum-ext,
+#page8 #sum-lab,
+#page8 #sum-ta,
+#page8 #sum-da,
+#page8 #sum-local {
+    background-color: #f1f5f9 !important;
+    font-weight: bold;
+    border-color: #94a3b8 !important;
+    color: #0f172a;
+}
+
+/* Page 8 Dark Total Rows (Grand Total) */
+#page8 tr[style*="#334155"] input,
+#page8 td[style*="#334155"] input {
+    background: rgba(255, 255, 255, 0.16) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.45) !important;
+    font-weight: bold;
+}
+
+#page8 tr[style*="#334155"] input:focus,
+#page8 td[style*="#334155"] input:focus {
+    background: rgba(255, 255, 255, 0.28) !important;
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.45) !important;
+}
+
+/* Page 8 Certification & Signatures Area */
+#page8 .p8-cert-input {
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    border-radius: 3px;
+    padding: 3px 6px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+#page8 .p8-cert-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.22);
 }
 
 .tada-val-input {
@@ -1825,7 +2092,8 @@ body.pdf-export-mode input[type="time"]::-webkit-calendar-picker-indicator {
     }
 
     .page.landscape,
-    #page7 {
+    #page7,
+    #page8 {
         page: landscape-page !important;
         page-break-before: always !important;
         page-break-after: always !important;
@@ -1841,7 +2109,12 @@ body.pdf-export-mode input[type="time"]::-webkit-calendar-picker-indicator {
 
     .remun-input,
     .remun-title-input,
-    .staff-input {
+    .staff-input,
+    .bill-input-cell,
+    .tada-input,
+    #page8 input,
+    #page8 textarea,
+    #page8 select {
         border: none !important;
         background: transparent !important;
         -moz-appearance: textfield;
@@ -1852,7 +2125,11 @@ body.pdf-export-mode input[type="time"]::-webkit-calendar-picker-indicator {
     .remun-input::-webkit-outer-spin-button,
     .remun-input::-webkit-inner-spin-button,
     .staff-input::-webkit-outer-spin-button,
-    .staff-input::-webkit-inner-spin-button {
+    .staff-input::-webkit-inner-spin-button,
+    .bill-input-cell::-webkit-outer-spin-button,
+    .bill-input-cell::-webkit-inner-spin-button,
+    .tada-input::-webkit-outer-spin-button,
+    .tada-input::-webkit-inner-spin-button {
         -webkit-appearance: none;
         margin: 0;
     }

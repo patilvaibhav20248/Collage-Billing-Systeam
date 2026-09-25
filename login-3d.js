@@ -13,31 +13,18 @@
     let mouseX = 0, mouseY = 0;
     let targetMouseX = 0, targetMouseY = 0;
     let gridOffset = 0;
-    let coreRotation = 0;
-    let logoRotation = 0;
     let logoFlipAngle = 0;
-    let flipAxis = 'y'; // Horizontal 3D coin spin (front to back, never upper to lower)
-    let scanAngle = 0;
     let stateTimer = 0;
     let pulseScale = 1;
 
-    // College / Deccan Education Society 3D Rotating Emblem Logo
-    const LOGO_LOCAL_BACKUP = 'college-logo.webp';
-    const LOGO_REMOTE_SRC = 'https://th.bing.com/th/id/OIP.s-VkdMxzUHqHXTL7M_UqiwAAAA?w=100&h=100&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3';
+    // Willingdon College 3D Rotating Emblem Logo
     const logoImg = new Image();
     let isLogoLoaded = false;
 
-    logoImg.crossOrigin = 'anonymous';
     logoImg.onload = function () {
         isLogoLoaded = true;
     };
-    logoImg.onerror = function () {
-        if (logoImg.src !== LOGO_REMOTE_SRC && !logoImg.src.includes('bing.com')) {
-            logoImg.src = LOGO_REMOTE_SRC;
-        }
-    };
-    // Prioritize instant local load
-    logoImg.src = LOGO_LOCAL_BACKUP;
+    logoImg.src = 'college-logo.webp';
 
     // Theme Color Palettes for States
     const CYBER_THEMES = {
@@ -273,16 +260,42 @@
             ctx.strokeStyle = activeTheme.primary;
             ctx.stroke();
 
-            // Cyber Lock Icon (Warning)
-            ctx.fillStyle = activeTheme.primary;
-            ctx.beginPath();
-            ctx.rect(-12, -5, 24, 22);
-            ctx.fill();
-            ctx.lineWidth = 3.5;
+            // Cyber Padlock Icon (Shown when password entered is incorrect)
+            ctx.save();
+            ctx.shadowBlur = 16;
+            ctx.shadowColor = activeTheme.primary;
+
+            // Lock Shackle (Curved top bar)
+            ctx.lineWidth = 4;
             ctx.strokeStyle = activeTheme.primary;
             ctx.beginPath();
-            ctx.arc(0, -7, 9, Math.PI, 0);
+            ctx.arc(0, -6, 11, Math.PI, 0);
             ctx.stroke();
+
+            // Lock Body
+            ctx.fillStyle = activeTheme.primary;
+            ctx.beginPath();
+            if (ctx.roundRect) {
+                ctx.roundRect(-15, -2, 30, 26, 5);
+            } else {
+                ctx.rect(-15, -2, 30, 26);
+            }
+            ctx.fill();
+
+            // Keyhole in center of padlock
+            ctx.fillStyle = 'rgba(10, 20, 38, 0.95)';
+            ctx.beginPath();
+            ctx.arc(0, 7, 3.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(-2, 8);
+            ctx.lineTo(2, 8);
+            ctx.lineTo(1.5, 16);
+            ctx.lineTo(-1.5, 16);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.restore();
         } else if (currentState === 'success') {
             const hexRadius = 50;
             ctx.beginPath();
@@ -584,35 +597,13 @@
         }
     };
 
-    window.set3DUsernameProgress = function (progress) {
-        if (progress > 0.5 && currentState !== 'angry' && currentState !== 'success') {
-            activeTheme = CYBER_THEMES.username;
-        }
-    };
-
-    window.set3DPasswordProgress = function (progress) {
-        if (progress > 0 && currentState !== 'angry' && currentState !== 'success') {
-            activeTheme = progress >= 1.0 ? CYBER_THEMES.ready : CYBER_THEMES.password;
-        }
-    };
-
-    window.setLogoFlipMode = function (mode) {
-        if (mode === 'x' || mode === 'vertical') flipAxis = 'x';
-        else if (mode === 'tilt' || mode === 'diagonal') flipAxis = 'tilt';
-        else flipAxis = 'y';
-    };
-
-    window.disableCursorTrail = function () {
-        const trail = document.getElementById('cursor-trail-canvas');
-        if (trail) trail.style.display = 'none';
+    window.stopLoginAnimation = function () {
         if (animFrameId) {
-            // Cancel background animation loop when logged in to save CPU
-            const loginScreen = document.getElementById('login-screen');
-            if (loginScreen && loginScreen.style.display === 'none') {
-                cancelAnimationFrame(animFrameId);
-            }
+            cancelAnimationFrame(animFrameId);
+            animFrameId = null;
         }
     };
+    window.disableCursorTrail = window.stopLoginAnimation;
 
     // ==========================================
     // 5. EVENT LISTENERS

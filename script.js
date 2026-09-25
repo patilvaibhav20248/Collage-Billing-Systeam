@@ -1,37 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const navLinks = document.querySelectorAll('.nav-tab');
-
-    // Handle navigation
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-
-            // Remove active class from all links
-            navLinks.forEach(l => l.classList.remove('active'));
-
-            // Add active class to clicked link
-            link.classList.add('active');
-
-            // Scroll to corresponding page
-            const href = link.getAttribute('href');
-            if (href && href.startsWith('#')) {
-                const targetId = href.substring(1);
-                const targetEl = document.getElementById(targetId);
-                if (targetEl) {
-                    targetEl.scrollIntoView({ behavior: 'smooth' });
-                }
-            }
-        });
-    });
-
-    // Handle Print
-    const printBtns = document.querySelectorAll('.print-btn');
-    printBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            window.print();
-        });
-    });
-
     // Sync dropdowns to displays
     const syncDropdown = (id, displayClass) => {
         const dropdown = document.getElementById(id);
@@ -39,7 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const updateAll = () => {
             const val = dropdown.value;
-            document.querySelectorAll(displayClass).forEach(disp => { disp.textContent = val; });
+            document.querySelectorAll(displayClass).forEach(disp => {
+                if (disp.tagName === 'INPUT' || disp.tagName === 'TEXTAREA') {
+                    disp.value = val;
+                } else {
+                    disp.textContent = val;
+                }
+            });
         };
 
         ['change', 'input'].forEach(evt => {
@@ -56,13 +29,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Sync subject from text box to all pages
     const updateSubjectDisplays = (val) => {
-        const textVal = (val && typeof val === 'string' && val.trim()) ? val.trim() : 'BSc IT C Programing And HTML';
+        const textVal = (val !== undefined && val !== null) ? String(val) : '';
         document.querySelectorAll('.subject-display').forEach(display => {
-            display.textContent = textVal;
+            if (display.tagName === 'INPUT' || display.tagName === 'TEXTAREA') {
+                display.value = textVal;
+            } else {
+                display.textContent = textVal;
+            }
         });
         const subjectInput = document.getElementById('subject-input');
-        if (subjectInput && subjectInput.value !== textVal && val !== undefined && val !== null) {
+        if (subjectInput && subjectInput !== document.activeElement && subjectInput.value !== textVal && val !== undefined && val !== null) {
             subjectInput.value = textVal;
+        }
+        const p8SubjInput = document.getElementById('p8-subject-input');
+        if (p8SubjInput && p8SubjInput !== document.activeElement && p8SubjInput.value !== textVal && val !== undefined && val !== null) {
+            p8SubjInput.value = textVal;
         }
     };
 
@@ -76,9 +57,18 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSubjectDisplays(mainSubjectInput.value);
     }
 
+    const p8SubjectInput = document.getElementById('p8-subject-input');
+    if (p8SubjectInput) {
+        ['input', 'change', 'keyup', 'paste'].forEach(evt => {
+            p8SubjectInput.addEventListener(evt, (e) => {
+                updateSubjectDisplays(e.target.value);
+            });
+        });
+    }
+
     const otherSubjectInputs = document.querySelectorAll('.subject-input');
     otherSubjectInputs.forEach(input => {
-        if (input !== mainSubjectInput) {
+        if (input !== mainSubjectInput && input !== p8SubjectInput) {
             ['input', 'change', 'keyup', 'paste'].forEach(evt => {
                 input.addEventListener(evt, (e) => {
                     updateSubjectDisplays(e.target.value);
@@ -205,10 +195,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // If val is YYYY-MM-DD, sync to date inputs
         if (val && String(val).includes('-') && String(val).length === 10) {
-            const dateInputsToSync = document.querySelectorAll('#date-input, .page-date-sync-input');
+            const dateInputsToSync = document.querySelectorAll('#date-input, .page-date-sync-input, .tada-date-picker');
             dateInputsToSync.forEach(inp => {
-                if (inp.value !== val) {
+                if (inp.value !== val && (!inp.value || inp.dataset.autoSynced === 'true')) {
                     inp.value = val;
+                    inp.dataset.autoSynced = 'true';
                 }
             });
         }
@@ -248,12 +239,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const updateTableTotals = () => {
-        console.log("Calculating table totals...");
         const calculateColumn = (inputClass, totalId, mode = 'sum') => {
             const inputs = document.querySelectorAll(inputClass);
             const totalDisplay = document.getElementById(totalId);
             if (!totalDisplay) {
-                console.warn(`Total display not found: ${totalId}`);
                 return 0;
             }
 
@@ -276,7 +265,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            console.log(`Column ${totalId} ${mode}:`, result);
             totalDisplay.textContent = result;
 
             // Brief highlight effect
@@ -408,17 +396,8 @@ document.addEventListener('DOMContentLoaded', () => {
             disp.textContent = totalPresentText;
         });
 
-        // Calculate Remuneration for Page 5
+        // Calculate Remuneration for Page 5 (Examiner 1)
         const part = document.getElementById('part-dropdown')?.value || 'Part - I';
-        const rows = {
-            'Part - I': 'remun-row-part1',
-            'Part - II': 'remun-row-part2',
-            'Part - III': 'remun-row-part3',
-            'OGT/Projects': 'remun-row-ogt',
-            'Part - IV': 'remun-row-ogt'
-        };
-
-        // --- Calculate Remuneration for Page 5 (Examiner 1) ---
         const rows1 = {
             'Part - I': 'remun-row-part1',
             'Part - II': 'remun-row-part2',
@@ -457,7 +436,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (p === part) {
-                activeTotal1 = totalRemun;
                 row.style.backgroundColor = '#f0f9ff';
             } else {
                 row.style.backgroundColor = 'transparent';
@@ -514,7 +492,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (p === part) {
-                activeTotal2 = totalRemun;
                 row.style.backgroundColor = '#f0f9ff';
             } else {
                 row.style.backgroundColor = 'transparent';
@@ -562,29 +539,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Listen for Part and Course dropdown changes to update active remuneration
     document.getElementById('part-dropdown')?.addEventListener('change', updateTableTotals);
     document.getElementById('course-dropdown')?.addEventListener('change', updateTableTotals);
-
-    // Navigation Tab Highlighting
-    const navTabs = document.querySelectorAll('.nav-tab');
-    const pages = document.querySelectorAll('.page');
-
-    window.addEventListener('scroll', () => {
-        let current = '';
-        const scrollPos = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
-        pages.forEach(page => {
-            const pageTop = page.offsetTop;
-            const pageHeight = page.clientHeight;
-            if (scrollPos >= (pageTop - 150)) {
-                current = page.getAttribute('id');
-            }
-        });
-
-        navTabs.forEach(tab => {
-            tab.classList.remove('active');
-            if (tab.getAttribute('href') === `#${current}`) {
-                tab.classList.add('active');
-            }
-        });
-    });
 
     // Listen for both input and change events
     ['input', 'change'].forEach(eventType => {
@@ -755,25 +709,70 @@ document.addEventListener('DOMContentLoaded', () => {
     setupStaffExamDatePicker();
 
     // Autonomous Practical Bill (Page 8) Logic
-    const updateFinalSummary = () => {
-        const exp = parseFloat(document.getElementById('exp-bill-total')?.textContent) || 0;
-        const ext = parseFloat(document.getElementById('ext-bill-total')?.textContent) || 0;
-        const int = parseFloat(document.getElementById('int-bill-total')?.textContent) || 0;
-        const lab = parseFloat(document.getElementById('lab-bill-total')?.textContent) || 0;
-        const taSum = parseFloat(document.getElementById('tada-ta-sum')?.textContent) || 0;
-        const autoSum = parseFloat(document.getElementById('tada-auto-sum')?.textContent) || 0;
-        const daSum = parseFloat(document.getElementById('tada-da-sum')?.textContent) || 0;
-        const tadaUpperSum = parseFloat(document.getElementById('tada-bill-total')?.textContent) || 0;
+    const recalculateFinalSummary = () => {
+        const getVal = (id) => {
+            const el = document.getElementById(id);
+            if (!el) return 0;
+            const raw = (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') ? el.value : el.textContent;
+            return parseFloat(raw) || 0;
+        };
+        const setVal = (id, val) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                el.value = val;
+            } else {
+                el.textContent = val;
+            }
+        };
 
-        // TA is TA + Auto from the lower TA/DA table, or falls back to upper TA/DA amount if entered there
-        const taVal = (taSum + autoSum) > 0 ? (taSum + autoSum) : (daSum === 0 ? tadaUpperSum : 0);
-        const daVal = daSum;
+        const exp = getVal('sum-exp');
+        const int = getVal('sum-int');
+        const ext = getVal('sum-ext');
+        const lab = getVal('sum-lab');
         const paper = parseFloat(document.querySelector('.sum-manual-input')?.value) || 0;
+        const ta = getVal('sum-ta');
+        const da = getVal('sum-da');
+        const local = getVal('sum-local');
+
+        const total = exp + int + ext + lab + paper + ta + da + local;
+        setVal('final-grand-total', total);
+        setVal('bill-grand-total', total);
+    };
+
+    const updateFinalSummary = () => {
+        const getVal = (id) => {
+            const el = document.getElementById(id);
+            if (!el) return 0;
+            const raw = (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') ? el.value : el.textContent;
+            return parseFloat(raw) || 0;
+        };
 
         const setVal = (id, val) => {
             const el = document.getElementById(id);
-            if (el) el.textContent = val;
+            if (!el) return;
+            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                el.value = val;
+            } else {
+                el.textContent = val;
+            }
         };
+
+        const exp = getVal('exp-bill-total');
+        const ext = getVal('ext-bill-total');
+        const int = getVal('int-bill-total');
+        const lab = getVal('lab-bill-total');
+        const taSum = getVal('tada-ta-sum');
+        const autoSum = getVal('tada-auto-sum');
+        const daSum = getVal('tada-da-sum');
+        const localSum = getVal('tada-local-sum');
+        const tadaUpperSum = getVal('tada-bill-total');
+
+        // TA is TA + Auto from the lower TA/DA table, or falls back to upper TA/DA amount if entered there
+        const taVal = (taSum + autoSum) > 0 ? (taSum + autoSum) : (daSum === 0 && localSum === 0 ? tadaUpperSum : 0);
+        const daVal = daSum;
+        const localVal = localSum;
+        const paper = parseFloat(document.querySelector('.sum-manual-input')?.value) || 0;
 
         setVal('sum-exp', exp);
         setVal('sum-ext', ext);
@@ -781,8 +780,9 @@ document.addEventListener('DOMContentLoaded', () => {
         setVal('sum-lab', lab);
         setVal('sum-ta', taVal);
         setVal('sum-da', daVal);
+        setVal('sum-local', localVal);
 
-        const total = exp + ext + int + lab + taVal + daVal + paper;
+        const total = exp + ext + int + lab + taVal + daVal + localVal + paper;
         setVal('final-grand-total', total);
         setVal('bill-grand-total', total);
     };
@@ -792,8 +792,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const inputs = document.querySelectorAll(inputClass);
             let total = 0;
             inputs.forEach(input => total += parseFloat(input.value) || 0);
-            const totalSpan = document.getElementById(totalId);
-            if (totalSpan) totalSpan.textContent = total;
+            const totalEl = document.getElementById(totalId);
+            if (totalEl) {
+                if (totalEl.tagName === 'INPUT' || totalEl.tagName === 'TEXTAREA') {
+                    totalEl.value = total;
+                } else {
+                    totalEl.textContent = total;
+                }
+            }
             return total;
         };
 
@@ -808,39 +814,140 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Attach listeners for Page 8 inputs
     document.addEventListener('input', (e) => {
-        if (e.target.classList.contains('bill-input-cell') || e.target.classList.contains('sum-manual-input')) {
+        if (!e.target) return;
+
+        // Section totals on Page 8 that can be manually edited by the user
+        const p8SectionTotals = ['exp-bill-total', 'ext-bill-total', 'int-bill-total', 'lab-bill-total', 'tada-bill-total'];
+        if (p8SectionTotals.includes(e.target.id)) {
+            updateFinalSummary();
+            return;
+        }
+
+        // Row item amount inputs trigger section calculation
+        if (e.target.classList.contains('exp-amt-input') ||
+            e.target.classList.contains('ext-amt-input') ||
+            e.target.classList.contains('int-amt-input') ||
+            e.target.classList.contains('lab-amt-input') ||
+            e.target.classList.contains('tada-amt-input')) {
             updatePage7Totals();
+            return;
+        }
+
+        // If user is editing a summary list item directly
+        if (e.target.id && (e.target.id.startsWith('sum-') || e.target.classList.contains('sum-manual-input'))) {
+            recalculateFinalSummary();
+            return;
+        }
+
+        // If user edited a TA/DA row total, column sum, or grand total directly
+        if (e.target.id === 'tada-grand-total' || e.target.id === 'tada-total-1' || e.target.id === 'tada-total-2' ||
+            e.target.id === 'tada-ta-sum' || e.target.id === 'tada-auto-sum' || e.target.id === 'tada-da-sum' || e.target.id === 'tada-local-sum') {
+            const upperTadaInput = document.querySelector('.tada-amt-input');
+            if (e.target.id === 'tada-grand-total' && upperTadaInput) {
+                upperTadaInput.value = e.target.value;
+                const upperTotal = document.getElementById('tada-bill-total');
+                if (upperTotal) upperTotal.value = e.target.value;
+            }
+            updateFinalSummary();
+            return;
+        }
+
+        if (e.target.id === 'final-grand-total') {
+            const bgt = document.getElementById('bill-grand-total');
+            if (bgt) bgt.value = e.target.value;
+            return;
+        }
+        if (e.target.id === 'bill-grand-total') {
+            const fgt = document.getElementById('final-grand-total');
+            if (fgt) fgt.value = e.target.value;
+            return;
+        }
+
+        // Bi-directional Month & Year sync
+        if (e.target.id === 'p8-month-input') {
+            const mVal = e.target.value;
+            const mDrop = document.getElementById('month-dropdown');
+            if (mDrop && mDrop.value !== mVal) mDrop.value = mVal;
+            document.querySelectorAll('.month-display').forEach(d => {
+                if (d !== e.target) {
+                    if (d.tagName === 'INPUT' || d.tagName === 'TEXTAREA') d.value = mVal;
+                    else d.textContent = mVal;
+                }
+            });
+            return;
+        }
+        if (e.target.id === 'p8-year-input') {
+            const yVal = e.target.value;
+            const yDrop = document.getElementById('year-dropdown');
+            if (yDrop && yDrop.value !== yVal) yDrop.value = yVal;
+            document.querySelectorAll('.year-display').forEach(d => {
+                if (d !== e.target) {
+                    if (d.tagName === 'INPUT' || d.tagName === 'TEXTAREA') d.value = yVal;
+                    else d.textContent = yVal;
+                }
+            });
+            return;
         }
     });
 
     // TA/DA Bill (Page 8) Logic
     const updateTadaTotals = () => {
-        let taSum = 0, autoSum = 0, daSum = 0, grandSum = 0;
+        let taSum = 0, autoSum = 0, daSum = 0, localSum = 0, grandSum = 0;
 
         [1, 2].forEach(rowNum => {
             const ta = parseFloat(document.querySelector(`.tada-val-input[data-row="${rowNum}"][data-type="ta"]`)?.value) || 0;
             const auto = parseFloat(document.querySelector(`.tada-val-input[data-row="${rowNum}"][data-type="auto"]`)?.value) || 0;
             const da = parseFloat(document.querySelector(`.tada-val-input[data-row="${rowNum}"][data-type="da"]`)?.value) || 0;
+            const local = parseFloat(document.querySelector(`.tada-val-input[data-row="${rowNum}"][data-type="local"]`)?.value) || 0;
 
-            const rowTotal = ta + auto + da;
-            const totalSpan = document.getElementById(`tada-total-${rowNum}`);
-            if (totalSpan) totalSpan.textContent = rowTotal;
+            const rowTotal = ta + auto + da + local;
+            const totalEl = document.getElementById(`tada-total-${rowNum}`);
+            if (totalEl) {
+                if (totalEl.tagName === 'INPUT' || totalEl.tagName === 'TEXTAREA') {
+                    totalEl.value = rowTotal;
+                } else {
+                    totalEl.textContent = rowTotal;
+                }
+            }
 
             taSum += ta;
             autoSum += auto;
             daSum += da;
+            localSum += local;
             grandSum += rowTotal;
         });
 
-        const taSpan = document.getElementById('tada-ta-sum');
-        const autoSpan = document.getElementById('tada-auto-sum');
-        const daSpan = document.getElementById('tada-da-sum');
-        const grandSpan = document.getElementById('tada-grand-total');
+        const setTotal = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) {
+                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                    el.value = val;
+                } else {
+                    el.textContent = val;
+                }
+            }
+        };
 
-        if (taSpan) taSpan.textContent = taSum;
-        if (autoSpan) autoSpan.textContent = autoSum;
-        if (daSpan) daSpan.textContent = daSum;
-        if (grandSpan) grandSpan.textContent = grandSum;
+        setTotal('tada-ta-sum', taSum);
+        setTotal('tada-auto-sum', autoSum);
+        setTotal('tada-da-sum', daSum);
+        setTotal('tada-local-sum', localSum);
+        setTotal('tada-grand-total', grandSum);
+
+        // Also sync grandSum to upper TA/DA table input if tada-amt-input is empty or auto-synced
+        const upperTadaInput = document.querySelector('.tada-amt-input');
+        if (upperTadaInput && (grandSum > 0 || upperTadaInput.dataset.autoSynced === 'true')) {
+            upperTadaInput.value = grandSum > 0 ? grandSum : '';
+            upperTadaInput.dataset.autoSynced = 'true';
+            const upperTotal = document.getElementById('tada-bill-total');
+            if (upperTotal) {
+                if (upperTotal.tagName === 'INPUT' || upperTotal.tagName === 'TEXTAREA') {
+                    upperTotal.value = grandSum;
+                } else {
+                    upperTotal.textContent = grandSum;
+                }
+            }
+        }
 
         updateFinalSummary();
     };
@@ -864,17 +971,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Global Examiner & Remuneration Sync
         const examinerMappings = {
-            'p1-ext-name': ['p7-ext-name', 'p8-ext-name'],
+            'p1-ext-name': ['p7-ext-name', 'p8-ext-name', 'p8-tada-ext-name'],
+            'p7-ext-name': ['p1-ext-name', 'p8-ext-name', 'p8-tada-ext-name'],
+            'p8-ext-name': ['p1-ext-name', 'p7-ext-name', 'p8-tada-ext-name'],
+            'p8-tada-ext-name': ['p1-ext-name', 'p7-ext-name', 'p8-ext-name'],
             'p1-int-name': ['p7-int-name'],
+            'p7-int-name': ['p1-int-name'],
             'p1-ext-college': ['p8-ext-college'],
-            'p1-ext-desig': ['p7-ext-desig'],
+            'p8-ext-college': ['p1-ext-college'],
+            'p1-ext-desig': ['p7-ext-desig', 'p8-tada-desig-1', 'p8-tada-upper-desig'],
             'p1-int-desig': ['p7-int-desig'],
+            'p8-ext-bank': ['p8-tada-bank'],
+            'p8-tada-bank': ['p8-ext-bank'],
+            'p8-ext-acc': ['p8-tada-acc'],
+            'p8-tada-acc': ['p8-ext-acc'],
+            'p8-ext-ifsc': ['p8-tada-ifsc'],
+            'p8-tada-ifsc': ['p8-ext-ifsc'],
             'p5-exam-title-1': ['p6-exam-title-1'],
             'p6-exam-title-1': ['p5-exam-title-1'],
             'p5-exam-title-2': ['p6-exam-title-2'],
             'p6-exam-title-2': ['p5-exam-title-2'],
             'p5-exam-title-3': ['p6-exam-title-3'],
-            'p6-exam-title-3': ['p5-exam-title-3']
+            'p6-exam-title-3': ['p5-exam-title-3'],
+            'p5-exam-title-ogt': ['p6-exam-title-ogt'],
+            'p6-exam-title-ogt': ['p5-exam-title-ogt']
         };
 
         if (examinerMappings[id]) {
@@ -883,6 +1003,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (tel) tel.value = e.target.value;
             });
         }
+    });
+
+    // Page 8 TA/DA Date Picker click handler
+    document.querySelectorAll('.tada-date-picker').forEach(picker => {
+        picker.addEventListener('click', () => {
+            try { picker.showPicker(); } catch (err) { }
+        });
     });
 
     // --- Auto-Save and Auto-Load Persistence ---
@@ -1102,14 +1229,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // Ensure subject text box is properly restored
             const savedSubject = data.by_id ? (data.by_id['subject-input'] || data.by_id['subject-dropdown']) : null;
             const subjInputEl = document.getElementById('subject-input');
-            if (savedSubject && typeof savedSubject === 'string' && savedSubject.trim()) {
+            if (savedSubject !== null && savedSubject !== undefined) {
                 if (subjInputEl) {
-                    subjInputEl.value = savedSubject.trim();
+                    subjInputEl.value = savedSubject;
                 }
-                updateSubjectDisplays(savedSubject.trim());
+                updateSubjectDisplays(savedSubject);
             } else {
-                const fallbackSubject = subjInputEl?.value?.trim() || 'BSc IT C Programing And HTML';
-                if (subjInputEl) subjInputEl.value = fallbackSubject;
+                const fallbackSubject = subjInputEl ? subjInputEl.value : '';
                 updateSubjectDisplays(fallbackSubject);
             }
 
@@ -1173,21 +1299,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 sel.selectedIndex = 0;
             });
 
-            // Reset subject text box to default
+            // Reset subject text box to empty
             const subjInputEl = document.getElementById('subject-input');
             if (subjInputEl) {
-                subjInputEl.value = 'BSc IT C Programing And HTML';
+                subjInputEl.value = '';
             }
-            updateSubjectDisplays('BSc IT C Programing And HTML');
+            updateSubjectDisplays('');
 
             // Reset exam title text boxes to default (Page 5 & 6)
             const defaultExamTitles = {
                 'p5-exam-title-1': 'B.Sc./B.C.S. Part I',
                 'p5-exam-title-2': 'B.Sc./B.C.S. Part II',
                 'p5-exam-title-3': 'B.Sc./B.C.S. Part III',
+                'p5-exam-title-ogt': 'OGT/Projects',
                 'p6-exam-title-1': 'B.Sc./B.C.S. Part I',
                 'p6-exam-title-2': 'B.Sc./B.C.S. Part II',
-                'p6-exam-title-3': 'B.Sc./B.C.S. Part III'
+                'p6-exam-title-3': 'B.Sc./B.C.S. Part III',
+                'p6-exam-title-ogt': 'OGT/Projects'
             };
             Object.keys(defaultExamTitles).forEach(titleId => {
                 const tel = document.getElementById(titleId);
@@ -1235,19 +1363,28 @@ document.addEventListener('DOMContentLoaded', () => {
             // Reset bill summary totals (Page 8)
             ['exp-bill-total', 'ext-bill-total', 'int-bill-total', 'lab-bill-total', 'tada-bill-total', 'bill-grand-total'].forEach(id => {
                 const el = document.getElementById(id);
-                if (el) el.textContent = '0';
+                if (el) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.value = '0';
+                    else el.textContent = '0';
+                }
             });
 
             // Reset TA/DA totals
-            ['tada-total-1', 'tada-total-2', 'tada-ta-sum', 'tada-auto-sum', 'tada-da-sum', 'tada-grand-total'].forEach(id => {
+            ['tada-total-1', 'tada-total-2', 'tada-ta-sum', 'tada-auto-sum', 'tada-da-sum', 'tada-local-sum', 'tada-grand-total'].forEach(id => {
                 const el = document.getElementById(id);
-                if (el) el.textContent = '0';
+                if (el) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.value = '0';
+                    else el.textContent = '0';
+                }
             });
 
             // Reset final summary list
-            ['sum-exp', 'sum-int', 'sum-ext', 'sum-lab', 'sum-ta', 'sum-da', 'final-grand-total'].forEach(id => {
+            ['sum-exp', 'sum-int', 'sum-ext', 'sum-lab', 'sum-ta', 'sum-da', 'sum-local', 'final-grand-total'].forEach(id => {
                 const el = document.getElementById(id);
-                if (el) el.textContent = '0';
+                if (el) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.value = '0';
+                    else el.textContent = '0';
+                }
             });
 
             // Run full sync & recalculation
@@ -1284,46 +1421,91 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Subject sync from text box to all pages
         const subjInput = document.getElementById('subject-input');
-        const currentSubject = (subjInput && subjInput.value && subjInput.value.trim()) ? subjInput.value.trim() : 'BSc IT C Programing And HTML';
+        const currentSubject = subjInput ? subjInput.value : '';
         updateSubjectDisplays(currentSubject);
 
         const extName = getVal('p1-ext-name');
         document.querySelectorAll('.examiner-display').forEach(d => d.textContent = extName || '__________________________________');
-        ['p7-ext-name', 'p8-ext-name'].forEach(tid => {
+        ['p7-ext-name', 'p8-ext-name', 'p8-tada-ext-name'].forEach(tid => {
             const tel = document.getElementById(tid);
-            if (tel) tel.value = extName;
+            if (tel && tel !== document.activeElement && extName) tel.value = extName;
         });
 
         const intName = getVal('p1-int-name');
         document.querySelectorAll('.examiner2-display').forEach(d => d.textContent = intName || '__________________________________');
         ['p7-int-name', 'p8-int-name'].forEach(tid => {
             const tel = document.getElementById(tid);
-            if (tel) tel.value = intName;
+            if (tel && tel !== document.activeElement && intName) tel.value = intName;
         });
 
         const extCollege = getVal('p1-ext-college');
         document.querySelectorAll('.college-display').forEach(d => d.textContent = extCollege || 'WILLINGDON COLLEGE SANGLI');
         const extCollegeInput = document.getElementById('p8-ext-college');
-        if (extCollegeInput) extCollegeInput.value = extCollege;
+        if (extCollegeInput && extCollegeInput !== document.activeElement && extCollege) extCollegeInput.value = extCollege;
 
         const intCollege = getVal('p1-int-college');
         document.querySelectorAll('.college2-display').forEach(d => d.textContent = intCollege || 'WILLINGDON COLLEGE SANGLI');
+
+        // External Examiner Bank details sync
+        const extBank = getVal('p8-ext-bank') || getVal('p8-tada-bank');
+        if (extBank) {
+            const eb = document.getElementById('p8-ext-bank');
+            const tb = document.getElementById('p8-tada-bank');
+            if (eb && !eb.value && eb !== document.activeElement) eb.value = extBank;
+            if (tb && !tb.value && tb !== document.activeElement) tb.value = extBank;
+        }
+        const extAcc = getVal('p8-ext-acc') || getVal('p8-tada-acc');
+        if (extAcc) {
+            const ea = document.getElementById('p8-ext-acc');
+            const ta = document.getElementById('p8-tada-acc');
+            if (ea && !ea.value && ea !== document.activeElement) ea.value = extAcc;
+            if (ta && !ta.value && ta !== document.activeElement) ta.value = extAcc;
+        }
+        const extIfsc = getVal('p8-ext-ifsc') || getVal('p8-tada-ifsc');
+        if (extIfsc) {
+            const ei = document.getElementById('p8-ext-ifsc');
+            const ti = document.getElementById('p8-tada-ifsc');
+            if (ei && !ei.value && ei !== document.activeElement) ei.value = extIfsc;
+            if (ti && !ti.value && ti !== document.activeElement) ti.value = extIfsc;
+        }
 
         const mainDate = document.getElementById('date-input');
         const dateVal = mainDate ? mainDate.value : getVal('date-input');
         updateAllDateDisplays(dateVal || '2026-09-23');
 
         const courseVal = document.getElementById('course-dropdown')?.value || '';
-        document.querySelectorAll('.course-display').forEach(disp => { disp.textContent = courseVal; });
+        document.querySelectorAll('.course-display').forEach(disp => {
+            if (disp === document.activeElement) return;
+            if (disp.tagName === 'INPUT' || disp.tagName === 'TEXTAREA') disp.value = courseVal;
+            else disp.textContent = courseVal;
+        });
 
         const partVal = document.getElementById('part-dropdown')?.value || '';
-        document.querySelectorAll('.part-display').forEach(disp => { disp.textContent = partVal; });
+        document.querySelectorAll('.part-display').forEach(disp => {
+            if (disp === document.activeElement) return;
+            if (disp.tagName === 'INPUT' || disp.tagName === 'TEXTAREA') disp.value = partVal;
+            else disp.textContent = partVal;
+        });
 
         const monthVal = document.getElementById('month-dropdown')?.value || '';
-        document.querySelectorAll('.month-display').forEach(disp => { disp.textContent = monthVal; });
+        document.querySelectorAll('.month-display').forEach(disp => {
+            if (disp === document.activeElement) return;
+            if (disp.tagName === 'INPUT' || disp.tagName === 'TEXTAREA') {
+                if (monthVal) disp.value = monthVal;
+            } else {
+                disp.textContent = monthVal;
+            }
+        });
 
         const yearVal = document.getElementById('year-dropdown')?.value || '';
-        document.querySelectorAll('.year-display').forEach(disp => { disp.textContent = yearVal; });
+        document.querySelectorAll('.year-display').forEach(disp => {
+            if (disp === document.activeElement) return;
+            if (disp.tagName === 'INPUT' || disp.tagName === 'TEXTAREA') {
+                if (yearVal) disp.value = yearVal;
+            } else {
+                disp.textContent = yearVal;
+            }
+        });
     };
 
     // Global input and change listeners
@@ -1504,126 +1686,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const userEl = document.getElementById('login-username');
         const passEl = document.getElementById('login-password');
         const btnEl = document.getElementById('login-btn');
-        const progressBar = document.getElementById('login-progress-bar');
+        const errorEl = document.getElementById('login-error-msg');
         if (!userEl || !passEl || !btnEl) return;
+
+        // Automatically hide error message when user starts re-typing
+        if (errorEl && errorEl.style.display !== 'none') {
+            errorEl.style.display = 'none';
+        }
 
         const userVal = userEl.value.trim();
         const passVal = passEl.value;
-        const targetUser = 'admin';
-        const targetPass = 'willingdon123';
 
         const hasUser = userVal.length > 0;
         const hasPass = passVal.length > 0;
 
-        // 1. Prefix and exact matching for Username
-        const isUserPrefixMatch = hasUser && targetUser.toLowerCase().startsWith(userVal.toLowerCase());
-        const isUserExactMatch = hasUser && (userVal.toLowerCase() === targetUser.toLowerCase());
-        const isUserIncorrect = hasUser && (!isUserPrefixMatch || userVal.length > targetUser.length);
-
-        // 2. Character-by-character check for Password
-        let matchCount = 0;
-        let isPassIncorrect = false;
-        if (hasPass) {
-            for (let i = 0; i < passVal.length; i++) {
-                if (i < targetPass.length && passVal[i] === targetPass[i]) {
-                    matchCount++;
-                } else {
-                    isPassIncorrect = true;
-                    break;
-                }
-            }
-            if (passVal.length > targetPass.length) {
-                isPassIncorrect = true;
-            }
-        }
-
-        const isExactMatch = isUserExactMatch && (passVal === targetPass);
-
-        // IF USER ENTERED SOMETHING INCORRECT: Robot becomes ANGRY!
-        if (isUserIncorrect || isPassIncorrect) {
-            btnEl.classList.remove('btn-revealing', 'btn-fully-unlocked');
-            btnEl.style.opacity = '0';
-            btnEl.style.transform = 'translateY(14px) scale(0.94)';
-            btnEl.style.pointerEvents = 'none';
-            if (progressBar) progressBar.style.width = '0%';
-            if (window.set3DUsernameProgress) window.set3DUsernameProgress(0);
-            if (window.set3DPasswordProgress) window.set3DPasswordProgress(0);
-            if (window.set3DState) window.set3DState('angry');
-            return;
-        }
-
-        // IF EMPTY: Robot in calm idle state with closed eyes
-        if (!hasUser && !hasPass) {
-            btnEl.classList.remove('btn-revealing', 'btn-fully-unlocked');
-            btnEl.style.opacity = '0';
-            btnEl.style.transform = 'translateY(14px) scale(0.94)';
-            btnEl.style.pointerEvents = 'none';
-            if (progressBar) progressBar.style.width = '0%';
-            if (window.set3DUsernameProgress) window.set3DUsernameProgress(0);
-            if (window.set3DPasswordProgress) window.set3DPasswordProgress(0);
+        // Interactive 3D responsiveness while typing (never show lock while simply typing!)
+        if (document.activeElement === passEl || hasPass) {
+            if (window.set3DState) window.set3DState('password');
+        } else if (document.activeElement === userEl || hasUser) {
+            if (window.set3DState) window.set3DState('username');
+        } else {
             if (window.set3DState) window.set3DState('idle');
-            return;
         }
 
-        // IF USER IS TYPING 'admin' CORRECTLY, but hasn't entered password yet
-        if (!hasPass) {
-            btnEl.classList.remove('btn-revealing', 'btn-fully-unlocked');
-            btnEl.style.opacity = '0';
-            btnEl.style.transform = 'translateY(14px) scale(0.94)';
-            btnEl.style.pointerEvents = 'none';
-            if (progressBar) progressBar.style.width = '0%';
-            const userProgress = userVal.length / targetUser.length;
-            if (window.set3DUsernameProgress) window.set3DUsernameProgress(userProgress);
-            if (window.set3DPasswordProgress) window.set3DPasswordProgress(0);
-
-            // Robot eyes awaken and open in cyber green as user types admin!
-            if (window.set3DState) window.set3DState('username');
-            return;
-        }
-
-        // IF USER HAS NOT FULLY FINISHED TYPING 'admin' (e.g. 'adm') but entered password characters
-        if (!isUserExactMatch) {
-            btnEl.classList.remove('btn-revealing', 'btn-fully-unlocked');
-            btnEl.style.opacity = '0';
-            btnEl.style.transform = 'translateY(14px) scale(0.94)';
-            btnEl.style.pointerEvents = 'none';
-            if (progressBar) progressBar.style.width = '0%';
-            const userProgress = userVal.length / targetUser.length;
-            if (window.set3DUsernameProgress) window.set3DUsernameProgress(userProgress);
-            if (window.set3DPasswordProgress) window.set3DPasswordProgress(0);
-            if (window.set3DState) window.set3DState('username');
-            return;
-        }
-
-        // HERE: Both Login ID is 'admin' AND password characters match 'willingdon123' so far!
-        btnEl.classList.add('btn-revealing');
-
-        const progress = matchCount / targetPass.length;
-        const dynamicOpacity = Math.min(1.0, 0.20 + (progress * 0.80));
-        const dynamicTranslateY = (1 - progress) * 10;
-        const dynamicScale = 0.94 + (progress * 0.06);
-
-        btnEl.style.opacity = dynamicOpacity.toFixed(2);
-        btnEl.style.transform = `translateY(${dynamicTranslateY.toFixed(1)}px) scale(${dynamicScale.toFixed(3)})`;
-        if (progressBar) {
-            progressBar.style.width = `${Math.min(100, Math.round(progress * 100))}%`;
-        }
-
-        // Real-time green charging in 3D: eyes open wider in sync with password
-        if (window.set3DUsernameProgress) window.set3DUsernameProgress(1.0);
-        if (window.set3DPasswordProgress) {
-            window.set3DPasswordProgress(progress);
-        }
-
-        // When fully matched
-        if (isExactMatch) {
+        if (hasUser && hasPass) {
             btnEl.classList.add('btn-fully-unlocked');
-            btnEl.style.pointerEvents = 'auto';
-            if (window.set3DState) window.set3DState('ready');
         } else {
             btnEl.classList.remove('btn-fully-unlocked');
-            btnEl.style.pointerEvents = 'none';
-            if (window.set3DState) window.set3DState('password');
         }
     };
 
@@ -1643,9 +1732,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (errorEl) errorEl.style.display = 'none';
             if (window.set3DState) window.set3DState('success');
 
-            // Disable cursor trail immediately upon login so no color trail is left inside website
             document.body.classList.add('logged-in');
-            if (window.disableCursorTrail) window.disableCursorTrail();
+            if (window.stopLoginAnimation) window.stopLoginAnimation();
 
             // Smooth fade-out transition
             const loginScreen = document.getElementById('login-screen');
@@ -1654,7 +1742,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 loginScreen.style.opacity = '0';
                 setTimeout(() => {
                     loginScreen.style.display = 'none';
-                    if (window.disableCursorTrail) window.disableCursorTrail();
+                    if (window.stopLoginAnimation) window.stopLoginAnimation();
                     if (appContainer) {
                         appContainer.style.display = 'block';
                         const mainNav = document.getElementById('main-nav');
@@ -1681,7 +1769,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateTadaTotals();
                 }, 400);
             } else {
-                if (window.disableCursorTrail) window.disableCursorTrail();
+                if (window.stopLoginAnimation) window.stopLoginAnimation();
                 if (appContainer) {
                     appContainer.style.display = 'block';
                     const mainNav = document.getElementById('main-nav');
@@ -1881,6 +1969,66 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // -------------------------------------------------------------
+    // Filename Customization Modal Handling
+    // -------------------------------------------------------------
+    const getDefaultPdfFileName = () => {
+        const subjectVal = (document.getElementById('subject-input')?.value || 'BSc_IT').trim().replace(/[^a-zA-Z0-9_-]/g, '_');
+        const dateVal = (document.getElementById('date-input')?.value || new Date().toISOString().slice(0, 10)).trim().replace(/[^a-zA-Z0-9_-]/g, '_');
+        return `Willingdon_College_${subjectVal}_Exam_Bill_${dateVal}`;
+    };
+
+    const openDownloadFilenameModal = () => {
+        closeDownloadConfirmModal();
+        const modal = document.getElementById('download-filename-modal-backdrop');
+        const input = document.getElementById('pdf-custom-filename-input');
+        if (input) {
+            input.value = getDefaultPdfFileName();
+        }
+        if (modal) {
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                if (input) {
+                    input.focus();
+                    input.select();
+                }
+            }, 80);
+        }
+    };
+
+    const closeDownloadFilenameModal = () => {
+        const modal = document.getElementById('download-filename-modal-backdrop');
+        if (modal) modal.style.display = 'none';
+    };
+
+    const resetDefaultPdfFilename = () => {
+        const input = document.getElementById('pdf-custom-filename-input');
+        if (input) {
+            input.value = getDefaultPdfFileName();
+            input.focus();
+            input.select();
+        }
+    };
+
+    const confirmAndStartPdfDownload = () => {
+        const input = document.getElementById('pdf-custom-filename-input');
+        let chosenName = (input?.value || '').trim();
+        if (!chosenName) {
+            chosenName = getDefaultPdfFileName();
+        }
+        // Sanitize invalid filename characters
+        chosenName = chosenName.replace(/[\\/:*?"<>|]/g, '_').trim();
+        if (chosenName.toLowerCase().endsWith('.pdf')) {
+            chosenName = chosenName.slice(0, -4).trim();
+        }
+        if (!chosenName) {
+            chosenName = getDefaultPdfFileName();
+        }
+        const finalFileName = `${chosenName}.pdf`;
+        closeDownloadFilenameModal();
+        startPdfDownload(finalFileName);
+    };
+
+    // -------------------------------------------------------------
     // Main Download PDF Trigger
     // -------------------------------------------------------------
     const handleDownloadPdf = () => {
@@ -1892,8 +2040,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Form is 100% full: proceed directly to PDF generation
-        startPdfDownload(false);
+        // Form is 100% full: prompt user for file name before download
+        openDownloadFilenameModal();
     };
 
     // -------------------------------------------------------------
@@ -1901,9 +2049,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------------
     let isGeneratingPdf = false;
 
-    const startPdfDownload = async (bypassCheck = false) => {
+    const startPdfDownload = async (customFileNameParam = null) => {
         if (isGeneratingPdf) return;
         closeDownloadConfirmModal();
+        closeDownloadFilenameModal();
 
         // Check if html2canvas and jsPDF are loaded
         const hasJsPdf = (typeof window.jspdf !== 'undefined' && window.jspdf.jsPDF) || (typeof window.jsPDF !== 'undefined');
@@ -1981,20 +2130,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 const currentPercent = Math.round(10 + (i / totalPages) * 75);
                 updateProgress(currentPercent, `Rendering Page ${pageNum} of ${totalPages}: ${config.name}...`);
 
-                // Ensure page is settled
-                await new Promise(r => setTimeout(r, 60));
+                // Ensure page is settled and scrolled into view for accurate layout rendering
+                pageEl.scrollIntoView({ block: 'start', inline: 'nearest' });
+                await new Promise(r => setTimeout(r, 80));
 
                 const canvas = await html2canvas(pageEl, {
-                    scale: 2, // 2x crisp retina resolution
+                    scale: 2.2, // Crisp high-res rendering
                     useCORS: true,
                     logging: false,
                     backgroundColor: '#ffffff',
                     scrollX: 0,
                     scrollY: 0,
+                    windowWidth: pageEl.scrollWidth,
                     ignoreElements: (el) => {
                         return el.classList && (
                             el.classList.contains('no-print') ||
-                            el.classList.contains('cursor-trail-canvas') ||
                             el.id === 'login-screen' ||
                             el.id === 'main-nav' ||
                             el.id === 'download-confirm-modal-backdrop' ||
@@ -2003,11 +2153,31 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                const imgData = canvas.toDataURL('image/jpeg', 0.98);
+
+                // Calculate proportional dimensions to preserve true aspect ratio (prevents squashing or stretching)
+                const canvasRatio = canvas.height / canvas.width;
+                const pageRatio = config.heightMm / config.widthMm;
+                let renderWidth = config.widthMm;
+                let renderHeight = config.heightMm;
+                let posX = 0;
+                let posY = 0;
+
+                if (canvasRatio > pageRatio) {
+                    // Element is slightly taller than A4 page: scale by height to prevent vertical squashing
+                    renderHeight = config.heightMm;
+                    renderWidth = renderHeight / canvasRatio;
+                    posX = (config.widthMm - renderWidth) / 2;
+                } else {
+                    // Element matches or is slightly shorter: fit width and center vertically
+                    renderWidth = config.widthMm;
+                    renderHeight = renderWidth * canvasRatio;
+                    posY = (config.heightMm - renderHeight) / 2;
+                }
 
                 if (i === 0) {
                     // First page: jsPDF initialized in portrait A4
-                    pdf.addImage(imgData, 'JPEG', 0, 0, config.widthMm, config.heightMm, undefined, 'FAST');
+                    pdf.addImage(imgData, 'JPEG', posX, posY, renderWidth, renderHeight, undefined, 'SLOW');
                 } else {
                     // Add subsequent pages with appropriate orientation
                     if (config.orientation === 'landscape') {
@@ -2015,29 +2185,32 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         pdf.addPage([210, 297], 'portrait');
                     }
-                    pdf.addImage(imgData, 'JPEG', 0, 0, config.widthMm, config.heightMm, undefined, 'FAST');
+                    pdf.addImage(imgData, 'JPEG', posX, posY, renderWidth, renderHeight, undefined, 'SLOW');
                 }
             }
 
             updateProgress(92, 'Compiling 8-page document...');
             await new Promise(r => setTimeout(r, 120));
 
-            // Generate clean filename based on subject and date
-            const subjectVal = (document.getElementById('subject-input')?.value || 'BSc_IT').replace(/[^a-zA-Z0-9_-]/g, '_');
-            const dateVal = (document.getElementById('date-input')?.value || '2026-09-23').replace(/[^a-zA-Z0-9_-]/g, '_');
-            const fileName = `Willingdon_College_${subjectVal}_Exam_Bill_${dateVal}.pdf`;
+            // Determine filename: use custom provided name or compute intelligent default
+            let fileName = typeof customFileNameParam === 'string' && customFileNameParam.trim()
+                ? customFileNameParam.trim()
+                : `${getDefaultPdfFileName()}.pdf`;
+            if (!fileName.toLowerCase().endsWith('.pdf')) {
+                fileName += '.pdf';
+            }
 
             updateProgress(98, 'Downloading PDF to your computer...');
             await new Promise(r => setTimeout(r, 80));
 
-            // Save PDF directly to user's PC
+            // Save PDF directly to user's PC with chosen custom name
             pdf.save(fileName);
 
             updateProgress(100, 'Download complete!');
             await new Promise(r => setTimeout(r, 400));
 
             // Show Toast
-            showToastNotification('✓ PDF successfully downloaded to your computer!');
+            showToastNotification(`✓ PDF successfully saved as "${fileName}"!`);
         } catch (err) {
             console.error('Error generating PDF:', err);
             alert('An error occurred while creating the PDF: ' + err.message);
@@ -2045,6 +2218,303 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.remove('pdf-export-mode');
             if (progressModal) progressModal.style.display = 'none';
             isGeneratingPdf = false;
+        }
+    };
+
+    // -------------------------------------------------------------
+    // Page 8 (Final Bill & TA/DA) Excel Soft Copy Generation (.xlsx)
+    // -------------------------------------------------------------
+    const downloadPage8Excel = () => {
+        if (typeof XLSX === 'undefined') {
+            alert('Excel export engine (SheetJS) is not ready. Please refresh the page and try again.');
+            return;
+        }
+
+        try {
+            // Helper to get string value from input or text element
+            const getStr = (id, fallback = '') => {
+                const el = typeof id === 'string' ? document.getElementById(id) : id;
+                if (!el) return fallback;
+                const v = (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') ? el.value : el.textContent;
+                return (v !== null && v !== undefined && v !== '') ? v.trim() : fallback;
+            };
+
+            // Helper to get numeric value
+            const getNum = (id, fallback = 0) => {
+                const s = getStr(id);
+                const n = parseFloat(s);
+                return isNaN(n) ? fallback : n;
+            };
+
+            // College & Exam Details
+            const collegeName = "D.E.Society's, Willingdon College, Sangli";
+            const examTitle = "Autonomous College Practical Examination";
+            const month = getStr('p8-month-input') || getStr('month-dropdown') || document.querySelector('.month-display')?.textContent?.trim() || 'March';
+            const year = getStr('p8-year-input') || getStr('year-input') || document.querySelector('.year-display')?.textContent?.trim() || '2025';
+            const classesTitle = "(B.A., B.Sc.., BCS, B.Sc. IT Part I, M.A., M.Sc. Part I)";
+            const billTitle = "Practical Examiners Rem. Bill (Viva) (A.3.P.25)";
+            const subject = getStr('subject-input') || document.querySelector('.subject-display')?.textContent?.trim() || getStr('subject-dropdown') || 'Autonomous Practical Exam';
+
+            // Remuneration Bill Data
+            const expName = getStr('p7-exp-name');
+            const expClass = getStr('p8-exp-class');
+            const expDesig = getStr('p7-exp-desig', 'Expert');
+            const expAmt = getNum('p7-exp-amt');
+            const expBank = getStr('p8-exp-bank');
+            const expAcc = getStr('p8-exp-acc');
+            const expIfsc = getStr('p8-exp-ifsc');
+            const expTotal = getNum('exp-bill-total') || expAmt;
+
+            const extName = getStr('p7-ext-name');
+            const extClass = getStr('p8-ext-class');
+            const extDesig = getStr('p7-ext-desig', 'External Examiner');
+            const extAmt = getNum('p7-ext-amt');
+            const extBank = getStr('p8-ext-bank');
+            const extAcc = getStr('p8-ext-acc');
+            const extIfsc = getStr('p8-ext-ifsc');
+            const extTotal = getNum('ext-bill-total') || extAmt;
+
+            const intName = getStr('p7-int-name');
+            const intClass = getStr('p8-int-class');
+            const intDesig = getStr('p7-int-desig', 'Internal Examiner');
+            const intAmt = getNum('p7-int-amt');
+            const intBank = getStr('p8-int-bank');
+            const intAcc = getStr('p8-int-acc');
+            const intIfsc = getStr('p8-int-ifsc');
+            const intTotal = getNum('int-bill-total') || intAmt;
+
+            const lab1Name = getStr('p7-lab-name-1');
+            const lab1Class = getStr('p8-lab1-class');
+            const lab1Desig = getStr('p7-lab-desig-1', 'Lab. Attendent');
+            const lab1Amt = getNum('p7-lab-amt-1');
+            const lab1Bank = getStr('p8-lab1-bank');
+            const lab1Acc = getStr('p8-lab1-acc');
+            const lab1Ifsc = getStr('p8-lab1-ifsc');
+
+            const lab2Name = getStr('p7-lab-name-2');
+            const lab2Class = getStr('p8-lab2-class');
+            const lab2Desig = getStr('p7-lab-desig-2', 'Lab. Attendent');
+            const lab2Amt = getNum('p7-lab-amt-2');
+            const lab2Bank = getStr('p8-lab2-bank');
+            const lab2Acc = getStr('p8-lab2-acc');
+            const lab2Ifsc = getStr('p8-lab2-ifsc');
+            const labTotal = getNum('lab-bill-total') || (lab1Amt + lab2Amt);
+
+            const tadaUpperName = getStr('p8-tada-ext-name') || extName;
+            const tadaUpperClass = getStr('p8-tada-upper-class') || extClass;
+            const tadaUpperDesig = getStr('p8-tada-upper-desig', 'External Examiner');
+            const tadaUpperAmt = getNum('p8-tada-upper-amt');
+            const tadaUpperBank = getStr('p8-tada-bank') || extBank;
+            const tadaUpperAcc = getStr('p8-tada-acc') || extAcc;
+            const tadaUpperIfsc = getStr('p8-tada-ifsc') || extIfsc;
+            const tadaUpperTotal = getNum('tada-bill-total') || tadaUpperAmt;
+
+            const billGrandTotal = getNum('bill-grand-total');
+
+            // TA/DA Details Section
+            const tada1Name = getStr('p8-ext-name') || extName;
+            const tada1Desig = getStr('p8-tada-desig-1', 'External Examiner');
+            const tada1College = getStr('p8-ext-college');
+            const tadaDates = document.querySelectorAll('.tada-date-picker');
+            const tada1Date = tadaDates[0]?.value ? tadaDates[0].value.trim() : '';
+            const tada1Class = getStr('p8-tada-class-1') || extClass;
+            const tada1Details = getStr('p8-tada-details-1');
+            const tada1TA = getNum(document.querySelector('.tada-val-input[data-row="1"][data-type="ta"]'));
+            const tada1Auto = getNum(document.querySelector('.tada-val-input[data-row="1"][data-type="auto"]'));
+            const tada1DA = getNum(document.querySelector('.tada-val-input[data-row="1"][data-type="da"]'));
+            const tada1Local = getNum(document.querySelector('.tada-val-input[data-row="1"][data-type="local"]'));
+            const tada1Total = getNum('tada-total-1') || (tada1TA + tada1Auto + tada1DA + tada1Local);
+
+            const tada2Name = getStr('p8-ext-name-2');
+            const tada2Desig = getStr('p8-tada-desig-2', 'External Examiner');
+            const tada2College = getStr('p8-ext-college-2');
+            const tada2Date = tadaDates[1]?.value ? tadaDates[1].value.trim() : '';
+            const tada2Class = getStr('p8-tada-class-2');
+            const tada2Details = getStr('p8-tada-details-2');
+            const tada2TA = getNum(document.querySelector('.tada-val-input[data-row="2"][data-type="ta"]'));
+            const tada2Auto = getNum(document.querySelector('.tada-val-input[data-row="2"][data-type="auto"]'));
+            const tada2DA = getNum(document.querySelector('.tada-val-input[data-row="2"][data-type="da"]'));
+            const tada2Local = getNum(document.querySelector('.tada-val-input[data-row="2"][data-type="local"]'));
+            const tada2Total = getNum('tada-total-2') || (tada2TA + tada2Auto + tada2DA + tada2Local);
+
+            const tadaTASum = getNum('tada-ta-sum') || (tada1TA + tada2TA);
+            const tadaAutoSum = getNum('tada-auto-sum') || (tada1Auto + tada2Auto);
+            const tadaDASum = getNum('tada-da-sum') || (tada1DA + tada2DA);
+            const tadaLocalSum = getNum('tada-local-sum') || (tada1Local + tada2Local);
+            const tadaGrandTotal = getNum('tada-grand-total') || (tada1Total + tada2Total);
+
+            // Final Summary List
+            const sumExp = getNum('sum-exp') || expTotal;
+            const sumInt = getNum('sum-int') || intTotal;
+            const sumExt = getNum('sum-ext') || extTotal;
+            const sumLab = getNum('sum-lab') || labTotal;
+            const sumPaper = getNum(document.querySelector('.sum-manual-input'));
+            const sumTA = getNum('sum-ta') || (tadaTASum + tadaAutoSum);
+            const sumDA = getNum('sum-da') || tadaDASum;
+            const sumLocal = getNum('sum-local') || tadaLocalSum;
+            const finalGrandTotal = getNum('final-grand-total') || billGrandTotal;
+
+            // Build Workbook
+            const wb = XLSX.utils.book_new();
+
+            // ==========================================
+            // SHEET 1: Complete Page 8 (Final Bill & TA-DA)
+            // ==========================================
+            const p8Aoa = [
+                [collegeName],
+                [`${examTitle} ${month} ${year}`],
+                [classesTitle],
+                [billTitle],
+                [`Subject : ${subject}`],
+                [],
+                ["PRACTICAL EXAMINERS REMUNERATION BILL (VIVA)"],
+                ["NO.", "Name of Staff", "Class", "Designation", "Amount (Rs.)", "Bank Name", "Account No.", "IFSC Code"],
+                ["Expert"],
+                [1, expName, expClass, expDesig, expAmt, expBank, expAcc, expIfsc],
+                ["", "", "", "Total Expert:", expTotal, "", "", ""],
+                ["External Examiner"],
+                [1, extName, extClass, extDesig, extAmt, extBank, extAcc, extIfsc],
+                ["", "", "", "Total External:", extTotal, "", "", ""],
+                ["Internal Examiner"],
+                [1, intName, intClass, intDesig, intAmt, intBank, intAcc, intIfsc],
+                ["", "", "", "Total Internal:", intTotal, "", "", ""],
+                ["Lab Staff"],
+                [1, lab1Name, lab1Class, lab1Desig, lab1Amt, lab1Bank, lab1Acc, lab1Ifsc],
+                [2, lab2Name, lab2Class, lab2Desig, lab2Amt, lab2Bank, lab2Acc, lab2Ifsc],
+                ["", "", "", "Total Lab Staff:", labTotal, "", "", ""],
+                ["TA /DA External Examination"],
+                [1, tadaUpperName, tadaUpperClass, tadaUpperDesig, tadaUpperAmt, tadaUpperBank, tadaUpperAcc, tadaUpperIfsc],
+                ["", "", "", "Total TA/DA (Combined):", tadaUpperTotal, "", "", ""],
+                ["", "", "", "BILL GRAND TOTAL:", billGrandTotal, "", "", ""],
+                [],
+                ["PRACTICAL EXAMINERS TA/DA DETAILS (A.3.P.29)"],
+                ["NO.", "Name of External Examiner", "Designation", "Name of the College", "Practical/ Viva Date", "Class", "Details of TA", "TA (Rs.)", "Auto (Rs.)", "DA (Rs.)", "Local (Rs.)", "Total Bill Amt Rs."],
+                [1, tada1Name, tada1Desig, tada1College, tada1Date, tada1Class, tada1Details, tada1TA, tada1Auto, tada1DA, tada1Local, tada1Total],
+                [2, tada2Name, tada2Desig, tada2College, tada2Date, tada2Class, tada2Details, tada2TA, tada2Auto, tada2DA, tada2Local, tada2Total],
+                ["", "", "", "", "", "", "Total TA/DA Details:", tadaTASum, tadaAutoSum, tadaDASum, tadaLocalSum, tadaGrandTotal],
+                [],
+                ["FINAL SUMMARY LIST", "Amount (Rs.)"],
+                ["Expert", sumExp],
+                ["Internal Examiner", sumInt],
+                ["External Examiner", sumExt],
+                ["Lab. Staff", sumLab],
+                ["Practical Paper Setting", sumPaper],
+                ["External Examiner TA", sumTA],
+                ["External Examiner DA", sumDA],
+                ["Local Allowance", sumLocal],
+                ["GRAND TOTAL (ALL)", finalGrandTotal],
+                [],
+                ["EXAMINATION BILL CERTIFICATION & APPROVAL"],
+                ["Certified that the above examiners, experts, and lab staff have performed their examination duties and the amounts claimed are verified, calculated, and passed in accordance with autonomous college regulations."],
+                [],
+                ["Clerk: ____________________", "", "Head of Department: ____________________", "", "", "Principal: ____________________"]
+            ];
+
+            const ws1 = XLSX.utils.aoa_to_sheet(p8Aoa);
+            ws1['!cols'] = [
+                { wch: 6 },
+                { wch: 30 },
+                { wch: 14 },
+                { wch: 22 },
+                { wch: 16 },
+                { wch: 24 },
+                { wch: 22 },
+                { wch: 16 },
+                { wch: 12 },
+                { wch: 12 },
+                { wch: 12 },
+                { wch: 16 }
+            ];
+            XLSX.utils.book_append_sheet(wb, ws1, "Final Bill & TA-DA");
+
+            // ==========================================
+            // SHEET 2: Bank Payment Details (Accounts NEFT/RTGS)
+            // ==========================================
+            const bankAoa = [
+                [collegeName],
+                [`Autonomous College Practical Examination - Bank Payment Advice (${month} ${year})`],
+                [`Subject: ${subject}`],
+                [],
+                ["Sr.", "Beneficiary Name", "Class", "Role / Designation", "Amount (Rs.)", "Bank Name", "Account Number", "IFSC Code"]
+            ];
+
+            let bIndex = 1;
+            const addBankRow = (name, cls, desig, amt, bank, acc, ifsc) => {
+                if (name || amt > 0 || acc) {
+                    bankAoa.push([bIndex++, name, cls, desig, amt, bank, acc, ifsc]);
+                }
+            };
+
+            addBankRow(expName, expClass, expDesig, expAmt, expBank, expAcc, expIfsc);
+            addBankRow(extName, extClass, extDesig, extAmt, extBank, extAcc, extIfsc);
+            addBankRow(intName, intClass, intDesig, intAmt, intBank, intAcc, intIfsc);
+            addBankRow(lab1Name, lab1Class, lab1Desig, lab1Amt, lab1Bank, lab1Acc, lab1Ifsc);
+            addBankRow(lab2Name, lab2Class, lab2Desig, lab2Amt, lab2Bank, lab2Acc, lab2Ifsc);
+            if (tadaUpperAmt > 0 && (tadaUpperName !== extName || tadaUpperAcc !== extAcc)) {
+                addBankRow(tadaUpperName, tadaUpperClass, tadaUpperDesig, tadaUpperAmt, tadaUpperBank, tadaUpperAcc, tadaUpperIfsc);
+            }
+
+            const totalBankAmt = expAmt + extAmt + intAmt + lab1Amt + lab2Amt + ((tadaUpperAmt > 0 && (tadaUpperName !== extName || tadaUpperAcc !== extAcc)) ? tadaUpperAmt : 0);
+            bankAoa.push([]);
+            bankAoa.push(["", "TOTAL DISBURSEMENT AMOUNT", "", "", totalBankAmt, "", "", ""]);
+
+            const wsBank = XLSX.utils.aoa_to_sheet(bankAoa);
+            wsBank['!cols'] = [
+                { wch: 6 },
+                { wch: 30 },
+                { wch: 14 },
+                { wch: 22 },
+                { wch: 16 },
+                { wch: 24 },
+                { wch: 22 },
+                { wch: 16 }
+            ];
+            XLSX.utils.book_append_sheet(wb, wsBank, "Bank Payment Details");
+
+            // ==========================================
+            // SHEET 3: TA-DA Breakdown
+            // ==========================================
+            const tadaAoa = [
+                [collegeName],
+                [`Practical Examiners TA/DA Statement (A.3.P.29) - ${month} ${year}`],
+                [`Subject: ${subject}`],
+                [],
+                ["NO.", "Name of External Examiner", "Designation", "College", "Exam Date", "Class", "TA Route/Details", "TA (Rs.)", "Auto (Rs.)", "DA (Rs.)", "Local (Rs.)", "Total (Rs.)"],
+                [1, tada1Name, tada1Desig, tada1College, tada1Date, tada1Class, tada1Details, tada1TA, tada1Auto, tada1DA, tada1Local, tada1Total],
+                [2, tada2Name, tada2Desig, tada2College, tada2Date, tada2Class, tada2Details, tada2TA, tada2Auto, tada2DA, tada2Local, tada2Total],
+                ["", "", "", "", "", "", "TOTAL TA/DA:", tadaTASum, tadaAutoSum, tadaDASum, tadaLocalSum, tadaGrandTotal]
+            ];
+            const wsTada = XLSX.utils.aoa_to_sheet(tadaAoa);
+            wsTada['!cols'] = [
+                { wch: 6 },
+                { wch: 28 },
+                { wch: 20 },
+                { wch: 28 },
+                { wch: 14 },
+                { wch: 12 },
+                { wch: 24 },
+                { wch: 12 },
+                { wch: 12 },
+                { wch: 12 },
+                { wch: 12 },
+                { wch: 16 }
+            ];
+            XLSX.utils.book_append_sheet(wb, wsTada, "TA-DA Statement");
+
+            // Generate clean filename
+            const cleanSub = subject.replace(/[^a-zA-Z0-9_-]/g, '_').substring(0, 30);
+            const cleanMo = month.replace(/[^a-zA-Z0-9_-]/g, '_');
+            const cleanYr = year.replace(/[^a-zA-Z0-9_-]/g, '_');
+            const fileName = `Page8_Final_Bill_TA_DA_${cleanSub}_${cleanMo}_${cleanYr}.xlsx`;
+
+            // Export to Excel file
+            XLSX.writeFile(wb, fileName);
+            if (typeof showStatus === 'function') {
+                showStatus('✓ Page 8 Excel Downloaded Successfully!', 'success');
+            }
+        } catch (err) {
+            console.error('Error generating Page 8 Excel:', err);
+            alert('Failed to generate Excel file: ' + err.message);
         }
     };
 
@@ -2064,9 +2534,14 @@ document.addEventListener('DOMContentLoaded', () => {
     window.checkFormFilledStatus = checkFormFilledStatus;
     window.openDownloadConfirmModal = openDownloadConfirmModal;
     window.closeDownloadConfirmModal = closeDownloadConfirmModal;
+    window.openDownloadFilenameModal = openDownloadFilenameModal;
+    window.closeDownloadFilenameModal = closeDownloadFilenameModal;
+    window.resetDefaultPdfFilename = resetDefaultPdfFilename;
+    window.confirmAndStartPdfDownload = confirmAndStartPdfDownload;
     window.focusFirstMissingField = focusFirstMissingField;
     window.handleDownloadPdf = handleDownloadPdf;
     window.startPdfDownload = startPdfDownload;
+    window.downloadPage8Excel = downloadPage8Excel;
 
     // Initial sequence
     assignPermanentFieldKeys();
@@ -2129,6 +2604,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     initNavTabs();
+
+    // Setup Floating Back-to-Top Button
+    const scrollTopBtn = document.getElementById('scroll-to-top-btn');
+    if (scrollTopBtn) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 350) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        }, { passive: true });
+    }
+
+    // Global ESC key listener to dismiss open dialogs
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (typeof closeDownloadFilenameModal === 'function') closeDownloadFilenameModal();
+            if (typeof closeDownloadConfirmModal === 'function') closeDownloadConfirmModal();
+            if (typeof closeShareModal === 'function') closeShareModal();
+        }
+    });
 
     setTimeout(() => {
         syncAllDisplays();
