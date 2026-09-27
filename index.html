@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/webp" href="college-logo.webp">
-    <link rel="stylesheet" href="styles.css?v=8.7">
+    <link rel="stylesheet" href="styles.css?v=9.1">
 </head>
 
 <body style="word-wrap: break-word;">
@@ -286,7 +286,7 @@
 
             <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
 
-            <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width=653
+            <table id="p1-attendance-table" class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width=653
                 style='width:489.8pt;margin-left:21.75pt;border-collapse:collapse;border:none'>
                 <tr style='height:89.1pt'>
                     <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
@@ -324,12 +324,13 @@
                         <p class=MsoNormal><span lang=EN-US>were absent Total</span></p>
                     </td>
                 </tr>
-                <tr style='height:62.1pt'>
+                <tr class="batch-row" style='height:62.1pt'>
                     <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:62.1pt'>
-                        <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US><select
+                        <p class=MsoNormal align=center style='text-align:center; margin-bottom: 3px;'><b><span lang=EN-US><select
+                                        id="p1-batch-dropdown-1"
                                         class="batch-dropdown"
-                                        style="font-size: 14px; font-weight: bold; font-family: inherit; margin: 0; padding: 2px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer;">
+                                        style="font-size: 13px; font-weight: bold; font-family: inherit; margin: 0; padding: 2px 4px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer; width: 100%;">
                                         <option value="Batch I" selected>Batch I</option>
                                         <option value="Batch II">Batch II</option>
                                         <option value="Batch III">Batch III</option>
@@ -337,7 +338,22 @@
                                         <option value="Batch V">Batch V</option>
                                         <option value="Batch VI">Batch VI</option>
                                     </select></span></b></p>
-                        <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US>&nbsp;</span></p>
+                        <div class="batch-datetime-container" style="display: flex; align-items: center; justify-content: center; gap: 2px; position: relative; width: 100%; margin-top: 4px;">
+                            <input type="text" class="batch-date-input" placeholder="DD/MM/YYYY" id="p1-batch-date-1"
+                                style="width: calc(100% - 22px); border: 1px solid #ccc; border-radius: 3px; padding: 2px 3px; font-size: 11px; text-align: center; font-family: inherit; background: white;">
+                            <div class="no-print"
+                                style="position: relative; width: 18px; height: 18px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;">
+                                <input type="date" class="batch-date-picker" title="Select Date from Calendar"
+                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;">
+                                <svg width="15" height="15" fill="none" stroke="#2563eb" stroke-width="2"
+                                    viewBox="0 0 24 24" style="pointer-events: none; z-index: 1;">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                            </div>
+                        </div>
                     </td>
                     <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
@@ -364,12 +380,13 @@
                                     class="table-input col-5-input" placeholder="0" id="p1-r1-c5"></span></p>
                     </td>
                 </tr>
-                <tr style='height:56.6pt'>
+                <tr class="batch-row" style='height:56.6pt'>
                     <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:56.6pt'>
-                        <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US><select
+                        <p class=MsoNormal align=center style='text-align:center; margin-bottom: 3px;'><b><span lang=EN-US><select
+                                        id="p1-batch-dropdown-2"
                                         class="batch-dropdown"
-                                        style="font-size: 14px; font-weight: bold; font-family: inherit; margin: 0; padding: 2px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer;">
+                                        style="font-size: 13px; font-weight: bold; font-family: inherit; margin: 0; padding: 2px 4px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer; width: 100%;">
                                         <option value="Batch I">Batch I</option>
                                         <option value="Batch II" selected>Batch II</option>
                                         <option value="Batch III">Batch III</option>
@@ -377,7 +394,22 @@
                                         <option value="Batch V">Batch V</option>
                                         <option value="Batch VI">Batch VI</option>
                                     </select></span></b></p>
-                        <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US>&nbsp;</span></p>
+                        <div class="batch-datetime-container" style="display: flex; align-items: center; justify-content: center; gap: 2px; position: relative; width: 100%; margin-top: 4px;">
+                            <input type="text" class="batch-date-input" placeholder="DD/MM/YYYY" id="p1-batch-date-2"
+                                style="width: calc(100% - 22px); border: 1px solid #ccc; border-radius: 3px; padding: 2px 3px; font-size: 11px; text-align: center; font-family: inherit; background: white;">
+                            <div class="no-print"
+                                style="position: relative; width: 18px; height: 18px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;">
+                                <input type="date" class="batch-date-picker" title="Select Date from Calendar"
+                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;">
+                                <svg width="15" height="15" fill="none" stroke="#2563eb" stroke-width="2"
+                                    viewBox="0 0 24 24" style="pointer-events: none; z-index: 1;">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                            </div>
+                        </div>
                     </td>
                     <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
@@ -404,12 +436,13 @@
                                     class="table-input col-5-input" placeholder="0" id="p1-r2-c5"></span></p>
                     </td>
                 </tr>
-                <tr style='height:47.15pt'>
+                <tr class="batch-row" style='height:47.15pt'>
                     <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
-                        <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US><select
+                        <p class=MsoNormal align=center style='text-align:center; margin-bottom: 3px;'><b><span lang=EN-US><select
+                                        id="p1-batch-dropdown-3"
                                         class="batch-dropdown"
-                                        style="font-size: 14px; font-weight: bold; font-family: inherit; margin: 0; padding: 2px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer;">
+                                        style="font-size: 13px; font-weight: bold; font-family: inherit; margin: 0; padding: 2px 4px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer; width: 100%;">
                                         <option value="Batch I">Batch I</option>
                                         <option value="Batch II">Batch II</option>
                                         <option value="Batch III" selected>Batch III</option>
@@ -417,7 +450,31 @@
                                         <option value="Batch V">Batch V</option>
                                         <option value="Batch VI">Batch VI</option>
                                     </select></span></b></p>
-                        <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US>&nbsp;</span></p>
+                        <div class="batch-datetime-container" style="display: flex; align-items: center; justify-content: center; gap: 2px; position: relative; width: 100%; margin-top: 4px;">
+                            <input type="text" class="batch-date-input" placeholder="DD/MM/YYYY" id="p1-batch-date-3"
+                                style="width: calc(100% - 22px); border: 1px solid #ccc; border-radius: 3px; padding: 2px 3px; font-size: 11px; text-align: center; font-family: inherit; background: white;">
+                            <div class="no-print"
+                                style="position: relative; width: 18px; height: 18px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;">
+                                <input type="date" class="batch-date-picker" title="Select Date from Calendar"
+                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;">
+                                <svg width="15" height="15" fill="none" stroke="#2563eb" stroke-width="2"
+                                    viewBox="0 0 24 24" style="pointer-events: none; z-index: 1;">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <div id="batch-add-btn-container" class="no-print" style="margin-top: 6px; text-align: center;">
+                            <button type="button" id="add-batch-row-btn" title="Add another batch row" style="display: inline-flex; align-items: center; justify-content: center; gap: 4px; padding: 3px 8px; font-size: 11px; font-weight: bold; background: #e0f2fe; color: #0284c7; border: 1px dashed #0284c7; border-radius: 4px; cursor: pointer; transition: all 0.2s;">
+                                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="12" y2="12"></line>
+                                </svg>
+                                <span>+ Add Batch</span>
+                            </button>
+                        </div>
                     </td>
                     <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
@@ -444,7 +501,7 @@
                                     class="table-input col-5-input" placeholder="0" id="p1-r3-c5"></span></p>
                     </td>
                 </tr>
-                <tr style='height:47.15pt'>
+                <tr id="p1-total-row" style='height:47.15pt'>
                     <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
                         <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US>&nbsp;</span></b>
@@ -493,8 +550,8 @@
                             style="font-weight: bold; border-bottom: 1px dashed #000; min-width: 200px; display: inline-block; padding: 0 5px;"></span></span></b><span
                     lang=EN-US style='font-size:10.0pt;line-height:115%'> </span><b><span lang=EN-US></span></b><span
                     lang=EN-US style='font-size:10.0pt;
-line-height:115%'></span><b><span lang=EN-US></span></b><span lang=EN-US>2) <b><u><span class="examiner2-display"
-                                style="font-weight: bold; border-bottom: 1px dashed #000; min-width: 200px; display: inline-block; padding: 0 5px;"></span></u>
+line-height:115%'></span><b><span lang=EN-US></span></b><span lang=EN-US>2) <b><span class="examiner2-display"
+                                style="font-weight: bold; border-bottom: 1px dashed #000; min-width: 200px; display: inline-block; padding: 0 5px;"></span>
                     </b></span></p>
 
             <p class=MsoNormal style='line-height:115%'><b><u><span lang=EN-US><span
@@ -612,8 +669,8 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                     lang=EN-US style='font-size:10.0pt;
 line-height:115%'> </span><b><span lang=EN-US></span></b><span lang=EN-US
                     style='font-size:10.0pt;line-height:115%'></span><b><span lang=EN-US></span></b><span lang=EN-US>2)
-                    <b><u><span class="examiner2-display"
-                                style="font-weight: bold; border-bottom: 1px dashed #000; min-width: 200px; display: inline-block; padding: 0 5px;"></span></u></b>
+                    <b><span class="examiner2-display"
+                                style="font-weight: bold; border-bottom: 1px dashed #000; min-width: 200px; display: inline-block; padding: 0 5px;"></span></b>
                 </span></p>
 
             <p class=MsoNormal align=right style='margin-left:288.0pt;text-align:right;
@@ -677,7 +734,7 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                             class="year-display">2025</span></span></b></p>
 
             <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
-                    style='font-size:14.0pt'>CIRTIFICATE
+                    style='font-size:14.0pt'>CERTIFICATE
                     REGARDING THE ARRANGEMENTS OF PRACTICAL</span></p>
 
             <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US
@@ -754,8 +811,7 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
 
             <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
 
-            <p class=MsoNormal><span lang=EN-US>______________<u>ALL EXPERIMENTS WERE
-                        ARRENGED ____________</u>_________________________</span></p>
+            <p class=MsoNormal align=center style='text-align:center; margin: 15px 0;'><b><u>ALL EXPERIMENTS WERE ARRANGED</u></b></p>
 
             <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
 
@@ -772,8 +828,8 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                     lang=EN-US style='font-size:10.0pt'>
                 </span><b><span lang=EN-US></span></b><span lang=EN-US style='font-size:
 10.0pt'></span><b><span lang=EN-US></span></b><span lang=EN-US>2)
-                    <b><u><span class="examiner2-display"
-                                style="font-weight: bold; border-bottom: 1px dashed #000; min-width: 200px; display: inline-block; padding: 0 5px;"></span></u></b>
+                    <b><span class="examiner2-display"
+                                style="font-weight: bold; border-bottom: 1px dashed #000; min-width: 200px; display: inline-block; padding: 0 5px;"></span></b>
                 </span></p>
 
             <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
@@ -973,95 +1029,83 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                     <td style="border: 1px solid black; padding: 5px;">
                         <input type="text" id="p5-exam-title-1" class="remun-title-input" value="B.Sc./B.C.S. Part I">
                     </td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="17.00"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="" data-default="17.00" id="p5-rate-1"
                             class="remun-input rate-input"></td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="2"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="" data-default="2" id="p5-examiners-1"
                             class="remun-input examiners-input"></td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="14.00"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="" data-default="14.00" id="p5-per-student-1"
                             class="remun-input per-student-input"></td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="student-count">0</p>
+                        <input type="number" min="0" id="p5-student-count-1" class="remun-input student-count student-count-input" placeholder="0">
                     </td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="remun-calc">0</p>
+                        <p class="remun-calc"></p>
                     </td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="total-remun">0</p>
+                        <p class="total-remun"></p>
                     </td>
                 </tr>
                 <tr id="remun-row-part2" style="text-align: center;">
                     <td style="border: 1px solid black; padding: 5px;">
                         <input type="text" id="p5-exam-title-2" class="remun-title-input" value="B.Sc./B.C.S. Part II">
                     </td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="25.00"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="" data-default="25.00" id="p5-rate-2"
                             class="remun-input rate-input"></td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="2"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="" data-default="2" id="p5-examiners-2"
                             class="remun-input examiners-input"></td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="14.00"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="" data-default="14.00" id="p5-per-student-2"
                             class="remun-input per-student-input"></td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="student-count">0</p>
+                        <input type="number" min="0" id="p5-student-count-2" class="remun-input student-count student-count-input" placeholder="">
                     </td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="remun-calc">0</p>
+                        <p class="remun-calc"></p>
                     </td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="total-remun">0</p>
+                        <p class="total-remun"></p>
                     </td>
                 </tr>
                 <tr id="remun-row-part3" style="text-align: center;">
                     <td style="border: 1px solid black; padding: 5px;">
                         <input type="text" id="p5-exam-title-3" class="remun-title-input" value="B.Sc./B.C.S. Part III">
                     </td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="40.00"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="" data-default="40.00" id="p5-rate-3"
                             class="remun-input rate-input"></td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="2"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="" data-default="2" id="p5-examiners-3"
                             class="remun-input examiners-input"></td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="21.00"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="" data-default="21.00" id="p5-per-student-3"
                             class="remun-input per-student-input"></td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="student-count">0</p>
+                        <input type="number" min="0" id="p5-student-count-3" class="remun-input student-count student-count-input" placeholder="">
                     </td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="remun-calc">0</p>
+                        <p class="remun-calc"></p>
                     </td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="total-remun">0</p>
+                        <p class="total-remun"></p>
                     </td>
                 </tr>
                 <tr id="remun-row-ogt" style="text-align: center;">
                     <td style="border: 1px solid black; padding: 5px;">
                         <input type="text" id="p5-exam-title-ogt" class="remun-title-input" value="OGT/Projects">
                     </td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="50.00"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="" data-default="50.00" id="p5-rate-ogt"
                             class="remun-input rate-input"></td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="2"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="" data-default="2" id="p5-examiners-ogt"
                             class="remun-input examiners-input"></td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="25.00"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="" data-default="25.00" id="p5-per-student-ogt"
                             class="remun-input per-student-input"></td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="student-count">0</p>
+                        <input type="number" min="0" id="p5-student-count-ogt" class="remun-input student-count student-count-input" placeholder="">
                     </td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="remun-calc">0</p>
+                        <p class="remun-calc"></p>
                     </td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="total-remun">0</p>
+                        <p class="total-remun"></p>
                     </td>
                 </tr>
-                <tr id="remun-row-extra" style="text-align: center;">
-                    <td colspan="6" style="border: 1px solid black; padding: 5px; text-align: right;">
-                        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
-                            <input type="text" placeholder="Remarks (optional)" style="flex: 1; border: none; text-align: right; background: transparent; font-family: inherit; font-size: 13px;">
-                            <label style="font-weight: bold; font-size: 13px; white-space: nowrap;">Date / दिनांक :</label>
-                            <span class="date-display print-date-display" style="display: none; font-weight: bold;">23/09/2026</span>
-                            <input type="date" value="2026-09-23" class="page-date-sync-input remun-date-input no-print-date" title="Select Date" style="font-size: 13px; font-weight: bold; cursor: pointer; vertical-align: middle;">
-                        </div>
-                    </td>
-                    <td style="border: 1px solid black; padding: 5px;">
-                        <input type="number" step="0.01" id="remun-extra-p5" class="remun-input remun-extra-input" placeholder="0" style="width: 100%; border: none; text-align: center; font-size: 14px; font-weight: bold; background: transparent;">
-                    </td>
-                </tr>
+
                 <tr id="remun-row-total" style="text-align: center; font-weight: bold; background-color: #f8f9fa;">
                     <td colspan="6" style="border: 1px solid black; padding: 5px; text-align: right;">
                         Total :
@@ -1228,95 +1272,83 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                     <td style="border: 1px solid black; padding: 5px;">
                         <input type="text" id="p6-exam-title-1" class="remun-title-input" value="B.Sc./B.C.S. Part I">
                     </td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="17.00"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="" data-default="17.00" id="p6-rate-1"
                             class="remun-input rate-input"></td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="2"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="" data-default="2" id="p6-examiners-1"
                             class="remun-input examiners-input"></td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="14.00"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="" data-default="14.00" id="p6-per-student-1"
                             class="remun-input per-student-input"></td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="student-count">0</p>
+                        <input type="number" min="0" id="p6-student-count-1" class="remun-input student-count student-count-input" placeholder="0">
                     </td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="remun-calc">0</p>
+                        <p class="remun-calc"></p>
                     </td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="total-remun">0</p>
+                        <p class="total-remun"></p>
                     </td>
                 </tr>
                 <tr id="remun2-row-part2" style="text-align: center;">
                     <td style="border: 1px solid black; padding: 5px;">
                         <input type="text" id="p6-exam-title-2" class="remun-title-input" value="B.Sc./B.C.S. Part II">
                     </td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="25.00"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="" data-default="25.00" id="p6-rate-2"
                             class="remun-input rate-input"></td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="2"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="" data-default="2" id="p6-examiners-2"
                             class="remun-input examiners-input"></td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="14.00"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="" data-default="14.00" id="p6-per-student-2"
                             class="remun-input per-student-input"></td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="student-count">0</p>
+                        <input type="number" min="0" id="p6-student-count-2" class="remun-input student-count student-count-input" placeholder="">
                     </td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="remun-calc">0</p>
+                        <p class="remun-calc"></p>
                     </td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="total-remun">0</p>
+                        <p class="total-remun"></p>
                     </td>
                 </tr>
                 <tr id="remun2-row-part3" style="text-align: center;">
                     <td style="border: 1px solid black; padding: 5px;">
                         <input type="text" id="p6-exam-title-3" class="remun-title-input" value="B.Sc./B.C.S. Part III">
                     </td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="40.00"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="" data-default="40.00" id="p6-rate-3"
                             class="remun-input rate-input"></td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="2"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="" data-default="2" id="p6-examiners-3"
                             class="remun-input examiners-input"></td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="21.00"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="" data-default="21.00" id="p6-per-student-3"
                             class="remun-input per-student-input"></td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="student-count">0</p>
+                        <input type="number" min="0" id="p6-student-count-3" class="remun-input student-count student-count-input" placeholder="">
                     </td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="remun-calc">0</p>
+                        <p class="remun-calc"></p>
                     </td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="total-remun">0</p>
+                        <p class="total-remun"></p>
                     </td>
                 </tr>
                 <tr id="remun2-row-ogt" style="text-align: center;">
                     <td style="border: 1px solid black; padding: 5px;">
                         <input type="text" id="p6-exam-title-ogt" class="remun-title-input" value="OGT/Projects">
                     </td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="50.00"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="" data-default="50.00" id="p6-rate-ogt"
                             class="remun-input rate-input"></td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="2"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" value="" data-default="2" id="p6-examiners-ogt"
                             class="remun-input examiners-input"></td>
-                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="25.00"
+                    <td style="border: 1px solid black; padding: 5px;"><input type="number" step="0.01" value="" data-default="25.00" id="p6-per-student-ogt"
                             class="remun-input per-student-input"></td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="student-count">0</p>
+                        <input type="number" min="0" id="p6-student-count-ogt" class="remun-input student-count student-count-input" placeholder="">
                     </td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="remun-calc">0</p>
+                        <p class="remun-calc"></p>
                     </td>
                     <td style="border: 1px solid black; padding: 5px;">
-                        <p class="total-remun">0</p>
+                        <p class="total-remun"></p>
                     </td>
                 </tr>
-                <tr id="remun2-row-extra" style="text-align: center;">
-                    <td colspan="6" style="border: 1px solid black; padding: 5px; text-align: right;">
-                        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
-                            <input type="text" placeholder="Remarks (optional)" style="flex: 1; border: none; text-align: right; background: transparent; font-family: inherit; font-size: 13px;">
-                            <label style="font-weight: bold; font-size: 13px; white-space: nowrap;">Date / दिनांक :</label>
-                            <span class="date-display print-date-display" style="display: none; font-weight: bold;">23/09/2026</span>
-                            <input type="date" value="2026-09-23" class="page-date-sync-input remun-date-input no-print-date" title="Select Date" style="font-size: 13px; font-weight: bold; cursor: pointer; vertical-align: middle;">
-                        </div>
-                    </td>
-                    <td style="border: 1px solid black; padding: 5px;">
-                        <input type="number" step="0.01" id="remun-extra-p6" class="remun-input remun-extra-input" placeholder="0" style="width: 100%; border: none; text-align: center; font-size: 14px; font-weight: bold; background: transparent;">
-                    </td>
-                </tr>
+
                 <tr id="remun2-row-total" style="text-align: center; font-weight: bold; background-color: #f8f9fa;">
                     <td colspan="6" style="border: 1px solid black; padding: 5px; text-align: right;">
                         Total :
@@ -1495,7 +1527,7 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                     <td style="padding: 1px;">
                         <div
                             style="display: flex; align-items: center; justify-content: center; gap: 2px; position: relative; width: 100%; min-height: 30px;">
-                            <textarea class="staff-input staff-exam-date" placeholder="DD/MM/YYYY"
+                            <textarea id="p7-exam-date-1" class="staff-input staff-exam-date" placeholder="DD/MM/YYYY"
                                 style="width: calc(100% - 24px); border: none; padding: 2px; text-align: center; resize: none; overflow: hidden; font-family: inherit; font-size: 9pt; min-height: 28px; line-height: 1.2;"
                                 rows="1"></textarea>
                             <div class="no-print"
@@ -1512,30 +1544,32 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                             </div>
                         </div>
                     </td>
-                    <td style="padding: 1px;"><input type="date" value="" class="staff-input staff-prep-date"
+                    <td style="padding: 1px;"><input type="date" id="p7-prep-date-1" value="" class="staff-input staff-prep-date"
                             title="Date of Preparation"
                             style="width: 100%; border: none; padding: 2px; text-align: center; cursor: pointer; font-size: 11px;">
                     </td>
-                    <td style="padding: 1px;"><input type="date" value="" class="staff-input staff-clean-date"
+                    <td style="padding: 1px;"><input type="date" id="p7-clean-date-1" value="" class="staff-input staff-clean-date"
                             title="Date of Cleaning"
                             style="width: 100%; border: none; padding: 2px; text-align: center; cursor: pointer; font-size: 11px;">
                     </td>
-                    <td style="padding: 1px;"><input type="number" value="" class="staff-input day-input"
+                    <td style="padding: 1px;"><input type="number" id="p7-exam-days-1" value="" class="staff-input day-input"
                             oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
-                    <td style="padding: 1px;"><input type="number" value="" class="staff-input day-input"
+                    <td style="padding: 1px;"><input type="number" id="p7-prep-days-1" value="" class="staff-input day-input"
                             oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
-                    <td style="padding: 1px;"><input type="number" value="" class="staff-input day-input"
+                    <td style="padding: 1px;"><input type="number" id="p7-clean-days-1" value="" class="staff-input day-input"
                             oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
-                    <td style="padding: 1px;"><input type="number" value="" class="staff-input total-days-input"
+                    <td style="padding: 1px;"><input type="number" id="p7-total-days-1" value="" class="staff-input total-days-input"
+                            oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center; font-weight: bold;">
                     </td>
-                    <td style="padding: 1px;"><input type="text" value="56/-" class="staff-input rate-input"
+                    <td style="padding: 1px;"><input type="text" id="p7-rate-1" value="56/-" class="staff-input rate-input"
                             oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
                     <td style="padding: 1px;"><input type="text" id="p6-amt-1" value="" class="staff-input amount-input"
+                            oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
                     <td></td>
                 </tr>
@@ -1548,49 +1582,36 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                             class="staff-input" style="width: 100%; border: none; padding: 2px; text-align: center;">
                     </td>
                     <td style="padding: 1px;">
-                        <div
-                            style="display: flex; align-items: center; justify-content: center; gap: 2px; position: relative; width: 100%; min-height: 30px;">
-                            <textarea class="staff-input staff-exam-date" placeholder="DD/MM/YYYY"
-                                style="width: calc(100% - 24px); border: none; padding: 2px; text-align: center; resize: none; overflow: hidden; font-family: inherit; font-size: 9pt; min-height: 28px; line-height: 1.2;"
-                                rows="1"></textarea>
-                            <div class="no-print"
-                                style="position: relative; width: 20px; height: 20px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;">
-                                <input type="date" class="staff-exam-date-picker" title="Select Date from Calendar"
-                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;">
-                                <svg width="15" height="15" fill="none" stroke="#2563eb" stroke-width="2"
-                                    viewBox="0 0 24 24" style="pointer-events: none; z-index: 1;">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                                </svg>
-                            </div>
-                        </div>
+                        <textarea id="p7-exam-date-2" class="staff-input staff-exam-date" placeholder="DD/MM/YYYY"
+                            style="width: 100%; border: none; padding: 2px; text-align: center; resize: none; overflow: hidden; font-family: inherit; font-size: 9pt; min-height: 28px; line-height: 1.2;"
+                            rows="1"></textarea>
                     </td>
-                    <td style="padding: 1px;"><input type="date" value="" class="staff-input staff-prep-date"
+                    <td style="padding: 1px;"><input type="date" id="p7-prep-date-2" value="" class="staff-input staff-prep-date"
                             title="Date of Preparation"
                             style="width: 100%; border: none; padding: 2px; text-align: center; cursor: pointer; font-size: 11px;">
                     </td>
-                    <td style="padding: 1px;"><input type="date" value="" class="staff-input staff-clean-date"
+                    <td style="padding: 1px;"><input type="date" id="p7-clean-date-2" value="" class="staff-input staff-clean-date"
                             title="Date of Cleaning"
                             style="width: 100%; border: none; padding: 2px; text-align: center; cursor: pointer; font-size: 11px;">
                     </td>
-                    <td style="padding: 1px;"><input type="number" value="" class="staff-input day-input"
+                    <td style="padding: 1px;"><input type="number" id="p7-exam-days-2" value="" class="staff-input day-input"
                             oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
-                    <td style="padding: 1px;"><input type="number" value="" class="staff-input day-input"
+                    <td style="padding: 1px;"><input type="number" id="p7-prep-days-2" value="" class="staff-input day-input"
                             oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
-                    <td style="padding: 1px;"><input type="number" value="" class="staff-input day-input"
+                    <td style="padding: 1px;"><input type="number" id="p7-clean-days-2" value="" class="staff-input day-input"
                             oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
-                    <td style="padding: 1px;"><input type="number" value="" class="staff-input total-days-input"
+                    <td style="padding: 1px;"><input type="number" id="p7-total-days-2" value="" class="staff-input total-days-input"
+                            oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center; font-weight: bold;">
                     </td>
-                    <td style="padding: 1px;"><input type="text" value="21/-" class="staff-input rate-input"
+                    <td style="padding: 1px;"><input type="text" id="p7-rate-2" value="21/-" class="staff-input rate-input"
                             oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
                     <td style="padding: 1px;"><input type="text" id="p6-amt-2" value="" class="staff-input amount-input"
+                            oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
                     <td></td>
                 </tr>
@@ -1603,111 +1624,86 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                             class="staff-input" style="width: 100%; border: none; padding: 2px; text-align: center;">
                     </td>
                     <td style="padding: 1px;">
-                        <div
-                            style="display: flex; align-items: center; justify-content: center; gap: 2px; position: relative; width: 100%; min-height: 30px;">
-                            <textarea class="staff-input staff-exam-date" placeholder="DD/MM/YYYY"
-                                style="width: calc(100% - 24px); border: none; padding: 2px; text-align: center; resize: none; overflow: hidden; font-family: inherit; font-size: 9pt; min-height: 28px; line-height: 1.2;"
-                                rows="1"></textarea>
-                            <div class="no-print"
-                                style="position: relative; width: 20px; height: 20px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;">
-                                <input type="date" class="staff-exam-date-picker" title="Select Date from Calendar"
-                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;">
-                                <svg width="15" height="15" fill="none" stroke="#2563eb" stroke-width="2"
-                                    viewBox="0 0 24 24" style="pointer-events: none; z-index: 1;">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                                </svg>
-                            </div>
-                        </div>
+                        <textarea id="p7-exam-date-3" class="staff-input staff-exam-date" placeholder="DD/MM/YYYY"
+                            style="width: 100%; border: none; padding: 2px; text-align: center; resize: none; overflow: hidden; font-family: inherit; font-size: 9pt; min-height: 28px; line-height: 1.2;"
+                            rows="1"></textarea>
                     </td>
-                    <td style="padding: 1px;"><input type="date" value="" class="staff-input staff-prep-date"
+                    <td style="padding: 1px;"><input type="date" id="p7-prep-date-3" value="" class="staff-input staff-prep-date"
                             title="Date of Preparation"
                             style="width: 100%; border: none; padding: 2px; text-align: center; cursor: pointer; font-size: 11px;">
                     </td>
-                    <td style="padding: 1px;"><input type="date" value="" class="staff-input staff-clean-date"
+                    <td style="padding: 1px;"><input type="date" id="p7-clean-date-3" value="" class="staff-input staff-clean-date"
                             title="Date of Cleaning"
                             style="width: 100%; border: none; padding: 2px; text-align: center; cursor: pointer; font-size: 11px;">
                     </td>
-                    <td style="padding: 1px;"><input type="number" value="" class="staff-input day-input"
+                    <td style="padding: 1px;"><input type="number" id="p7-exam-days-3" value="" class="staff-input day-input"
                             oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
-                    <td style="padding: 1px;"><input type="number" value="" class="staff-input day-input"
+                    <td style="padding: 1px;"><input type="number" id="p7-prep-days-3" value="" class="staff-input day-input"
                             oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
-                    <td style="padding: 1px;"><input type="number" value="" class="staff-input day-input"
+                    <td style="padding: 1px;"><input type="number" id="p7-clean-days-3" value="" class="staff-input day-input"
                             oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
-                    <td style="padding: 1px;"><input type="number" value="" class="staff-input total-days-input"
+                    <td style="padding: 1px;"><input type="number" id="p7-total-days-3" value="" class="staff-input total-days-input"
+                            oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center; font-weight: bold;">
                     </td>
-                    <td style="padding: 1px;"><input type="text" value="21/-" class="staff-input rate-input"
+                    <td style="padding: 1px;"><input type="text" id="p7-rate-3" value="21/-" class="staff-input rate-input"
                             oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
                     <td style="padding: 1px;"><input type="text" id="p6-amt-3" value="" class="staff-input amount-input"
+                            oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
                     <td></td>
                 </tr>
                 <tr>
                     <td style="text-align: center;">4.</td>
-                    <td style="padding: 1px;"><textarea class="staff-input"
+                    <td style="padding: 1px;"><textarea id="p6-name-4" class="staff-input"
                             style="width: 100%; border: none; padding: 2px; font-weight: bold; font-size: 10pt; resize: none; overflow: hidden; font-family: inherit; min-height: 30px;"
                             rows="1"></textarea></td>
-                    <td style="padding: 1px;"><input type="text" class="staff-input"
+                    <td style="padding: 1px;"><input type="text" id="p6-desig-4" value="Peon / Servant" class="staff-input"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
                     <td style="padding: 1px;">
-                        <div
-                            style="display: flex; align-items: center; justify-content: center; gap: 2px; position: relative; width: 100%; min-height: 30px;">
-                            <textarea class="staff-input staff-exam-date" placeholder="DD/MM/YYYY"
-                                style="width: calc(100% - 24px); border: none; padding: 2px; text-align: center; resize: none; overflow: hidden; font-family: inherit; font-size: 9pt; min-height: 28px; line-height: 1.2;"
-                                rows="1"></textarea>
-                            <div class="no-print"
-                                style="position: relative; width: 20px; height: 20px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;">
-                                <input type="date" class="staff-exam-date-picker" title="Select Date from Calendar"
-                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;">
-                                <svg width="15" height="15" fill="none" stroke="#2563eb" stroke-width="2"
-                                    viewBox="0 0 24 24" style="pointer-events: none; z-index: 1;">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                                </svg>
-                            </div>
-                        </div>
+                        <textarea id="p7-exam-date-4" class="staff-input staff-exam-date" placeholder="DD/MM/YYYY"
+                            style="width: 100%; border: none; padding: 2px; text-align: center; resize: none; overflow: hidden; font-family: inherit; font-size: 9pt; min-height: 28px; line-height: 1.2;"
+                            rows="1"></textarea>
                     </td>
-                    <td style="padding: 1px;"><input type="date" class="staff-input staff-prep-date"
+                    <td style="padding: 1px;"><input type="date" id="p7-prep-date-4" class="staff-input staff-prep-date"
                             title="Date of Preparation"
                             style="width: 100%; border: none; padding: 2px; text-align: center; cursor: pointer; font-size: 11px;">
                     </td>
-                    <td style="padding: 1px;"><input type="date" class="staff-input staff-clean-date"
+                    <td style="padding: 1px;"><input type="date" id="p7-clean-date-4" class="staff-input staff-clean-date"
                             title="Date of Cleaning"
                             style="width: 100%; border: none; padding: 2px; text-align: center; cursor: pointer; font-size: 11px;">
                     </td>
-                    <td style="padding: 1px;"><input type="number" class="staff-input day-input"
+                    <td style="padding: 1px;"><input type="number" id="p7-exam-days-4" class="staff-input day-input"
                             oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
-                    <td style="padding: 1px;"><input type="number" class="staff-input day-input"
+                    <td style="padding: 1px;"><input type="number" id="p7-prep-days-4" class="staff-input day-input"
                             oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
-                    <td style="padding: 1px;"><input type="number" class="staff-input day-input"
+                    <td style="padding: 1px;"><input type="number" id="p7-clean-days-4" class="staff-input day-input"
                             oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
-                    <td style="padding: 1px;"><input type="number" class="staff-input total-days-input"
+                    <td style="padding: 1px;"><input type="number" id="p7-total-days-4" class="staff-input total-days-input"
+                            oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center; font-weight: bold;">
                     </td>
-                    <td style="padding: 1px;"><input type="text" class="staff-input rate-input"
+                    <td style="padding: 1px;"><input type="text" id="p7-rate-4" value="15/-" class="staff-input rate-input"
                             oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
-                    <td style="padding: 1px;"><input type="text" class="staff-input amount-input"
+                    <td style="padding: 1px;"><input type="text" id="p6-amt-4" class="staff-input amount-input"
+                            oninput="updateStaffTotals()"
                             style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
                     <td></td>
                 </tr>
                 <tr style="font-weight: bold;">
                     <td colspan="4"></td>
                     <td colspan="7" style="text-align: right; padding-right: 10px;">Rs. <input type="text" value=""
-                            class="staff-total-words" style="border: none; font-weight: bold; width: 250px;"> Total</td>
-                    <td style="text-align: center;"><input type="text" value="" class="staff-grand-total"
+                            id="p7-total-words" class="staff-total-words" oninput="updateStaffTotals()" style="border: none; font-weight: bold; width: 250px;"> Total</td>
+                    <td style="text-align: center;"><input type="text" value="" id="p7-grand-total" class="staff-grand-total"
+                            oninput="updateStaffTotals()"
                             style="width: 100%; border: none; text-align: center; font-weight: bold;"></td>
                     <td></td>
                 </tr>
@@ -1726,14 +1722,15 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                     style="width: 53%; font-size: 8pt; line-height: 1.25; display: flex; flex-direction: column; justify-content: space-between;">
                     <div>
                         <p style="margin: 0 0 4px 0;">That the examination lasted for <strong><input type="text"
+                                    id="p7-duration-days"
                                     value="06"
-                                    style="width: 24px; border: none; border-bottom: 1px solid #000; text-align: center; font-weight: bold; font-size: 8pt;"></strong>
+                                    style="width: 28px; border: none; border-bottom: 1px solid #000; text-align: center; font-weight: bold; font-size: 8pt;"></strong>
                             days and that the work of preparation and cleaning in respect of the said examination was
                             done on
                             the days specified herein . We further certify that the examination commenced daily at hours
                             and was
-                            over at <strong><input type="text" value="08"
-                                    style="width: 24px; border: none; border-bottom: 1px solid #000; text-align: center; font-weight: bold; font-size: 8pt;"></strong>
+                            over at <strong><input type="text" id="p7-over-hours" value="08"
+                                    style="width: 28px; border: none; border-bottom: 1px solid #000; text-align: center; font-weight: bold; font-size: 8pt;"></strong>
                             hours. ( Please do not include the time spent in preparing and cleaning for the Examination.
                             If any )
                         </p>
@@ -1742,9 +1739,9 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                             examined was
                             <span style="display: inline-block; border-bottom: 1px solid #000; width: 100px;"></span>
                             and the assessment
-                            daily started at <strong><input type="text" value="10.30 am"
+                            daily started at <strong><input type="text" id="p7-daily-start" value="10.30 am"
                                     style="width: 60px; border: none; border-bottom: 1px solid #000; text-align: center; font-weight: bold; font-size: 8pt;"></strong>
-                            hours and was over at <strong><input type="text" value="6.00 pm"
+                            hours and was over at <strong><input type="text" id="p7-daily-end" value="6.00 pm"
                                     style="width: 60px; border: none; border-bottom: 1px solid #000; text-align: center; font-weight: bold; font-size: 8pt;"></strong>
                             hours.
                         </p>
@@ -2367,8 +2364,8 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
     <script src="jspdf.umd.min.js"></script>
     <script src="html2canvas.min.js"></script>
     <script src="xlsx.full.min.js"></script>
-    <script src="login-3d.js?v=8.6"></script>
-    <script src="script.js?v=8.9"></script>
+    <script src="login-3d.js?v=9.1"></script>
+    <script src="script.js?v=9.1"></script>
 </body>
 
 </html>

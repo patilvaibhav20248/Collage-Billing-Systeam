@@ -243,8 +243,7 @@ ul.bullet-list li {
 
     /* Ensure landscape orientation during print */
     .page.landscape,
-    #page7,
-    #page8 {
+    #page7 {
         page: landscape-page !important;
         page-break-before: always !important;
         page-break-after: always !important;
@@ -256,6 +255,10 @@ ul.bullet-list li {
         min-height: 210mm !important;
         padding: 10mm 14mm !important;
         box-sizing: border-box !important;
+    }
+
+    #page8 {
+        display: none !important;
     }
 
     .no-print {
@@ -1403,6 +1406,7 @@ input[type="time"]:focus {
 @media print {
     .page-date-sync-input,
     .staff-exam-date-picker,
+    .batch-date-picker,
     .no-print,
     .no-print-date {
         display: none !important;
@@ -1414,6 +1418,17 @@ input[type="time"]:focus {
     }
 
     .staff-exam-date {
+        width: 100% !important;
+    }
+
+    .batch-date-input,
+    .batch-time-input {
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        color: black !important;
         width: 100% !important;
     }
 
@@ -1771,7 +1786,11 @@ body.pdf-export-mode #main-nav,
 body.pdf-export-mode .download-modal-backdrop,
 body.pdf-export-mode .toast-message,
 body.pdf-export-mode .staff-exam-date-picker,
-body.pdf-export-mode .no-print-date {
+body.pdf-export-mode .batch-date-picker,
+body.pdf-export-mode .no-print-date,
+body.pdf-export-mode .page-date-sync-input,
+body.pdf-export-mode #batch-add-btn-container,
+body.pdf-export-mode .remove-batch-row-btn {
     display: none !important;
 }
 
@@ -1780,9 +1799,37 @@ body.pdf-export-mode .print-date-display {
     font-weight: bold !important;
 }
 
+body.pdf-export-mode .batch-datetime-container {
+    width: 100% !important;
+    justify-content: center !important;
+    margin-top: 2px !important;
+}
+
+body.pdf-export-mode .batch-date-input {
+    width: 100% !important;
+    text-align: center !important;
+    border: none !important;
+    background: transparent !important;
+    font-size: 11px !important;
+    padding: 0 !important;
+}
+
+body.pdf-export-mode .remun-title-input {
+    white-space: normal !important;
+    word-break: break-word !important;
+    text-align: center !important;
+    font-size: 10pt !important;
+    line-height: 1.25 !important;
+    padding: 2px !important;
+}
+
 body.pdf-export-mode .page {
     box-shadow: none !important;
     margin: 0 !important;
+}
+
+body.pdf-export-mode #page8 {
+    display: none !important;
 }
 
 body.pdf-export-mode input,
@@ -1812,6 +1859,20 @@ body.pdf-export-mode input[type="time"]::-webkit-calendar-picker-indicator {
     font-size: 11pt;
 }
 
+.student-count-input {
+    width: 75px;
+    font-weight: bold;
+    border-radius: 4px;
+    background-color: #ffffff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.student-count-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    outline: none;
+}
+
 .remun-title-input {
     width: 100%;
     text-align: center;
@@ -1833,6 +1894,23 @@ body.pdf-export-mode input[type="time"]::-webkit-calendar-picker-indicator {
     border-color: #2563eb;
     outline: none;
     box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.remun-calc {
+    margin: 0;
+    font-size: 11pt;
+    font-weight: 600;
+    line-height: 1.35;
+    word-break: break-word;
+    color: #1e293b;
+    padding: 2px 4px;
+}
+
+.total-remun {
+    margin: 0;
+    font-size: 11pt;
+    font-weight: bold;
+    color: #0f172a;
 }
 
 .staff-input {
@@ -2061,6 +2139,33 @@ body.pdf-export-mode input[type="time"]::-webkit-calendar-picker-indicator {
     text-align: right;
 }
 
+/* Page 1 Dynamic Batch Controls */
+#add-batch-row-btn {
+    transition: all 0.2s ease-in-out;
+}
+
+#add-batch-row-btn:hover {
+    background: #0284c7 !important;
+    color: #ffffff !important;
+    border-color: #0284c7 !important;
+    box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3) !important;
+    transform: translateY(-1px);
+}
+
+#add-batch-row-btn:active {
+    transform: translateY(0);
+}
+
+.remove-batch-row-btn {
+    transition: all 0.15s ease-in-out;
+}
+
+.remove-batch-row-btn:hover {
+    background-color: #fee2e2 !important;
+    border-color: #ef4444 !important;
+    color: #b91c1c !important;
+}
+
 /* Print Rules */
 @page {
     size: A4 portrait;
@@ -2092,8 +2197,7 @@ body.pdf-export-mode input[type="time"]::-webkit-calendar-picker-indicator {
     }
 
     .page.landscape,
-    #page7,
-    #page8 {
+    #page7 {
         page: landscape-page !important;
         page-break-before: always !important;
         page-break-after: always !important;
@@ -2105,6 +2209,10 @@ body.pdf-export-mode input[type="time"]::-webkit-calendar-picker-indicator {
         height: auto !important;
         padding: 10mm 14mm !important;
         box-sizing: border-box !important;
+    }
+
+    #page8 {
+        display: none !important;
     }
 
     .remun-input,
@@ -2136,6 +2244,15 @@ body.pdf-export-mode input[type="time"]::-webkit-calendar-picker-indicator {
 
     input[type="number"] {
         -moz-appearance: textfield;
+    }
+
+    .remun-calc {
+        font-size: 9.5pt !important;
+        line-height: 1.25 !important;
+    }
+
+    .total-remun {
+        font-size: 10pt !important;
     }
 
     .no-print {

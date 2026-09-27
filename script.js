@@ -186,13 +186,6 @@ document.addEventListener('DOMContentLoaded', () => {
             display.textContent = displayVal;
         });
 
-        // Sync to Page 7 exam date if empty or auto-synced
-        const p7ExamDate = document.querySelector('#page7 .staff-exam-date');
-        if (p7ExamDate && (!p7ExamDate.value.trim() || p7ExamDate.dataset.autoSynced === 'true')) {
-            p7ExamDate.value = displayVal;
-            p7ExamDate.dataset.autoSynced = 'true';
-        }
-
         // If val is YYYY-MM-DD, sync to date inputs
         if (val && String(val).includes('-') && String(val).length === 10) {
             const dateInputsToSync = document.querySelectorAll('#date-input, .page-date-sync-input, .tada-date-picker');
@@ -285,16 +278,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Calculate Column 5: "Seat No. of Candidates who were absent Total"
         // Horizontal subtraction in each row: Called (Col 2) - Present (Col 3) - OutOfTurn (Col 4) = Absent Total (Col 5)
-        // Total row display: Horizontal (Total Called - Total Present - Total OutOfTurn) and Vertical (Box 1 + Box 2 + Box 3)
+        // Total row display: Horizontal (Total Called - Total Present - Total OutOfTurn) and Vertical sum across batch rows
         const col5Display = document.getElementById('col-5-total');
         if (col5Display) {
-            let totalOf3Boxes = 0;
+            let totalOfBatchBoxes = 0;
 
-            [1, 2, 3].forEach(rowIdx => {
-                const calledEl = document.getElementById(`p1-r${rowIdx}-c2`);
-                const presentEl = document.getElementById(`p1-r${rowIdx}-c3`);
-                const outOfTurnEl = document.getElementById(`p1-r${rowIdx}-c4`);
-                const absentEl = document.getElementById(`p1-r${rowIdx}-c5`);
+            const allBatchRows = document.querySelectorAll('#p1-attendance-table tr.batch-row');
+            allBatchRows.forEach((row, rowIdx) => {
+                const calledEl = row.querySelector('.col-2-input');
+                const presentEl = row.querySelector('.col-3-input');
+                const outOfTurnEl = row.querySelector('.col-4-input');
+                const absentEl = row.querySelector('.col-5-input');
                 if (!absentEl) return;
 
                 const cRaw = calledEl ? calledEl.value.trim() : '';
@@ -367,12 +361,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     rowCount = horizontalRowTotal;
                 }
 
-                totalOf3Boxes += rowCount;
+                totalOfBatchBoxes += rowCount;
             });
 
             // Horizontal subtraction across total row: Total Called - Total Present - Total OutOfTurn
             const horizontalTotalAcross = Math.max(0, totalCalled - totalPresent - totalOutOfTurn);
-            const finalTotalAbsent = Math.max(horizontalTotalAcross, totalOf3Boxes);
+            const finalTotalAbsent = Math.max(horizontalTotalAcross, totalOfBatchBoxes);
 
             col5Display.textContent = finalTotalAbsent;
 
@@ -391,123 +385,170 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalPresentText = document.getElementById('col-3-total')?.textContent || totalPresent.toString();
         const studentCount = parseInt(totalPresentText) || 0;
 
+        // Extract individual batch present counts from Page 1
+        const batchCounts = [];
+        const presentInputs = document.querySelectorAll('#page1 .col-3-input');
+        presentInputs.forEach(input => {
+            const rawVal = input.value.trim();
+            if (rawVal) {
+                const val = parseFloat(rawVal.replace(/,/g, '')) || 0;
+                if (val > 0) {
+                    batchCounts.push(val);
+                }
+            }
+        });
+
+        // Helper to calculate remuneration table for Page 5 or Page 6
+        const calculateRemunTable = (rowIds, totalElId) => {
+            let pageVerticalTotal = 0;
+            let pageStudentTotal = 0;
+
+            rowIds.forEach((rowId, index) => {
+                const row = document.getElementById(rowId);
+                if (!row) return;
+
+                const rateCol2Input = row.querySelector('.rate-input');
+                const examinersInput = row.querySelector('.examiners-input');
+                const perStudentInput = row.querySelector('.per-student-input');
+                const calcEl = row.querySelector('.remun-calc');
+                const totalRemunEl = row.querySelector('.total-remun');
+                const studentInput = row.querySelector('.student-count');
+
+                let count = 0;
+                let hasValue = false;
+
+                if (index === 0) {
+                    // Row 1: Automatically copies total students from Page 1
+                    if (studentInput) {
+                        // Only auto-update from Page 1 if user is not actively typing in this exact input
+                        if (document.activeElement !== studentInput) {
+                            if (studentCount > 0) {
+                                studentInput.value = studentCount;
+                            } else if (!studentInput.dataset.userEdited) {
+                                studentInput.value = '';
+                            }
+                        }
+
+                        const rawVal = studentInput.value.trim();
+                        if (rawVal !== '') {
+                            const parsed = parseFloat(rawVal);
+                            if (!isNaN(parsed) && parsed > 0) {
+                                count = parsed;
+                                hasValue = true;
+                            }
+                        } else if (studentCount > 0) {
+                            count = studentCount;
+                            hasValue = true;
+                            studentInput.value = studentCount;
+                        }
+                    }
+                } else {
+                    // Rows 2, 3, 4: Should remain empty until user enters student count in the column
+                    if (studentInput) {
+                        const rawVal = studentInput.value.trim();
+                        if (rawVal !== '') {
+                            const parsed = parseFloat(rawVal);
+                            if (!isNaN(parsed) && parsed > 0) {
+                                count = parsed;
+                                hasValue = true;
+                            }
+                        }
+                    }
+                }
+
+                if (hasValue && count > 0) {
+                    // Student number entered (> 0):
+                    // Populate default rates and examiners if empty (and not active element)
+                    if (rateCol2Input && rateCol2Input.value.trim() === '' && rateCol2Input !== document.activeElement) {
+                        rateCol2Input.value = rateCol2Input.dataset.default || '';
+                    }
+                    if (examinersInput && examinersInput.value.trim() === '' && examinersInput !== document.activeElement) {
+                        examinersInput.value = examinersInput.dataset.default || '2';
+                    }
+                    if (perStudentInput && perStudentInput.value.trim() === '' && perStudentInput !== document.activeElement) {
+                        perStudentInput.value = perStudentInput.dataset.default || '';
+                    }
+
+                    const rate = parseFloat(perStudentInput?.value) || parseFloat(perStudentInput?.dataset.default) || 0;
+                    const rateDisplay = (rate % 1 === 0) ? rate.toFixed(0) : rate.toString();
+
+                    pageStudentTotal += count;
+                    const totalRemun = (count * rate).toFixed(2);
+
+                    if (calcEl) {
+                        calcEl.textContent = `${count} × ${rateDisplay}`;
+                        if (index === 0 && batchCounts.length > 1 && count === studentCount) {
+                            calcEl.title = batchCounts.map((b, i) => `Batch ${i + 1}: ${b} × ₹${rateDisplay} = ₹${(b * rate).toFixed(2)}`).join(' | ');
+                        } else {
+                            calcEl.title = `${count} students × ₹${rateDisplay}`;
+                        }
+                    }
+
+                    if (totalRemunEl) {
+                        totalRemunEl.textContent = totalRemun;
+                    }
+
+                    pageVerticalTotal += (count * rate);
+                    row.style.backgroundColor = '#f0f9ff';
+                } else {
+                    // Student number NOT entered or 0:
+                    // All other boxes (Rate, Examiners, Per-student rate, Calc, Total) must display EMPTY!
+                    if (rateCol2Input && rateCol2Input !== document.activeElement) {
+                        rateCol2Input.value = '';
+                    }
+                    if (examinersInput && examinersInput !== document.activeElement) {
+                        examinersInput.value = '';
+                    }
+                    if (perStudentInput && perStudentInput !== document.activeElement) {
+                        perStudentInput.value = '';
+                    }
+                    if (calcEl) {
+                        calcEl.textContent = '';
+                        calcEl.title = '';
+                    }
+                    if (totalRemunEl) {
+                        totalRemunEl.textContent = '';
+                    }
+                    row.style.backgroundColor = 'transparent';
+                }
+            });
+
+            // Set lower box: total amount
+            const totalEl = document.getElementById(totalElId);
+            if (totalEl) {
+                totalEl.textContent = pageVerticalTotal.toFixed(2);
+            }
+
+            return { verticalTotal: pageVerticalTotal, studentTotal: pageStudentTotal };
+        };
+
+        // Calculate Remuneration for Page 5 (Examiner 1 - External)
+        const res1 = calculateRemunTable(
+            ['remun-row-part1', 'remun-row-part2', 'remun-row-part3', 'remun-row-ogt'],
+            'remun-total-p5'
+        );
+        const verticalTotal1 = res1.verticalTotal;
+
+        // Calculate Remuneration for Page 6 (Examiner 2 - Internal)
+        const res2 = calculateRemunTable(
+            ['remun2-row-part1', 'remun2-row-part2', 'remun2-row-part3', 'remun2-row-ogt'],
+            'remun-total-p6'
+        );
+        const verticalTotal2 = res2.verticalTotal;
+
+        // Sync totals to Page 4, Page 5, and Page 6 receipt displays
         const page4TotalDisplays = document.querySelectorAll('.page4-total-present');
         page4TotalDisplays.forEach(disp => {
-            disp.textContent = totalPresentText;
-        });
-
-        // Calculate Remuneration for Page 5 (Examiner 1)
-        const part = document.getElementById('part-dropdown')?.value || 'Part - I';
-        const rows1 = {
-            'Part - I': 'remun-row-part1',
-            'Part - II': 'remun-row-part2',
-            'Part - III': 'remun-row-part3',
-            'OGT/Projects': 'remun-row-ogt',
-            'Part - IV': 'remun-row-ogt'
-        };
-
-        let verticalTotal1 = 0;
-        Object.keys(rows1).forEach(p => {
-            const rowId = rows1[p];
-            const row = document.getElementById(rowId);
-            if (!row) return;
-
-            const rateInput = row.querySelector('.per-student-input');
-            const rate = parseFloat(rateInput?.value) || 0;
-            const calcEl = row.querySelector('.remun-calc');
-            const rateDisplay = (rate % 1 === 0) ? rate.toFixed(0) : rate.toString();
-
-            const studentCountEl = row.querySelector('.student-count');
-            if (studentCountEl) {
-                studentCountEl.textContent = studentCount;
-            }
-
-            const totalRemun = (studentCount * rate).toFixed(2);
-            if (calcEl) {
-                calcEl.textContent = studentCount > 0 ? `${studentCount} × ${rateDisplay}` : '0';
-            }
-            const totalRemunEl = row.querySelector('.total-remun');
-            if (totalRemunEl) {
-                totalRemunEl.textContent = studentCount > 0 ? totalRemun : '0';
-            }
-
-            if (studentCount > 0) {
-                verticalTotal1 += (studentCount * rate);
-            }
-
-            if (p === part) {
-                row.style.backgroundColor = '#f0f9ff';
+            if (disp.closest('#page5')) {
+                const p5Students = res1.studentTotal > 0 ? res1.studentTotal.toString() : (totalPresentText !== '0' ? totalPresentText : '0');
+                disp.textContent = p5Students;
+            } else if (disp.closest('#page6')) {
+                const p6Students = res2.studentTotal > 0 ? res2.studentTotal.toString() : (totalPresentText !== '0' ? totalPresentText : '0');
+                disp.textContent = p6Students;
             } else {
-                row.style.backgroundColor = 'transparent';
+                disp.textContent = totalPresentText;
             }
         });
-
-        // Add upper box (textbox) value to vertical total (Page 5)
-        const extraInput1 = document.getElementById('remun-extra-p5');
-        const extraVal1 = parseFloat(extraInput1?.value) || 0;
-        verticalTotal1 += extraVal1;
-
-        // Set lower box: total amount of all vertical boxes (Page 5)
-        const totalP5El = document.getElementById('remun-total-p5');
-        if (totalP5El) {
-            totalP5El.textContent = verticalTotal1.toFixed(2);
-        }
-
-        // --- Calculate Remuneration for Page 6 (Examiner 2) ---
-        const rows2 = {
-            'Part - I': 'remun2-row-part1',
-            'Part - II': 'remun2-row-part2',
-            'Part - III': 'remun2-row-part3',
-            'OGT/Projects': 'remun2-row-ogt',
-            'Part - IV': 'remun2-row-ogt'
-        };
-
-        let verticalTotal2 = 0;
-        Object.keys(rows2).forEach(p => {
-            const rowId = rows2[p];
-            const row = document.getElementById(rowId);
-            if (!row) return;
-
-            const rateInput = row.querySelector('.per-student-input');
-            const rate = parseFloat(rateInput?.value) || 0;
-            const calcEl = row.querySelector('.remun-calc');
-            const rateDisplay = (rate % 1 === 0) ? rate.toFixed(0) : rate.toString();
-
-            const studentCountEl = row.querySelector('.student-count');
-            if (studentCountEl) {
-                studentCountEl.textContent = studentCount;
-            }
-
-            const totalRemun = (studentCount * rate).toFixed(2);
-            if (calcEl) {
-                calcEl.textContent = studentCount > 0 ? `${studentCount} × ${rateDisplay}` : '0';
-            }
-            const totalRemunEl = row.querySelector('.total-remun');
-            if (totalRemunEl) {
-                totalRemunEl.textContent = studentCount > 0 ? totalRemun : '0';
-            }
-
-            if (studentCount > 0) {
-                verticalTotal2 += (studentCount * rate);
-            }
-
-            if (p === part) {
-                row.style.backgroundColor = '#f0f9ff';
-            } else {
-                row.style.backgroundColor = 'transparent';
-            }
-        });
-
-        // Add upper box (textbox) value to vertical total (Page 6)
-        const extraInput2 = document.getElementById('remun-extra-p6');
-        const extraVal2 = parseFloat(extraInput2?.value) || 0;
-        verticalTotal2 += extraVal2;
-
-        // Set lower box: total amount of all vertical boxes (Page 6)
-        const totalP6El = document.getElementById('remun-total-p6');
-        if (totalP6El) {
-            totalP6El.textContent = verticalTotal2.toFixed(2);
-        }
 
         // Update total remuneration display across all pages
         const totalRemunDisplays = document.querySelectorAll('.total-remun-display');
@@ -616,6 +657,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!staffPage) return;
 
         let grandTotalSum = 0;
+        let anyRowCalculated = false;
         const rows = staffPage.querySelectorAll('table tr');
 
         rows.forEach(row => {
@@ -624,11 +666,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (dayInputs.length > 0 && totalBox) {
                 let rowSum = 0;
+                let hasDayEntered = false;
                 dayInputs.forEach(input => {
-                    rowSum += parseFloat(input.value) || 0;
+                    const v = parseFloat(input.value);
+                    if (!isNaN(v) && v > 0) {
+                        rowSum += v;
+                        hasDayEntered = true;
+                    }
                 });
 
-                totalBox.value = rowSum > 0 ? rowSum : '';
+                if (hasDayEntered) {
+                    totalBox.value = rowSum;
+                } else if (totalBox.value) {
+                    const tbVal = parseFloat(totalBox.value);
+                    if (!isNaN(tbVal) && tbVal > 0) {
+                        rowSum = tbVal;
+                        hasDayEntered = true;
+                    }
+                }
 
                 // Rate Multiplication
                 const rateInput = row.querySelector('.rate-input');
@@ -637,11 +692,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (rateInput && amountInput) {
                     const rateVal = parseFloat(rateInput.value.replace(/[^\d.]/g, '')) || 0;
                     if (rowSum > 0 && rateVal > 0) {
-                        const amount = rowSum * rateVal;
+                        const amount = Math.round(rowSum * rateVal);
                         amountInput.value = amount + '/-';
                         grandTotalSum += amount;
+                        anyRowCalculated = true;
                     } else {
-                        amountInput.value = '';
+                        // Check if an amount was entered directly into amountInput
+                        const directAmt = parseFloat(amountInput.value.replace(/[^\d.]/g, '')) || 0;
+                        if (directAmt > 0) {
+                            grandTotalSum += directAmt;
+                            anyRowCalculated = true;
+                            if (!amountInput.value.includes('/-')) {
+                                amountInput.value = directAmt + '/-';
+                            }
+                        }
                     }
                 }
             }
@@ -651,17 +715,43 @@ document.addEventListener('DOMContentLoaded', () => {
         const finalTotalInput = staffPage.querySelector('.staff-grand-total');
         const totalWordsInput = staffPage.querySelector('.staff-total-words');
 
-        if (finalTotalInput) finalTotalInput.value = grandTotalSum > 0 ? grandTotalSum + '/-' : '';
-        if (totalWordsInput) totalWordsInput.value = grandTotalSum > 0 ? numberToWords(grandTotalSum) : '';
+        if (grandTotalSum > 0) {
+            if (finalTotalInput) finalTotalInput.value = grandTotalSum + '/-';
+            if (totalWordsInput) totalWordsInput.value = numberToWords(grandTotalSum);
+        } else if (finalTotalInput && finalTotalInput.value) {
+            // Preserve manually entered grand total if user typed directly into total box
+            const manualTotal = parseFloat(finalTotalInput.value.replace(/[^\d.]/g, '')) || 0;
+            if (manualTotal > 0) {
+                if (!finalTotalInput.value.includes('/-')) finalTotalInput.value = manualTotal + '/-';
+                if (totalWordsInput && !totalWordsInput.value) totalWordsInput.value = numberToWords(manualTotal);
+            }
+        }
 
         // Sync these amounts to Page 8 immediately after calculation
         syncPage7To8();
     };
     window.updateStaffTotals = updateStaffTotals;
 
-    // Page 7 "Date of Examination on which worked" calendar picker logic
+    // Page 7 "Date of Examination on which worked" calendar picker & row copy logic
     const setupStaffExamDatePicker = () => {
-        const pickers = document.querySelectorAll('.staff-exam-date-picker');
+        const syncRow1ToOtherStaffRows = (dateVal) => {
+            const valToSync = (dateVal !== undefined && dateVal !== null) ? dateVal : '';
+            const otherExamDates = document.querySelectorAll('#page7 tr:nth-child(n+3) .staff-exam-date');
+            otherExamDates.forEach(ta => {
+                ta.value = valToSync;
+            });
+        };
+
+        const row1ExamDate = document.querySelector('#page7 tr:nth-child(2) .staff-exam-date');
+        if (row1ExamDate) {
+            ['input', 'change', 'keyup', 'paste'].forEach(evt => {
+                row1ExamDate.addEventListener(evt, (e) => {
+                    syncRow1ToOtherStaffRows(e.target.value);
+                });
+            });
+        }
+
+        const pickers = document.querySelectorAll('#page7 .staff-exam-date-picker');
         pickers.forEach(picker => {
             const onPick = (e) => {
                 const val = e.target.value;
@@ -681,20 +771,57 @@ document.addEventListener('DOMContentLoaded', () => {
                         textarea.value = formatted;
                     }
 
-                    // Auto-sync row 1 date to empty rows 2, 3, 4
-                    const tr = e.target.closest('tr');
-                    const tbody = tr ? tr.parentElement : null;
-                    if (tbody && tr === tbody.children[1]) {
-                        const rows = tbody.querySelectorAll('tr');
-                        rows.forEach((r, idx) => {
-                            if (idx > 1) {
-                                const otherText = r.querySelector('.staff-exam-date');
-                                if (otherText && !otherText.value.trim()) {
-                                    otherText.value = textarea.value;
-                                }
-                            }
-                        });
-                    }
+                    // Copy selected date to rows 2, 3, 4 only on Page 7
+                    syncRow1ToOtherStaffRows(textarea.value);
+                }
+            };
+            picker.addEventListener('change', onPick);
+            picker.addEventListener('input', onPick);
+            picker.addEventListener('click', () => {
+                try {
+                    picker.showPicker();
+                } catch (err) { }
+            });
+        });
+
+        // Sync prep date from row 1 to rows 2, 3, 4 on Page 7
+        const prepDates = document.querySelectorAll('#page7 .staff-prep-date');
+        if (prepDates.length > 0) {
+            prepDates[0].addEventListener('change', (e) => {
+                prepDates.forEach((inp, idx) => {
+                    if (idx > 0) inp.value = e.target.value;
+                });
+            });
+        }
+
+        // Sync clean date from row 1 to rows 2, 3, 4 on Page 7
+        const cleanDates = document.querySelectorAll('#page7 .staff-clean-date');
+        if (cleanDates.length > 0) {
+            cleanDates[0].addEventListener('change', (e) => {
+                cleanDates.forEach((inp, idx) => {
+                    if (idx > 0) inp.value = e.target.value;
+                });
+            });
+        }
+    };
+    setupStaffExamDatePicker();
+
+    // Page 1 "Batch No. Date and time of the Practical examination" calendar picker logic
+    const setupBatchDatePicker = () => {
+        const pickers = document.querySelectorAll('.batch-date-picker');
+        pickers.forEach(picker => {
+            if (picker.dataset.hasPickerListener === 'true') return;
+            picker.dataset.hasPickerListener = 'true';
+            const onPick = (e) => {
+                const val = e.target.value;
+                if (!val) return;
+                const parts = val.split('-');
+                if (parts.length !== 3) return;
+                const formatted = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                const container = e.target.closest('td');
+                const dateInput = container ? container.querySelector('.batch-date-input') : null;
+                if (dateInput) {
+                    dateInput.value = formatted;
                 }
             };
             picker.addEventListener('change', onPick);
@@ -706,7 +833,117 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     };
-    setupStaffExamDatePicker();
+    setupBatchDatePicker();
+
+    // Page 1 Dynamic Batch Rows Setup
+    const setupDynamicBatchRows = () => {
+        const table = document.getElementById('p1-attendance-table');
+        const totalRow = document.getElementById('p1-total-row');
+        const addBtn = document.getElementById('add-batch-row-btn');
+        if (!table || !totalRow || !addBtn) return;
+
+        const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV'];
+
+        const moveAddButtonToLastRow = () => {
+            const btnContainer = document.getElementById('batch-add-btn-container');
+            if (!btnContainer) return;
+            const allBatchRows = table.querySelectorAll('tr.batch-row');
+            if (allBatchRows.length > 0) {
+                const lastRow = allBatchRows[allBatchRows.length - 1];
+                const firstTd = lastRow.querySelector('td');
+                if (firstTd) {
+                    firstTd.appendChild(btnContainer);
+                }
+            }
+        };
+
+        addBtn.addEventListener('click', () => {
+            const currentRows = table.querySelectorAll('tr.batch-row');
+            const newIndex = currentRows.length + 1;
+            const roman = (newIndex <= romanNumerals.length) ? romanNumerals[newIndex - 1] : String(newIndex);
+            const defaultBatchName = `Batch ${roman}`;
+
+            // Build select options
+            let optionsHtml = '';
+            const maxOptions = Math.max(8, newIndex + 2);
+            for (let i = 1; i <= maxOptions; i++) {
+                const r = (i <= romanNumerals.length) ? romanNumerals[i - 1] : String(i);
+                const bName = `Batch ${r}`;
+                const isSelected = (bName === defaultBatchName) ? 'selected' : '';
+                optionsHtml += `<option value="${bName}" ${isSelected}>${bName}</option>`;
+            }
+
+            const tr = document.createElement('tr');
+            tr.className = 'batch-row dynamic-batch-row';
+            tr.style.height = '47.15pt';
+            tr.innerHTML = `
+                <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px;">
+                        <p class=MsoNormal style='margin: 0; flex: 1;'><b><span lang=EN-US>
+                            <select id="p1-batch-dropdown-${newIndex}" class="batch-dropdown" style="font-size: 13px; font-weight: bold; font-family: inherit; margin: 0; padding: 2px 4px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer; width: 100%;">
+                                ${optionsHtml}
+                            </select>
+                        </span></b></p>
+                        <button type="button" class="remove-batch-row-btn no-print" title="Delete this batch row" style="background: none; border: 1px solid #fca5a5; border-radius: 4px; color: #ef4444; font-size: 11px; font-weight: bold; cursor: pointer; padding: 1px 5px; margin-left: 4px; line-height: 1.2; display: inline-flex; align-items: center; justify-content: center;">✕</button>
+                    </div>
+                    <div class="batch-datetime-container" style="display: flex; align-items: center; justify-content: center; gap: 2px; position: relative; width: 100%; margin-top: 4px;">
+                        <input type="text" class="batch-date-input" placeholder="DD/MM/YYYY" id="p1-batch-date-${newIndex}"
+                            style="width: calc(100% - 22px); border: 1px solid #ccc; border-radius: 3px; padding: 2px 3px; font-size: 11px; text-align: center; font-family: inherit; background: white;">
+                        <div class="no-print" style="position: relative; width: 18px; height: 18px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;">
+                            <input type="date" class="batch-date-picker" title="Select Date from Calendar"
+                                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;">
+                            <svg width="15" height="15" fill="none" stroke="#2563eb" stroke-width="2" viewBox="0 0 24 24" style="pointer-events: none; z-index: 1;">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </div>
+                    </div>
+                </td>
+                <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
+                    <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
+                                class="table-input col-2-input" placeholder="0" id="p1-r${newIndex}-c2"></span></p>
+                </td>
+                <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
+                    <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
+                                class="table-input col-3-input" placeholder="0" id="p1-r${newIndex}-c3"></span></p>
+                </td>
+                <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
+                    <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
+                                class="table-input col-4-input" placeholder="0" id="p1-r${newIndex}-c4"></span></p>
+                </td>
+                <td width=131 valign=top style='width:98.0pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
+                    <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
+                                class="table-input col-5-input" placeholder="0" id="p1-r${newIndex}-c5"></span></p>
+                </td>
+            `;
+
+            // Insert before total row
+            totalRow.parentNode.insertBefore(tr, totalRow);
+
+            // Move the Add Batch button container to the new last row
+            moveAddButtonToLastRow();
+
+            // Bind remove event
+            const removeBtn = tr.querySelector('.remove-batch-row-btn');
+            if (removeBtn) {
+                removeBtn.addEventListener('click', () => {
+                    tr.remove();
+                    moveAddButtonToLastRow();
+                    updateTableTotals();
+                });
+            }
+
+            // Initialize calendar picker for the new row
+            setupBatchDatePicker();
+
+            // Update field keys and recalculate table totals
+            assignPermanentFieldKeys();
+            updateTableTotals();
+        });
+    };
+    setupDynamicBatchRows();
 
     // Autonomous Practical Bill (Page 8) Logic
     const recalculateFinalSummary = () => {
@@ -994,14 +1231,70 @@ document.addEventListener('DOMContentLoaded', () => {
             'p5-exam-title-3': ['p6-exam-title-3'],
             'p6-exam-title-3': ['p5-exam-title-3'],
             'p5-exam-title-ogt': ['p6-exam-title-ogt'],
-            'p6-exam-title-ogt': ['p5-exam-title-ogt']
+            'p6-exam-title-ogt': ['p5-exam-title-ogt'],
+            'p5-student-count-1': ['p6-student-count-1'],
+            'p6-student-count-1': ['p5-student-count-1'],
+            'p5-student-count-2': ['p6-student-count-2'],
+            'p6-student-count-2': ['p5-student-count-2'],
+            'p5-student-count-3': ['p6-student-count-3'],
+            'p6-student-count-3': ['p5-student-count-3'],
+            'p5-student-count-ogt': ['p6-student-count-ogt'],
+            'p6-student-count-ogt': ['p5-student-count-ogt'],
+
+            'p5-rate-1': ['p6-rate-1'],
+            'p6-rate-1': ['p5-rate-1'],
+            'p5-examiners-1': ['p6-examiners-1'],
+            'p6-examiners-1': ['p5-examiners-1'],
+            'p5-per-student-1': ['p6-per-student-1'],
+            'p6-per-student-1': ['p5-per-student-1'],
+
+            'p5-rate-2': ['p6-rate-2'],
+            'p6-rate-2': ['p5-rate-2'],
+            'p5-examiners-2': ['p6-examiners-2'],
+            'p6-examiners-2': ['p5-examiners-2'],
+            'p5-per-student-2': ['p6-per-student-2'],
+            'p6-per-student-2': ['p5-per-student-2'],
+
+            'p5-rate-3': ['p6-rate-3'],
+            'p6-rate-3': ['p5-rate-3'],
+            'p5-examiners-3': ['p6-examiners-3'],
+            'p6-examiners-3': ['p5-examiners-3'],
+            'p5-per-student-3': ['p6-per-student-3'],
+            'p6-per-student-3': ['p5-per-student-3'],
+
+            'p5-rate-ogt': ['p6-rate-ogt'],
+            'p6-rate-ogt': ['p5-rate-ogt'],
+            'p5-examiners-ogt': ['p6-examiners-ogt'],
+            'p6-examiners-ogt': ['p5-examiners-ogt'],
+            'p5-per-student-ogt': ['p6-per-student-ogt'],
+            'p6-per-student-ogt': ['p5-per-student-ogt']
         };
+
+        if (e.target.classList.contains('student-count-input')) {
+            if (e.target.value.trim() !== '') {
+                e.target.dataset.userEdited = 'true';
+            } else {
+                delete e.target.dataset.userEdited;
+            }
+        }
 
         if (examinerMappings[id]) {
             examinerMappings[id].forEach(targetId => {
                 const tel = document.getElementById(targetId);
-                if (tel) tel.value = e.target.value;
+                if (tel) {
+                    tel.value = e.target.value;
+                    if (id.includes('student-count')) {
+                        if (e.target.value.trim() !== '') {
+                            tel.dataset.userEdited = 'true';
+                        } else {
+                            delete tel.dataset.userEdited;
+                        }
+                    }
+                }
             });
+            if (id.includes('student-count') || id.includes('rate-') || id.includes('per-student-') || id.includes('examiners-')) {
+                updateTableTotals();
+            }
         }
     });
 
@@ -1046,23 +1339,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Assign permanent, deterministic data-bill-key to every input/select/textarea
     const assignPermanentFieldKeys = () => {
         const container = document.getElementById('app-container') || document.body;
-        const pages = container.querySelectorAll('.page');
-        pages.forEach(page => {
-            const pageId = page.id || 'page';
-            const fields = page.querySelectorAll('input, textarea, select');
-            fields.forEach((field, i) => {
-                if (field.id) {
-                    field.dataset.billKey = field.id;
-                } else {
-                    field.dataset.billKey = `${pageId}_${field.tagName.toLowerCase()}_${i}`;
-                }
-            });
-        });
-
-        const remainingFields = container.querySelectorAll('input:not([data-bill-key]), textarea:not([data-bill-key]), select:not([data-bill-key])');
-        remainingFields.forEach((field, i) => {
-            if (field.id === 'login-username' || field.id === 'login-password') return;
-            field.dataset.billKey = field.id || `app_${field.tagName.toLowerCase()}_${i}`;
+        const fields = container.querySelectorAll('input, textarea, select');
+        fields.forEach((field) => {
+            if (field.classList.contains('page-date-sync-input') ||
+                field.classList.contains('batch-date-picker') ||
+                field.classList.contains('staff-exam-date-picker') ||
+                field.id === 'login-username' ||
+                field.id === 'login-password') {
+                return;
+            }
+            if (field.id) {
+                field.dataset.billKey = field.id;
+            }
         });
     };
 
@@ -1071,18 +1359,20 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             assignPermanentFieldKeys();
             const data = {
-                version: 2,
+                version: 3,
                 savedAt: new Date().toISOString(),
                 by_id: {},
-                by_key: {},
-                by_index: []
+                by_key: {}
             };
 
             const container = document.getElementById('app-container') || document.body;
             const inputs = container.querySelectorAll('input, textarea, select');
-            inputs.forEach((el, index) => {
-                // Don't save login credentials
+            inputs.forEach((el) => {
+                // Don't save login credentials or picker widgets
                 if (el.id === 'login-username' || el.id === 'login-password') return;
+                if (el.classList.contains('page-date-sync-input') ||
+                    el.classList.contains('batch-date-picker') ||
+                    el.classList.contains('staff-exam-date-picker')) return;
 
                 const val = (el.type === 'checkbox' || el.type === 'radio') ? el.checked : el.value;
 
@@ -1092,12 +1382,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (el.dataset.billKey) {
                     data.by_key[el.dataset.billKey] = val;
                 }
-                data.by_index.push({
-                    index: index,
-                    key: el.dataset.billKey || el.id || '',
-                    type: el.type,
-                    value: val
-                });
             });
 
             localStorage.setItem('exam_bill_data', JSON.stringify(data));
@@ -1125,6 +1409,68 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const saveAllBillDataManually = () => {
         saveAllData(true);
+    };
+
+    // Self-healing sanitizer: cleans up corrupted values caused by legacy index shifts
+    const sanitizeAndRepairCorruptedData = () => {
+        // 1. Repair candidate count inputs on Page 1 (must be numeric/seats, never date strings)
+        const countInputs = document.querySelectorAll('.col-2-input, .col-3-input, .col-4-input, .col-5-input');
+        countInputs.forEach(inp => {
+            const v = (inp.value || '').trim();
+            if (/^\d{4}-\d{2}-\d{2}$/.test(v) || /^\d{2}\/\d{2}\/\d{4}$/.test(v) || /^\d{4}\/\d{2}\/\d{2}$/.test(v)) {
+                inp.value = '';
+            }
+        });
+
+        // 2. Repair Page 7 designations: defaults if numbers or amounts like "224/-" were accidentally saved
+        const desigDefaults = {
+            'p6-desig-1': 'Expert',
+            'p6-desig-2': 'Lab. Attendant',
+            'p6-desig-3': 'Lab. Attendant',
+            'p6-desig-4': 'Peon / Servant'
+        };
+        Object.keys(desigDefaults).forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                const v = (el.value || '').trim();
+                if (/^\d+/.test(v) || v.includes('/-') || !v) {
+                    el.value = desigDefaults[id];
+                }
+            }
+        });
+
+        // 3. Repair Page 7 footer fields
+        const durationEl = document.getElementById('p7-duration-days');
+        if (durationEl) {
+            const v = (durationEl.value || '').trim();
+            if (v.includes('/') || isNaN(parseInt(v)) || parseInt(v) > 30) {
+                durationEl.value = '06';
+            }
+        }
+
+        const overHoursEl = document.getElementById('p7-over-hours');
+        if (overHoursEl) {
+            const v = (overHoursEl.value || '').trim();
+            if (v.includes('/') || isNaN(parseInt(v)) || parseInt(v) > 24) {
+                overHoursEl.value = '08';
+            }
+        }
+
+        const startEl = document.getElementById('p7-daily-start');
+        if (startEl) {
+            const v = (startEl.value || '').trim();
+            if (v.includes('/') || v.includes('dred') || !v) {
+                startEl.value = '10.30 am';
+            }
+        }
+
+        const endEl = document.getElementById('p7-daily-end');
+        if (endEl) {
+            const v = (endEl.value || '').trim();
+            if (v.includes('/') || !v) {
+                endEl.value = '6.00 pm';
+            }
+        }
     };
 
     // Debounce function to prevent excessive saving
@@ -1211,20 +1557,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
-            // 3. Fallback for legacy format (by numeric index)
-            if (!data.by_key && data.by_index && Array.isArray(data.by_index)) {
-                const legacyInputs = document.querySelectorAll('input, textarea, select');
-                data.by_index.forEach(item => {
-                    const el = legacyInputs[item.index];
-                    if (el && !el.id && el.type === item.type) {
-                        if (el.type === 'checkbox' || el.type === 'radio') {
-                            el.checked = Boolean(item.value);
-                        } else {
-                            el.value = item.value;
-                        }
-                    }
-                });
-            }
+            // Run self-healing sanitizer to fix any previously corrupted fields
+            sanitizeAndRepairCorruptedData();
 
             // Ensure subject text box is properly restored
             const savedSubject = data.by_id ? (data.by_id['subject-input'] || data.by_id['subject-dropdown']) : null;
@@ -1278,8 +1612,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const container = document.getElementById('app-container') || document.body;
             const inputs = container.querySelectorAll('input, textarea');
             inputs.forEach(el => {
-                // Keep fixed per-student rates and staff rates
-                if (el.classList.contains('per-student-input') || el.classList.contains('rate-input')) {
+                // Keep fixed staff rates (Page 7)
+                if (el.classList.contains('staff-input') && el.classList.contains('rate-input')) {
                     return;
                 }
                 // Don't touch login inputs
@@ -1345,9 +1679,28 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.page4-total-present').forEach(d => d.textContent = '0');
 
             // Reset remuneration rows (Page 5 & 6)
-            document.querySelectorAll('.student-count').forEach(el => el.textContent = '0');
-            document.querySelectorAll('.remun-calc').forEach(el => el.textContent = '0');
-            document.querySelectorAll('.total-remun').forEach(el => el.textContent = '0');
+            document.querySelectorAll('.student-count').forEach(el => {
+                if (el.tagName === 'INPUT') {
+                    el.value = '';
+                    delete el.dataset.userEdited;
+                } else {
+                    el.textContent = '';
+                }
+            });
+            document.querySelectorAll('.rate-input:not(.staff-input)').forEach(el => {
+                el.value = '';
+                delete el.dataset.userEdited;
+            });
+            document.querySelectorAll('.examiners-input').forEach(el => {
+                el.value = '';
+                delete el.dataset.userEdited;
+            });
+            document.querySelectorAll('.per-student-input').forEach(el => {
+                el.value = '';
+                delete el.dataset.userEdited;
+            });
+            document.querySelectorAll('.remun-calc').forEach(el => el.textContent = '');
+            document.querySelectorAll('.total-remun').forEach(el => el.textContent = '');
             document.querySelectorAll('.total-remun-display').forEach(el => el.textContent = '0');
             document.querySelectorAll('.remun-extra-input').forEach(el => el.value = '');
             document.querySelectorAll('.remun-vertical-total').forEach(el => el.textContent = '0');
@@ -2077,24 +2430,46 @@ document.addEventListener('DOMContentLoaded', () => {
         if (progressModal) progressModal.style.display = 'flex';
         updateProgress(5, 'Preparing bill pages and syncing form fields...');
 
+        // Synchronize all live displays, totals, and dates before PDF capture
+        if (typeof syncAllDisplays === 'function') syncAllDisplays();
+        if (typeof updateTableTotals === 'function') updateTableTotals();
+        if (typeof updateStaffTotals === 'function') updateStaffTotals();
+        if (typeof updatePage7Totals === 'function') updatePage7Totals();
+        if (typeof updateTadaTotals === 'function') updateTadaTotals();
+        const mainDateInput = document.getElementById('date-input');
+        if (mainDateInput && mainDateInput.value && typeof updateAllDateDisplays === 'function') {
+            updateAllDateDisplays(mainDateInput.value);
+        }
+
         // Synchronize all input values to DOM value attributes for canvas fidelity
         document.querySelectorAll('input, select, textarea').forEach(el => {
             if (el.tagName === 'SELECT') {
                 for (let i = 0; i < el.options.length; i++) {
-                    if (i === el.selectedIndex) el.options[i].setAttribute('selected', 'selected');
-                    else el.options[i].removeAttribute('selected');
+                    if (i === el.selectedIndex) {
+                        el.options[i].setAttribute('selected', 'selected');
+                        el.options[i].selected = true;
+                    } else {
+                        el.options[i].removeAttribute('selected');
+                        el.options[i].selected = false;
+                    }
                 }
+            } else if (el.tagName === 'TEXTAREA') {
+                el.textContent = el.value;
+                el.setAttribute('value', el.value);
+                el.setAttribute('data-live-val', el.value);
             } else if (el.type === 'checkbox' || el.type === 'radio') {
                 if (el.checked) el.setAttribute('checked', 'checked');
                 else el.removeAttribute('checked');
             } else {
                 el.setAttribute('value', el.value);
+                el.setAttribute('data-live-val', el.value);
             }
         });
 
         // Add clean export mode to body
         document.body.classList.add('pdf-export-mode');
 
+        // Only export up to Page 7 (7-page official bill document)
         const pageConfigs = [
             { id: 'page1', name: 'Attendance Sheet', orientation: 'portrait', widthMm: 210, heightMm: 297 },
             { id: 'page2', name: 'Laboratory Certificate', orientation: 'portrait', widthMm: 210, heightMm: 297 },
@@ -2102,8 +2477,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'page4', name: 'Verification Certificate', orientation: 'portrait', widthMm: 210, heightMm: 297 },
             { id: 'page5', name: 'Remuneration Bill (External)', orientation: 'portrait', widthMm: 210, heightMm: 297 },
             { id: 'page6', name: 'Remuneration Bill (Internal)', orientation: 'portrait', widthMm: 210, heightMm: 297 },
-            { id: 'page7', name: 'Assistants & Staff Bill (Landscape)', orientation: 'landscape', widthMm: 297, heightMm: 210 },
-            { id: 'page8', name: 'Final Bill & TA/DA (Landscape)', orientation: 'landscape', widthMm: 297, heightMm: 210 }
+            { id: 'page7', name: 'Assistants & Staff Bill (Landscape)', orientation: 'landscape', widthMm: 297, heightMm: 210 }
         ];
 
         try {
@@ -2130,66 +2504,349 @@ document.addEventListener('DOMContentLoaded', () => {
                 const currentPercent = Math.round(10 + (i / totalPages) * 75);
                 updateProgress(currentPercent, `Rendering Page ${pageNum} of ${totalPages}: ${config.name}...`);
 
-                // Ensure page is settled and scrolled into view for accurate layout rendering
-                pageEl.scrollIntoView({ block: 'start', inline: 'nearest' });
-                await new Promise(r => setTimeout(r, 80));
-
-                const canvas = await html2canvas(pageEl, {
-                    scale: 2.2, // Crisp high-res rendering
-                    useCORS: true,
-                    logging: false,
-                    backgroundColor: '#ffffff',
-                    scrollX: 0,
-                    scrollY: 0,
-                    windowWidth: pageEl.scrollWidth,
-                    ignoreElements: (el) => {
-                        return el.classList && (
-                            el.classList.contains('no-print') ||
-                            el.id === 'login-screen' ||
-                            el.id === 'main-nav' ||
-                            el.id === 'download-confirm-modal-backdrop' ||
-                            el.id === 'download-progress-modal-backdrop'
-                        );
+                // Assign unique tracking ID to each form element in pageEl before html2canvas clones it
+                let trackCounter = 0;
+                pageEl.querySelectorAll('input, select, textarea').forEach(el => {
+                    el.setAttribute('data-pdf-track-id', `track-${trackCounter++}`);
+                    const liveVal = el.value || '';
+                    el.setAttribute('value', liveVal);
+                    el.setAttribute('data-live-val', liveVal);
+                    if (el.tagName === 'TEXTAREA') {
+                        el.textContent = liveVal;
                     }
                 });
 
-                const imgData = canvas.toDataURL('image/jpeg', 0.98);
+                // Ensure page is settled and scrolled into view for accurate layout rendering
+                pageEl.scrollIntoView({ block: 'start', inline: 'nearest' });
+                await new Promise(r => setTimeout(r, 100));
 
-                // Calculate proportional dimensions to preserve true aspect ratio (prevents squashing or stretching)
-                const canvasRatio = canvas.height / canvas.width;
-                const pageRatio = config.heightMm / config.widthMm;
-                let renderWidth = config.widthMm;
-                let renderHeight = config.heightMm;
-                let posX = 0;
-                let posY = 0;
+                try {
+                    const canvas = await html2canvas(pageEl, {
+                        scale: 2.5, // 2.5x high-definition rendering for razor-sharp clarity
+                        useCORS: true,
+                        logging: false,
+                        backgroundColor: '#ffffff',
+                        scrollX: 0,
+                        scrollY: 0,
+                        windowWidth: pageEl.scrollWidth,
+                        windowHeight: pageEl.scrollHeight,
+                        onclone: (clonedDoc) => {
+                            const clonedPage = clonedDoc.getElementById(config.id);
+                            if (!clonedPage) return;
 
-                if (canvasRatio > pageRatio) {
-                    // Element is slightly taller than A4 page: scale by height to prevent vertical squashing
-                    renderHeight = config.heightMm;
-                    renderWidth = renderHeight / canvasRatio;
-                    posX = (config.widthMm - renderWidth) / 2;
-                } else {
-                    // Element matches or is slightly shorter: fit width and center vertically
-                    renderWidth = config.widthMm;
-                    renderHeight = renderWidth * canvasRatio;
-                    posY = (config.heightMm - renderHeight) / 2;
-                }
+                            // Helper to reliably find matching original element from live pageEl
+                            const getOriginalElement = (clonedEl) => {
+                                if (!clonedEl) return null;
+                                const trackId = clonedEl.getAttribute('data-pdf-track-id');
+                                if (trackId) {
+                                    const found = pageEl.querySelector(`[data-pdf-track-id="${trackId}"]`);
+                                    if (found) return found;
+                                }
+                                if (clonedEl.id) {
+                                    const found = pageEl.querySelector(`#${clonedEl.id}`) || document.getElementById(clonedEl.id);
+                                    if (found) return found;
+                                }
+                                return null;
+                            };
 
-                if (i === 0) {
-                    // First page: jsPDF initialized in portrait A4
-                    pdf.addImage(imgData, 'JPEG', posX, posY, renderWidth, renderHeight, undefined, 'SLOW');
-                } else {
-                    // Add subsequent pages with appropriate orientation
-                    if (config.orientation === 'landscape') {
-                        pdf.addPage([297, 210], 'landscape');
+                            // 1. Ensure date display on Page 1 is visible with proper formatted text
+                            const mainDateEl = document.getElementById('date-input');
+                            const mainDateVal = mainDateEl ? (formatDateForDisplay(mainDateEl.value) || mainDateEl.value) : '';
+                            clonedPage.querySelectorAll('.print-date-display').forEach(el => {
+                                el.style.display = 'inline';
+                                if (mainDateVal) el.textContent = mainDateVal;
+                            });
+
+                            // 2. Remove all non-printing / picker / widget elements from clonedPage
+                            const removeSelectors = [
+                                '.no-print',
+                                '.no-print-date',
+                                '.page-date-sync-input',
+                                '.batch-date-picker',
+                                '.staff-exam-date-picker',
+                                '.remove-batch-row-btn',
+                                '#batch-add-btn-container'
+                            ];
+                            clonedPage.querySelectorAll(removeSelectors.join(',')).forEach(el => el.remove());
+
+                            // 3. Remove all placeholder attributes so no placeholder text ever renders in PDF
+                            clonedPage.querySelectorAll('[placeholder]').forEach(el => el.removeAttribute('placeholder'));
+
+                            // 4. Transform <select> elements into bold text spans matching web display
+                            const clonedSelects = clonedPage.querySelectorAll('select');
+                            clonedSelects.forEach((sel) => {
+                                const orig = getOriginalElement(sel);
+                                let text = '';
+                                if (orig && orig.selectedIndex >= 0 && orig.options[orig.selectedIndex]) {
+                                    text = orig.options[orig.selectedIndex].text;
+                                } else if (sel.selectedIndex >= 0 && sel.options[sel.selectedIndex]) {
+                                    text = sel.options[sel.selectedIndex].text;
+                                } else {
+                                    text = sel.value || '';
+                                }
+
+                                const span = clonedDoc.createElement('span');
+                                span.className = sel.className;
+                                span.style.cssText = sel.style.cssText;
+                                span.style.border = 'none';
+                                span.style.background = 'transparent';
+                                span.style.boxShadow = 'none';
+                                span.style.fontFamily = 'inherit';
+                                span.style.fontWeight = 'bold';
+
+                                if (sel.classList.contains('batch-dropdown')) {
+                                    span.style.display = 'block';
+                                    span.style.textAlign = 'center';
+                                    span.style.width = '100%';
+                                } else {
+                                    span.style.display = 'inline-block';
+                                    span.style.textAlign = 'left';
+                                    span.style.width = 'auto';
+                                    span.style.margin = '0 4px';
+                                    span.style.padding = '0';
+                                    span.style.verticalAlign = 'baseline';
+                                }
+                                span.textContent = text;
+                                if (sel.parentNode) {
+                                    sel.parentNode.replaceChild(span, sel);
+                                }
+                            });
+
+                            // 5. Transform .remun-title-input into full-width wrapping divs (prevents left/right clipping)
+                            const clonedRemunTitles = clonedPage.querySelectorAll('.remun-title-input');
+                            clonedRemunTitles.forEach((inp) => {
+                                const orig = getOriginalElement(inp);
+                                const val = (orig ? orig.value : inp.value) || inp.getAttribute('value') || '';
+                                const div = clonedDoc.createElement('div');
+                                div.className = 'remun-title-display';
+                                div.style.display = 'block';
+                                div.style.width = '100%';
+                                div.style.textAlign = 'center';
+                                div.style.fontSize = '10pt';
+                                div.style.lineHeight = '1.25';
+                                div.style.fontWeight = '500';
+                                div.style.fontFamily = 'inherit';
+                                div.style.wordBreak = 'break-word';
+                                div.style.whiteSpace = 'normal';
+                                div.style.padding = '2px 0';
+                                div.style.boxSizing = 'border-box';
+                                div.textContent = val;
+                                if (inp.parentNode) {
+                                    inp.parentNode.replaceChild(div, inp);
+                                }
+                            });
+
+                            // 6. Transform <textarea> into wrapping divs
+                            const clonedTextareas = clonedPage.querySelectorAll('textarea');
+                            clonedTextareas.forEach((ta) => {
+                                const orig = getOriginalElement(ta);
+                                let val = '';
+                                if (orig && orig.value !== undefined && orig.value !== null && String(orig.value).trim() !== '') {
+                                    val = String(orig.value);
+                                } else if (orig && orig.getAttribute('data-live-val')) {
+                                    val = orig.getAttribute('data-live-val');
+                                } else if (orig && orig.getAttribute('value')) {
+                                    val = orig.getAttribute('value');
+                                } else if (ta.value !== undefined && ta.value !== null && String(ta.value).trim() !== '') {
+                                    val = String(ta.value);
+                                } else if (ta.textContent) {
+                                    val = ta.textContent;
+                                }
+                                val = (val || '').trim();
+
+                                const div = clonedDoc.createElement('div');
+                                div.className = ta.className;
+                                div.style.cssText = ta.style.cssText;
+                                div.style.border = 'none';
+                                div.style.background = 'transparent';
+                                div.style.boxShadow = 'none';
+                                div.style.whiteSpace = 'pre-wrap';
+                                div.style.wordBreak = 'break-word';
+                                div.style.fontFamily = 'inherit';
+                                div.style.minHeight = '1.2em';
+
+                                if (ta.classList.contains('staff-exam-date')) {
+                                    div.style.width = '100%';
+                                    div.style.textAlign = 'center';
+                                    div.style.fontSize = '9pt';
+                                    div.style.lineHeight = '1.2';
+                                    div.style.fontWeight = 'bold';
+                                } else if (ta.classList.contains('staff-input')) {
+                                    div.style.fontSize = '9.5pt';
+                                    div.style.fontWeight = 'bold';
+                                    div.style.textAlign = 'left';
+                                }
+
+                                if (!val) {
+                                    div.innerHTML = '&nbsp;';
+                                } else {
+                                    div.textContent = val;
+                                }
+
+                                if (ta.parentNode) {
+                                    ta.parentNode.replaceChild(div, ta);
+                                }
+                            });
+
+                            // 7. Transform remaining <input> elements into clean spans
+                            const clonedInputs = clonedPage.querySelectorAll('input');
+                            clonedInputs.forEach((inp) => {
+                                const orig = getOriginalElement(inp);
+                                if (inp.type === 'checkbox' || inp.type === 'radio') {
+                                    if (orig) inp.checked = orig.checked;
+                                    return;
+                                }
+
+                                let val = '';
+                                if (orig && orig.value !== undefined && orig.value !== null && String(orig.value).trim() !== '') {
+                                    val = String(orig.value);
+                                } else if (orig && orig.getAttribute('data-live-val')) {
+                                    val = orig.getAttribute('data-live-val');
+                                } else if (orig && orig.getAttribute('value')) {
+                                    val = orig.getAttribute('value');
+                                } else if (inp.value !== undefined && inp.value !== null && String(inp.value).trim() !== '') {
+                                    val = String(inp.value);
+                                } else if (inp.getAttribute('data-live-val')) {
+                                    val = inp.getAttribute('data-live-val');
+                                } else if (inp.getAttribute('value')) {
+                                    val = inp.getAttribute('value');
+                                }
+                                val = (val || '').trim();
+
+                                // Format type="date" inputs into DD/MM/YYYY
+                                if ((inp.type === 'date' || (orig && orig.type === 'date')) && val) {
+                                    const parts = val.split('-');
+                                    if (parts.length === 3 && parts[0].length === 4) {
+                                        val = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                                    }
+                                }
+
+                                const span = clonedDoc.createElement('span');
+                                span.className = inp.className;
+                                span.style.cssText = inp.style.cssText;
+                                span.style.border = 'none';
+                                span.style.background = 'transparent';
+                                span.style.boxShadow = 'none';
+                                span.style.outline = 'none';
+                                span.style.fontFamily = 'inherit';
+                                span.style.wordBreak = 'break-word';
+
+                                if (inp.classList.contains('batch-date-input')) {
+                                    span.style.display = 'block';
+                                    span.style.width = '100%';
+                                    span.style.textAlign = 'center';
+                                    span.style.fontSize = '11px';
+                                } else if (inp.classList.contains('staff-prep-date') || inp.classList.contains('staff-clean-date')) {
+                                    span.style.display = 'block';
+                                    span.style.width = '100%';
+                                    span.style.textAlign = 'center';
+                                    span.style.fontWeight = 'bold';
+                                    span.style.fontSize = '9pt';
+                                    span.style.lineHeight = '1.2';
+                                } else if (inp.classList.contains('table-input') || inp.classList.contains('remun-input') || inp.classList.contains('day-input') || inp.classList.contains('rate-input') || inp.classList.contains('amount-input') || inp.classList.contains('total-days-input') || inp.classList.contains('staff-grand-total')) {
+                                    span.style.display = 'block';
+                                    span.style.width = '100%';
+                                    span.style.textAlign = 'center';
+                                    span.style.fontWeight = 'bold';
+                                    span.style.fontSize = '9.5pt';
+                                    span.style.lineHeight = '1.2';
+                                } else if (inp.classList.contains('staff-total-words')) {
+                                    span.style.display = 'inline-block';
+                                    span.style.minWidth = '220px';
+                                    span.style.width = 'auto';
+                                    span.style.textAlign = 'center';
+                                    span.style.fontWeight = 'bold';
+                                    span.style.fontSize = '9.5pt';
+                                } else if (inp.classList.contains('examiner-input') || inp.classList.contains('examiner2-input')) {
+                                    span.style.display = 'inline-block';
+                                    span.style.minWidth = '200px';
+                                    span.style.width = 'auto';
+                                    span.style.marginRight = '10px';
+                                    span.style.fontWeight = 'bold';
+                                } else if (inp.classList.contains('college-input') || inp.classList.contains('college2-input')) {
+                                    span.style.display = 'inline-block';
+                                    span.style.minWidth = '220px';
+                                    span.style.width = 'auto';
+                                    span.style.fontWeight = 'bold';
+                                } else {
+                                    span.style.display = 'inline-block';
+                                }
+
+                                if (!val) {
+                                    span.innerHTML = '&nbsp;';
+                                } else {
+                                    span.textContent = val;
+                                }
+
+                                if (inp.parentNode) {
+                                    inp.parentNode.replaceChild(span, inp);
+                                }
+                            });
+                        },
+                        ignoreElements: (el) => {
+                            return el.classList && (
+                                el.classList.contains('no-print') ||
+                                el.classList.contains('no-print-date') ||
+                                el.classList.contains('page-date-sync-input') ||
+                                el.classList.contains('batch-date-picker') ||
+                                el.classList.contains('staff-exam-date-picker') ||
+                                el.classList.contains('remove-batch-row-btn') ||
+                                el.id === 'batch-add-btn-container' ||
+                                el.id === 'login-screen' ||
+                                el.id === 'main-nav' ||
+                                el.id === 'download-confirm-modal-backdrop' ||
+                                el.id === 'download-filename-modal-backdrop' ||
+                                el.id === 'download-progress-modal-backdrop' ||
+                                el.id === 'share-modal-backdrop'
+                            );
+                        }
+                    });
+
+                    // Lossless PNG data URL: delivers crisp, blur-free text and sharp table gridlines
+                    const imgData = canvas.toDataURL('image/png');
+
+                    // Calculate proportional dimensions to preserve true aspect ratio
+                    const canvasRatio = canvas.height / canvas.width;
+                    const pageRatio = config.heightMm / config.widthMm;
+                    let renderWidth = config.widthMm;
+                    let renderHeight = config.heightMm;
+                    let posX = 0;
+                    let posY = 0;
+
+                    if (canvasRatio > pageRatio) {
+                        // Element is slightly taller than A4: scale down to fit height without clipping
+                        renderHeight = config.heightMm;
+                        renderWidth = renderHeight / canvasRatio;
+                        posX = (config.widthMm - renderWidth) / 2;
+                        posY = 0;
                     } else {
-                        pdf.addPage([210, 297], 'portrait');
+                        // Fit width cleanly from top
+                        renderWidth = config.widthMm;
+                        renderHeight = renderWidth * canvasRatio;
+                        posX = 0;
+                        posY = 0;
                     }
-                    pdf.addImage(imgData, 'JPEG', posX, posY, renderWidth, renderHeight, undefined, 'SLOW');
+
+                    if (i === 0) {
+                        // First page: portrait A4
+                        pdf.addImage(imgData, 'PNG', posX, posY, renderWidth, renderHeight, undefined, 'FAST');
+                    } else {
+                        // Subsequent pages with correct orientation (Page 7: Landscape [297, 210])
+                        if (config.orientation === 'landscape') {
+                            pdf.addPage([297, 210], 'landscape');
+                        } else {
+                            pdf.addPage([210, 297], 'portrait');
+                        }
+                        pdf.addImage(imgData, 'PNG', posX, posY, renderWidth, renderHeight, undefined, 'FAST');
+                    }
+                } finally {
+                    pageEl.querySelectorAll('[data-pdf-track-id]').forEach(el => {
+                        el.removeAttribute('data-pdf-track-id');
+                    });
                 }
             }
 
-            updateProgress(92, 'Compiling 8-page document...');
+            updateProgress(92, 'Compiling 7-page document...');
             await new Promise(r => setTimeout(r, 120));
 
             // Determine filename: use custom provided name or compute intelligent default
@@ -2215,6 +2872,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error generating PDF:', err);
             alert('An error occurred while creating the PDF: ' + err.message);
         } finally {
+            document.querySelectorAll('[data-pdf-track-id]').forEach(el => el.removeAttribute('data-pdf-track-id'));
             document.body.classList.remove('pdf-export-mode');
             if (progressModal) progressModal.style.display = 'none';
             isGeneratingPdf = false;
