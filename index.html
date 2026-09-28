@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/webp" href="college-logo.webp">
-    <link rel="stylesheet" href="styles.css?v=9.1">
+    <link rel="stylesheet" href="styles.css?v=9.6">
 </head>
 
 <body style="word-wrap: break-word;">
@@ -101,11 +101,17 @@
                         <span class="nav-tab-badge">8</span>
                         <span class="nav-tab-text">Final Bills</span>
                     </a>
+                    <a href="javascript:void(0)" onclick="openStaffBankDbModal()" class="nav-tab nav-tab-bank-db"
+                        title="Staff Bank Database & Complete Editable List" style="--item-index: 9;">
+                        <span class="nav-tab-badge">9</span>
+                        <span class="nav-tab-text">Staff Bank List</span>
+                        <span id="nav-bank-db-count-badge" class="nav-bank-count-badge">8</span>
+                    </a>
                 </div>
 
                 <div class="nav-actions-group">
                     <button type="button" onclick="saveAllBillDataManually()" class="nav-btn btn-save"
-                        title="Save all entered data permanently (Ctrl+S)" style="--item-index: 9;">
+                        title="Save all entered data permanently (Ctrl+S)" style="--item-index: 10;">
                         <svg class="nav-btn-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             viewBox="0 0 24 24">
@@ -116,7 +122,7 @@
                         <span>Save Data</span>
                     </button>
                     <button type="button" onclick="handleDownloadPdf()" class="nav-btn btn-download"
-                        title="Download complete bill as PDF to your PC" style="--item-index: 10;">
+                        title="Download complete bill as PDF to your PC" style="--item-index: 11;">
                         <svg class="nav-btn-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             viewBox="0 0 24 24">
@@ -127,7 +133,7 @@
                         <span>Download PDF</span>
                     </button>
                     <button type="button" onclick="downloadPage8Excel()" class="nav-btn btn-excel"
-                        title="Download Page 8 (Final Bill & TA/DA) as an Excel spreadsheet (.xlsx)" style="--item-index: 11;">
+                        title="Download Page 8 (Final Bill & TA/DA) as an Excel spreadsheet (.xlsx)" style="--item-index: 12;">
                         <svg class="nav-btn-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             viewBox="0 0 24 24">
@@ -270,13 +276,13 @@
 14.0pt;line-height:150%'> Examiners Names &amp; College</span></p>
 
             <p class=MsoNormal style='line-height:150%'><span lang=EN-US> 1. <b>
-                        <input type="text" id="p1-ext-name" class="examiner-input" placeholder="Enter Examiner Name"
+                        <input type="text" id="p1-ext-name" list="staff-name-datalist" class="examiner-input" placeholder="Enter Examiner Name"
                             style="font-size: 14px; font-weight: bold; font-family: inherit; margin: 0; padding: 2px; border: 1px solid #ccc; border-radius: 4px; width: 200px; background: white;">
                         <input type="text" id="p1-ext-college" class="college-input" placeholder="Enter College Name"
                             style="font-size: 14px; font-weight: bold; font-family: inherit; margin: 0 5px; padding: 2px; border: 1px solid #ccc; border-radius: 4px; width: 250px; background: white;">
                     </b></span></p>
             <p class=MsoNormal><span lang=EN-US> 2. <b><u>
-                            <input type="text" id="p1-int-name" class="examiner2-input"
+                            <input type="text" id="p1-int-name" list="staff-name-datalist" class="examiner2-input"
                                 placeholder="Enter Examiner 2 Name"
                                 style="font-size: 14px; font-weight: bold; font-family: inherit; margin: 0; padding: 2px; border: 1px solid #ccc; border-radius: 4px; width: 200px; background: white;">
                             <input type="text" id="p1-int-college" class="college2-input"
@@ -1874,6 +1880,14 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                     Page 8: Final Bill & TA/DA (A4 Landscape)
                 </span>
                 <div style="display: flex; gap: 8px; align-items: center;">
+                    <button onclick="openStaffBankDbModal()" type="button"
+                        title="Staff Bank Database: Free lifetime auto-fill & staff management"
+                        style="background: #4f46e5; color: white; border: none; padding: 5px 14px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); transition: all 0.2s;">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v4M12 14v4M16 14v4"/>
+                        </svg>
+                        Bank Details DB
+                    </button>
                     <button onclick="downloadPage8Excel()" type="button"
                         title="Download Page 8 (Final Bill & TA/DA) as an Excel spreadsheet (.xlsx)"
                         style="background: #15803d; color: white; border: none; padding: 5px 14px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); transition: all 0.2s;">
@@ -1913,7 +1927,6 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                 </p>
                 <p class="MsoNormal" style="margin: 4px 0 0 0; font-size: 10pt;">
                     Subject : <b><u><span class="subject-display"></span></u></b>
-                </p>
             </div>
 
             <table class="bill-table">
@@ -1936,7 +1949,7 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                     </tr>
                     <tr>
                         <td class="text-center">1</td>
-                        <td><input type="text" id="p7-exp-name" class="bill-input-cell" value="" placeholder="Expert Name"></td>
+                        <td><input type="text" id="p7-exp-name" list="staff-name-datalist" class="bill-input-cell" value="" placeholder="Expert Name"></td>
                         <td><input type="text" id="p8-exp-class" class="bill-input-cell text-center" value="" placeholder="Class"></td>
                         <td><input type="text" id="p7-exp-desig" class="bill-input-cell" value="Expert"></td>
                         <td><input type="number" id="p7-exp-amt" class="bill-input-cell exp-amt-input text-center" value="" placeholder="0"></td>
@@ -1956,7 +1969,7 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                     </tr>
                     <tr>
                         <td class="text-center">1</td>
-                        <td><input type="text" id="p7-ext-name" class="bill-input-cell" value="" placeholder="External Examiner Name"></td>
+                        <td><input type="text" id="p7-ext-name" list="staff-name-datalist" class="bill-input-cell" value="" placeholder="External Examiner Name"></td>
                         <td><input type="text" id="p8-ext-class" class="bill-input-cell text-center" value="" placeholder="Class"></td>
                         <td><input type="text" id="p7-ext-desig" class="bill-input-cell" value="External Examiner"></td>
                         <td><input type="number" id="p7-ext-amt" class="bill-input-cell ext-amt-input text-center" value="" placeholder="0"></td>
@@ -1976,7 +1989,7 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                     </tr>
                     <tr>
                         <td class="text-center">1</td>
-                        <td><input type="text" id="p7-int-name" class="bill-input-cell" value="" placeholder="Internal Examiner Name"></td>
+                        <td><input type="text" id="p7-int-name" list="staff-name-datalist" class="bill-input-cell" value="" placeholder="Internal Examiner Name"></td>
                         <td><input type="text" id="p8-int-class" class="bill-input-cell text-center" value="" placeholder="Class"></td>
                         <td><input type="text" id="p7-int-desig" class="bill-input-cell" value="Internal Examiner"></td>
                         <td><input type="number" id="p7-int-amt" class="bill-input-cell int-amt-input text-center" value="" placeholder="0"></td>
@@ -1996,7 +2009,7 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                     </tr>
                     <tr>
                         <td class="text-center">1</td>
-                        <td><input type="text" id="p7-lab-name-1" class="bill-input-cell" value="" placeholder="Staff Name 1"></td>
+                        <td><input type="text" id="p7-lab-name-1" list="staff-name-datalist" class="bill-input-cell" value="" placeholder="Staff Name 1"></td>
                         <td><input type="text" id="p8-lab1-class" class="bill-input-cell text-center" value="" placeholder="Class"></td>
                         <td><input type="text" id="p7-lab-desig-1" class="bill-input-cell" value="Lab. Attendent"></td>
                         <td><input type="number" id="p7-lab-amt-1" class="bill-input-cell lab-amt-input text-center" value="" placeholder="0"></td>
@@ -2006,7 +2019,7 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                     </tr>
                     <tr>
                         <td class="text-center">2</td>
-                        <td><input type="text" id="p7-lab-name-2" class="bill-input-cell" value="" placeholder="Staff Name 2"></td>
+                        <td><input type="text" id="p7-lab-name-2" list="staff-name-datalist" class="bill-input-cell" value="" placeholder="Staff Name 2"></td>
                         <td><input type="text" id="p8-lab2-class" class="bill-input-cell text-center" value="" placeholder="Class"></td>
                         <td><input type="text" id="p7-lab-desig-2" class="bill-input-cell" value="Lab. Attendent"></td>
                         <td><input type="number" id="p7-lab-amt-2" class="bill-input-cell lab-amt-input text-center" value="" placeholder="0"></td>
@@ -2026,7 +2039,7 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                     </tr>
                     <tr>
                         <td class="text-center">1</td>
-                        <td><input type="text" id="p8-tada-ext-name" class="bill-input-cell" value="" placeholder="External Examiner Name"></td>
+                        <td><input type="text" id="p8-tada-ext-name" list="staff-name-datalist" class="bill-input-cell" value="" placeholder="External Examiner Name"></td>
                         <td><input type="text" id="p8-tada-upper-class" class="bill-input-cell text-center" value="" placeholder="Class"></td>
                         <td><input type="text" id="p8-tada-upper-desig" class="bill-input-cell" value="External Examiner"></td>
                         <td><input type="number" id="p8-tada-upper-amt" class="bill-input-cell tada-amt-input text-center" value="" placeholder="0"></td>
@@ -2076,7 +2089,7 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                 <tbody>
                     <tr>
                         <td style="text-align: center;">1</td>
-                        <td><input type="text" id="p8-ext-name" class="tada-input" value="" placeholder="Examiner Name"></td>
+                        <td><input type="text" id="p8-ext-name" list="staff-name-datalist" class="tada-input" value="" placeholder="Examiner Name"></td>
                         <td><input type="text" id="p8-tada-desig-1" class="tada-input" value="External Examiner"></td>
                         <td><input type="text" id="p8-ext-college" class="tada-input" value="" placeholder="College Name"></td>
                         <td><input type="date" class="tada-input tada-date-picker" title="Practical/Viva Date"
@@ -2091,7 +2104,7 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
                     </tr>
                     <tr>
                         <td style="text-align: center;">2</td>
-                        <td><input type="text" id="p8-ext-name-2" class="tada-input" value="" placeholder="Examiner Name 2"></td>
+                        <td><input type="text" id="p8-ext-name-2" list="staff-name-datalist" class="tada-input" value="" placeholder="Examiner Name 2"></td>
                         <td><input type="text" id="p8-tada-desig-2" class="tada-input" value="External Examiner"></td>
                         <td><input type="text" id="p8-ext-college-2" class="tada-input" value="" placeholder="College Name 2"></td>
                         <td><input type="date" class="tada-input tada-date-picker" title="Practical/Viva Date"
@@ -2352,20 +2365,183 @@ text-indent:36.0pt;line-height:115%'><span lang=EN-US> Examiner </span></p>
             <span id="toast-text">Copied to clipboard!</span>
         </div>
 
-        <!-- Floating Back-to-Top Button -->
-        <button id="scroll-to-top-btn" class="scroll-to-top-btn no-print" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Scroll to Top">
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
-            </svg>
-        </button>
+        <!-- Staff Name Autocomplete Datalist -->
+        <datalist id="staff-name-datalist">
+            <!-- Populated dynamically from StaffBankDB -->
+        </datalist>
+
+        <!-- Staff Bank Database Manager Modal (100% Free Lifetime Local Storage) -->
+        <div id="staff-bank-db-modal-backdrop" class="no-print download-modal-backdrop" style="display: none;" onclick="closeStaffBankDbModal()">
+            <div class="staff-bank-db-modal-content" onclick="event.stopPropagation()">
+                <!-- Modal Header -->
+                <div class="staff-db-header">
+                    <div class="staff-db-header-left">
+                        <div class="staff-db-icon-wrap">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v4M12 14v4M16 14v4" />
+                            </svg>
+                        </div>
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <h2 class="staff-db-title">Staff Bank Details Database</h2>
+                                <span class="staff-db-badge-free">Lifetime Free</span>
+                            </div>
+                            <p class="staff-db-subtitle">
+                                Typing staff name on any page automatically fills Bank Name, Account No. &amp; IFSC code
+                            </p>
+                        </div>
+                    </div>
+                    <button type="button" class="staff-db-close-btn" onclick="closeStaffBankDbModal()" title="Close database list">&times;</button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="staff-db-body">
+                    <!-- Control Bar -->
+                    <div class="staff-db-controls">
+                        <div class="staff-db-search-box">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input type="text" id="staff-db-search-input" placeholder="Search by staff name, bank, account no, or IFSC..." oninput="filterStaffDbTable(this.value)">
+                        </div>
+                        <div class="staff-db-action-btns">
+                            <button type="button" class="staff-btn staff-btn-primary" onclick="toggleStaffAddForm(true)">
+                                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                <span>Add New Staff</span>
+                            </button>
+                            <button type="button" class="staff-btn staff-btn-primary" onclick="copyStaffDbToClipboard()" title="Copy Staff Name, Class, Bank Name, Account Number, IFSC Code to Clipboard">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                <span>Copy List</span>
+                            </button>
+                            <button type="button" class="staff-btn staff-btn-secondary" onclick="exportStaffDbCsv()" title="Download Excel CSV backup file">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="8" y1="13" x2="16" y2="17"></line>
+                                    <line x1="16" y1="13" x2="8" y2="17"></line>
+                                </svg>
+                                <span>Export CSV</span>
+                            </button>
+                            <button type="button" class="staff-btn staff-btn-secondary" onclick="exportStaffDbJson()" title="Download JSON backup file">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                <span>Export Backup</span>
+                            </button>
+                            <button type="button" class="staff-btn staff-btn-secondary" onclick="triggerStaffDbImport()" title="Import staff from JSON or CSV file">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                <span>Import File</span>
+                            </button>
+                            <input type="file" id="staff-db-import-file" accept=".json,.csv" style="display: none;" onchange="handleStaffDbFileImport(event)">
+                        </div>
+                    </div>
+
+                    <!-- Add / Edit Staff Form Panel (Collapsible) -->
+                    <div id="staff-form-panel" class="staff-form-panel" style="display: none;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <h3 id="staff-form-title" style="margin: 0; font-size: 1rem; color: #1e1b4b; font-weight: 700;">Add Staff Member</h3>
+                            <button type="button" onclick="toggleStaffAddForm(false)" style="background: none; border: none; font-size: 1.2rem; color: #64748b; cursor: pointer; padding: 0 4px;">&times;</button>
+                        </div>
+                        <input type="hidden" id="staff-form-edit-id" value="">
+                        <div class="staff-form-grid">
+                            <div class="staff-form-field">
+                                <label for="staff-form-name">Staff Full Name *</label>
+                                <input type="text" id="staff-form-name" placeholder="e.g. Dr. S. R. Patil" required>
+                            </div>
+                            <div class="staff-form-field">
+                                <label for="staff-form-role">Class / Designation</label>
+                                <select id="staff-form-role">
+                                    <option value="Expert">Expert</option>
+                                    <option value="External Examiner">External Examiner</option>
+                                    <option value="Internal Examiner">Internal Examiner</option>
+                                    <option value="Lab. Attendent">Lab. Attendent</option>
+                                    <option value="Peon / Servant">Peon / Servant</option>
+                                    <option value="B.Sc. III">B.Sc. III</option>
+                                    <option value="M.Sc.">M.Sc.</option>
+                                    <option value="Staff">Other Staff</option>
+                                </select>
+                            </div>
+                            <div class="staff-form-field">
+                                <label for="staff-form-bank">Bank Name *</label>
+                                <input type="text" id="staff-form-bank" placeholder="e.g. Bank of India" required>
+                            </div>
+                            <div class="staff-form-field">
+                                <label for="staff-form-acc">Account Number *</label>
+                                <input type="text" id="staff-form-acc" placeholder="e.g. 150210110004523" required>
+                            </div>
+                            <div class="staff-form-field">
+                                <label for="staff-form-ifsc">IFSC Code *</label>
+                                <input type="text" id="staff-form-ifsc" placeholder="e.g. BKID0001502" style="text-transform: uppercase;" required>
+                            </div>
+                            <div class="staff-form-field">
+                                <label for="staff-form-college">College / Institution</label>
+                                <input type="text" id="staff-form-college" placeholder="e.g. Willingdon College, Sangli" value="Willingdon College, Sangli">
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+                            <button type="button" class="staff-btn staff-btn-secondary" onclick="toggleStaffAddForm(false)">Cancel</button>
+                            <button type="button" class="staff-btn staff-btn-primary" onclick="submitStaffMemberForm()">Save to Database</button>
+                        </div>
+                    </div>
+
+                    <!-- Staff Table -->
+                    <div class="staff-table-wrap">
+                        <table class="staff-db-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 4%; text-align: center;">#</th>
+                                    <th style="width: 23%;">Staff Name</th>
+                                    <th style="width: 14%;">Class</th>
+                                    <th style="width: 18%;">Bank Name</th>
+                                    <th style="width: 16%;">Account Number</th>
+                                    <th style="width: 11%;">IFSC Code</th>
+                                    <th style="width: 14%; text-align: center;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="staff-db-tbody">
+                                <!-- Populated dynamically by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="staff-db-footer">
+                    <div class="staff-db-counter">
+                        <span id="staff-db-total-count">0 staff registered</span> &bull; 
+                        <span style="color: #16a34a; font-weight: 600;">Lifetime Offline Storage Active</span>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <button type="button" class="staff-btn staff-btn-secondary" onclick="resetStaffDbToDefaults()" title="Reset to default Willingdon College staff examples" style="font-size: 0.78rem;">
+                            Load College Samples
+                        </button>
+                        <button type="button" class="staff-btn staff-btn-secondary" onclick="closeStaffBankDbModal()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div><!-- /#app-container -->
 
     <script src="jspdf.umd.min.js"></script>
     <script src="html2canvas.min.js"></script>
-    <script src="xlsx.full.min.js"></script>
-    <script src="login-3d.js?v=9.1"></script>
-    <script src="script.js?v=9.1"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>if (typeof XLSX === 'undefined') { document.write('<script src="xlsx.full.min.js"><\/script>'); }</script>
+    <script src="login-3d.js?v=9.6"></script>
+    <script src="script.js?v=9.6"></script>
 </body>
 
 </html>

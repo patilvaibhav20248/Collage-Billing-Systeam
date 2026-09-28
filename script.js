@@ -2115,6 +2115,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     // Load saved bill data immediately upon login!
                     loadAllData();
+                    updateStaffDatalist();
+                    setupStaffAutofillListeners();
                     syncAllDisplays();
                     updateTableTotals();
                     updateStaffTotals();
@@ -2137,6 +2139,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
                 loadAllData();
+                updateStaffDatalist();
+                setupStaffAutofillListeners();
                 syncAllDisplays();
                 updateTableTotals();
                 updateStaffTotals();
@@ -3176,6 +3180,763 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // =============================================================
+    // STAFF BANK DATABASE & LIFETIME AUTO-FILL SYSTEM
+    // =============================================================
+    const DEFAULT_STAFF_DB = [
+        { id: 'staff_1', name: 'Dr. S. R. Patil', role: 'Expert', bank: 'Bank of India', acc: '150210110004523', ifsc: 'BKID0001502', college: 'Willingdon College, Sangli' },
+        { id: 'staff_2', name: 'Prof. V. M. Kulkarni', role: 'External Examiner', bank: 'State Bank of India', acc: '30987654321', ifsc: 'SBIN0000473', college: 'Willingdon College, Sangli' },
+        { id: 'staff_3', name: 'Dr. A. B. Joshi', role: 'Internal Examiner', bank: 'Bank of Maharashtra', acc: '60123456789', ifsc: 'MAHB0000123', college: 'Willingdon College, Sangli' },
+        { id: 'staff_4', name: 'Shri. R. K. Jadhav', role: 'Lab. Attendent', bank: 'Central Bank of India', acc: '21098765432', ifsc: 'CBIN0280654', college: 'Willingdon College, Sangli' },
+        { id: 'staff_5', name: 'Shri. S. P. Shinde', role: 'Lab. Attendent', bank: 'Union Bank of India', acc: '54321098765', ifsc: 'UBIN0532145', college: 'Willingdon College, Sangli' },
+        { id: 'staff_6', name: 'Shri. P. T. Mane', role: 'Peon / Servant', bank: 'Bank of Baroda', acc: '43210987654', ifsc: 'BARB0SANGLI', college: 'Willingdon College, Sangli' },
+        { id: 'staff_7', name: 'Dr. M. N. Deshmukh', role: 'External Examiner', bank: 'HDFC Bank', acc: '50100234567890', ifsc: 'HDFC0000215', college: 'Willingdon College, Sangli' },
+        { id: 'staff_8', name: 'Prof. S. K. Pawar', role: 'Internal Examiner', bank: 'ICICI Bank', acc: '021501500342', ifsc: 'ICIC0000215', college: 'Willingdon College, Sangli' }
+    ];
+
+    const getStaffBankDb = () => {
+        try {
+            const raw = localStorage.getItem('staff_bank_database');
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+            }
+        } catch (e) {
+            console.error('Error loading Staff Bank DB:', e);
+        }
+        return DEFAULT_STAFF_DB;
+    };
+
+    const updateNavBankCountBadge = () => {
+        const badge = document.getElementById('nav-bank-db-count-badge');
+        if (badge) {
+            const db = getStaffBankDb();
+            badge.textContent = db.length;
+        }
+    };
+
+    const saveStaffBankDb = (data) => {
+        try {
+            localStorage.setItem('staff_bank_database', JSON.stringify(data));
+            updateStaffDatalist();
+            updateNavBankCountBadge();
+        } catch (e) {
+            console.error('Error saving Staff Bank DB:', e);
+        }
+    };
+
+    const updateStaffDatalist = () => {
+        const datalist = document.getElementById('staff-name-datalist');
+        if (!datalist) return;
+        const db = getStaffBankDb();
+        datalist.innerHTML = '';
+        db.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item.name;
+            opt.label = `${item.role || 'Staff'} • ${item.bank || 'Bank'} (${item.ifsc || 'IFSC'})`;
+            datalist.appendChild(opt);
+        });
+        updateNavBankCountBadge();
+    };
+
+    const findStaffInDb = (nameQuery) => {
+        if (!nameQuery) return null;
+        const cleanQuery = String(nameQuery).trim().toLowerCase();
+        if (!cleanQuery) return null;
+
+        const db = getStaffBankDb();
+        // Exact match first
+        let match = db.find(s => s.name && s.name.trim().toLowerCase() === cleanQuery);
+        if (match) return match;
+
+        // Substring match
+        match = db.find(s => {
+            if (!s.name) return false;
+            const sName = s.name.trim().toLowerCase();
+            return sName.includes(cleanQuery) || cleanQuery.includes(sName);
+        });
+        return match || null;
+    };
+
+    const triggerBankAutofillFlash = (element) => {
+        if (!element) return;
+        element.classList.remove('bank-autofilled');
+        void element.offsetWidth; // Force reflow
+        element.classList.add('bank-autofilled');
+        setTimeout(() => element.classList.remove('bank-autofilled'), 2000);
+    };
+
+    // Auto-fill bank details whenever a staff name is typed or chosen
+    const autofillBankDetailsForInput = (inputEl, notify = true) => {
+        if (!inputEl) return;
+        const nameVal = inputEl.value ? inputEl.value.trim() : '';
+        if (!nameVal) return;
+
+        const staff = findStaffInDb(nameVal);
+        if (!staff) return;
+
+        const targetId = inputEl.id;
+        const autofilledEls = [];
+
+        const setFieldVal = (id, val) => {
+            if (!val) return;
+            const el = document.getElementById(id);
+            if (el) {
+                el.value = val;
+                autofilledEls.push(el);
+            }
+        };
+
+        // Mapping rules based on input ID
+        if (targetId === 'p7-exp-name' || targetId === 'p6-name-1') {
+            setFieldVal('p8-exp-bank', staff.bank);
+            setFieldVal('p8-exp-acc', staff.acc);
+            setFieldVal('p8-exp-ifsc', staff.ifsc);
+            const desig = document.getElementById('p7-exp-desig');
+            if (desig && (!desig.value || desig.value === 'Expert')) desig.value = staff.role || 'Expert';
+        } else if (targetId === 'p7-ext-name' || targetId === 'p1-ext-name' || targetId === 'p8-ext-name' || targetId === 'p8-tada-ext-name') {
+            setFieldVal('p8-ext-bank', staff.bank);
+            setFieldVal('p8-tada-bank', staff.bank);
+            setFieldVal('p8-ext-acc', staff.acc);
+            setFieldVal('p8-tada-acc', staff.acc);
+            setFieldVal('p8-ext-ifsc', staff.ifsc);
+            setFieldVal('p8-tada-ifsc', staff.ifsc);
+            if (staff.college) {
+                setFieldVal('p1-ext-college', staff.college);
+                setFieldVal('p8-ext-college', staff.college);
+            }
+            const desig = document.getElementById('p7-ext-desig');
+            if (desig && (!desig.value || desig.value === 'External Examiner')) desig.value = staff.role || 'External Examiner';
+            const tadaUpperDesig = document.getElementById('p8-tada-upper-desig');
+            if (tadaUpperDesig) tadaUpperDesig.value = staff.role || 'External Examiner';
+            const tadaDesig1 = document.getElementById('p8-tada-desig-1');
+            if (tadaDesig1) tadaDesig1.value = staff.role || 'External Examiner';
+        } else if (targetId === 'p7-int-name' || targetId === 'p1-int-name') {
+            setFieldVal('p8-int-bank', staff.bank);
+            setFieldVal('p8-int-acc', staff.acc);
+            setFieldVal('p8-int-ifsc', staff.ifsc);
+            if (staff.college) {
+                setFieldVal('p1-int-college', staff.college);
+            }
+            const desig = document.getElementById('p7-int-desig');
+            if (desig && (!desig.value || desig.value === 'Internal Examiner')) desig.value = staff.role || 'Internal Examiner';
+        } else if (targetId === 'p7-lab-name-1' || targetId === 'p6-name-2') {
+            setFieldVal('p8-lab1-bank', staff.bank);
+            setFieldVal('p8-lab1-acc', staff.acc);
+            setFieldVal('p8-lab1-ifsc', staff.ifsc);
+            const desig = document.getElementById('p7-lab-desig-1');
+            if (desig && (!desig.value || desig.value === 'Lab. Attendent')) desig.value = staff.role || 'Lab. Attendent';
+        } else if (targetId === 'p7-lab-name-2' || targetId === 'p6-name-3') {
+            setFieldVal('p8-lab2-bank', staff.bank);
+            setFieldVal('p8-lab2-acc', staff.acc);
+            setFieldVal('p8-lab2-ifsc', staff.ifsc);
+            const desig = document.getElementById('p7-lab-desig-2');
+            if (desig && (!desig.value || desig.value === 'Lab. Attendent')) desig.value = staff.role || 'Lab. Attendent';
+        } else if (targetId === 'p8-ext-name-2') {
+            if (staff.college) setFieldVal('p8-ext-college-2', staff.college);
+            const desig = document.getElementById('p8-tada-desig-2');
+            if (desig) desig.value = staff.role || 'External Examiner';
+        }
+
+        // Animate all filled cells
+        if (autofilledEls.length > 0) {
+            autofilledEls.forEach(el => triggerBankAutofillFlash(el));
+            if (notify && typeof showToastNotification === 'function') {
+                showToastNotification(`✓ Auto-filled Bank details for "${staff.name}"`);
+            }
+            debouncedSave();
+        }
+    };
+
+    // Automatic Database Update: When user types new staff name + bank/acc directly in form, add/update in database!
+    let autoAddDbTimeout = null;
+    const checkAndAutoAddStaffFromRow = (rowType) => {
+        clearTimeout(autoAddDbTimeout);
+        autoAddDbTimeout = setTimeout(() => {
+            let name = '', bank = '', acc = '', ifsc = '', role = '', college = '';
+
+            if (rowType === 'exp') {
+                name = document.getElementById('p7-exp-name')?.value?.trim() || '';
+                bank = document.getElementById('p8-exp-bank')?.value?.trim() || '';
+                acc = document.getElementById('p8-exp-acc')?.value?.trim() || '';
+                ifsc = (document.getElementById('p8-exp-ifsc')?.value?.trim() || '').toUpperCase();
+                role = document.getElementById('p7-exp-desig')?.value?.trim() || 'Expert';
+            } else if (rowType === 'ext') {
+                name = document.getElementById('p7-ext-name')?.value?.trim() || document.getElementById('p1-ext-name')?.value?.trim() || '';
+                bank = document.getElementById('p8-ext-bank')?.value?.trim() || document.getElementById('p8-tada-bank')?.value?.trim() || '';
+                acc = document.getElementById('p8-ext-acc')?.value?.trim() || document.getElementById('p8-tada-acc')?.value?.trim() || '';
+                ifsc = (document.getElementById('p8-ext-ifsc')?.value?.trim() || document.getElementById('p8-tada-ifsc')?.value?.trim() || '').toUpperCase();
+                role = document.getElementById('p7-ext-desig')?.value?.trim() || 'External Examiner';
+                college = document.getElementById('p8-ext-college')?.value?.trim() || document.getElementById('p1-ext-college')?.value?.trim() || '';
+            } else if (rowType === 'int') {
+                name = document.getElementById('p7-int-name')?.value?.trim() || document.getElementById('p1-int-name')?.value?.trim() || '';
+                bank = document.getElementById('p8-int-bank')?.value?.trim() || '';
+                acc = document.getElementById('p8-int-acc')?.value?.trim() || '';
+                ifsc = (document.getElementById('p8-int-ifsc')?.value?.trim() || '').toUpperCase();
+                role = document.getElementById('p7-int-desig')?.value?.trim() || 'Internal Examiner';
+                college = document.getElementById('p1-int-college')?.value?.trim() || '';
+            } else if (rowType === 'lab1') {
+                name = document.getElementById('p7-lab-name-1')?.value?.trim() || '';
+                bank = document.getElementById('p8-lab1-bank')?.value?.trim() || '';
+                acc = document.getElementById('p8-lab1-acc')?.value?.trim() || '';
+                ifsc = (document.getElementById('p8-lab1-ifsc')?.value?.trim() || '').toUpperCase();
+                role = document.getElementById('p7-lab-desig-1')?.value?.trim() || 'Lab. Attendent';
+            } else if (rowType === 'lab2') {
+                name = document.getElementById('p7-lab-name-2')?.value?.trim() || '';
+                bank = document.getElementById('p8-lab2-bank')?.value?.trim() || '';
+                acc = document.getElementById('p8-lab2-acc')?.value?.trim() || '';
+                ifsc = (document.getElementById('p8-lab2-ifsc')?.value?.trim() || '').toUpperCase();
+                role = document.getElementById('p7-lab-desig-2')?.value?.trim() || 'Lab. Attendent';
+            } else if (rowType === 'tada') {
+                name = document.getElementById('p8-tada-ext-name')?.value?.trim() || '';
+                bank = document.getElementById('p8-tada-bank')?.value?.trim() || '';
+                acc = document.getElementById('p8-tada-acc')?.value?.trim() || '';
+                ifsc = (document.getElementById('p8-tada-ifsc')?.value?.trim() || '').toUpperCase();
+                role = document.getElementById('p8-tada-upper-desig')?.value?.trim() || 'External Examiner';
+            }
+
+            // Must have a valid staff name and at least an account number or bank name
+            if (!name || name.length < 2 || (!acc && !bank)) return;
+
+            const db = getStaffBankDb();
+            const existingIdx = db.findIndex(s => s.name && s.name.trim().toLowerCase() === name.toLowerCase());
+
+            if (existingIdx === -1) {
+                // Automatically add new staff member to database!
+                const newStaff = {
+                    id: 'staff_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                    name: name,
+                    role: role || 'Staff',
+                    bank: bank || '',
+                    acc: acc || '',
+                    ifsc: ifsc || '',
+                    college: college || 'Willingdon College, Sangli'
+                };
+                db.push(newStaff);
+                saveStaffBankDb(db);
+                if (typeof showToastNotification === 'function') {
+                    showToastNotification(`✓ Added "${name}" to Staff Bank List!`);
+                }
+            } else {
+                // Automatically update details if changed
+                const existing = db[existingIdx];
+                let hasChanges = false;
+                if (bank && existing.bank !== bank) { existing.bank = bank; hasChanges = true; }
+                if (acc && existing.acc !== acc) { existing.acc = acc; hasChanges = true; }
+                if (ifsc && existing.ifsc !== ifsc) { existing.ifsc = ifsc; hasChanges = true; }
+                if (college && existing.college !== college) { existing.college = college; hasChanges = true; }
+
+                if (hasChanges) {
+                    db[existingIdx] = existing;
+                    saveStaffBankDb(db);
+                    if (typeof showToastNotification === 'function') {
+                        showToastNotification(`✓ Updated "${name}" in Staff Bank List!`);
+                    }
+                }
+            }
+        }, 500);
+    };
+
+    // Attach autofill and auto-add event listeners to all staff name and bank inputs
+    const setupStaffAutofillListeners = () => {
+        const staffNameInputIds = [
+            'p7-exp-name', 'p7-ext-name', 'p7-int-name',
+            'p7-lab-name-1', 'p7-lab-name-2', 'p8-tada-ext-name',
+            'p8-ext-name', 'p8-ext-name-2', 'p1-ext-name', 'p1-int-name',
+            'p6-name-1', 'p6-name-2', 'p6-name-3', 'p6-name-4'
+        ];
+
+        staffNameInputIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el && !el.dataset.hasBankAutofill) {
+                el.dataset.hasBankAutofill = 'true';
+                ['input', 'change', 'blur'].forEach(evt => {
+                    el.addEventListener(evt, () => {
+                        autofillBankDetailsForInput(el, evt !== 'input');
+                    });
+                });
+            }
+        });
+
+        // Auto-save listeners on bank/account cells to auto-add new staff to DB
+        const rowBindings = [
+            { type: 'exp', ids: ['p7-exp-name', 'p8-exp-bank', 'p8-exp-acc', 'p8-exp-ifsc', 'p7-exp-desig'] },
+            { type: 'ext', ids: ['p7-ext-name', 'p8-ext-bank', 'p8-ext-acc', 'p8-ext-ifsc', 'p7-ext-desig', 'p8-ext-college', 'p1-ext-name', 'p1-ext-college'] },
+            { type: 'int', ids: ['p7-int-name', 'p8-int-bank', 'p8-int-acc', 'p8-int-ifsc', 'p7-int-desig', 'p1-int-name', 'p1-int-college'] },
+            { type: 'lab1', ids: ['p7-lab-name-1', 'p8-lab1-bank', 'p8-lab1-acc', 'p8-lab1-ifsc', 'p7-lab-desig-1'] },
+            { type: 'lab2', ids: ['p7-lab-name-2', 'p8-lab2-bank', 'p8-lab2-acc', 'p8-lab2-ifsc', 'p7-lab-desig-2'] },
+            { type: 'tada', ids: ['p8-tada-ext-name', 'p8-tada-bank', 'p8-tada-acc', 'p8-tada-ifsc', 'p8-tada-upper-desig'] }
+        ];
+
+        rowBindings.forEach(binding => {
+            binding.ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && !el.dataset.hasAutoAddDb) {
+                    el.dataset.hasAutoAddDb = 'true';
+                    ['change', 'blur'].forEach(evt => {
+                        el.addEventListener(evt, () => {
+                            checkAndAutoAddStaffFromRow(binding.type);
+                        });
+                    });
+                }
+            });
+        });
+    };
+
+    // Modal controls
+    const openStaffBankDbModal = () => {
+        const modal = document.getElementById('staff-bank-db-modal-backdrop');
+        if (!modal) return;
+        renderStaffDbTable();
+        toggleStaffAddForm(false);
+        modal.style.display = 'flex';
+        const searchInput = document.getElementById('staff-db-search-input');
+        if (searchInput) {
+            searchInput.value = '';
+            setTimeout(() => searchInput.focus(), 100);
+        }
+    };
+
+    const closeStaffBankDbModal = () => {
+        const modal = document.getElementById('staff-bank-db-modal-backdrop');
+        if (modal) modal.style.display = 'none';
+        toggleStaffAddForm(false);
+    };
+
+    const escapeHtml = (str) => {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    };
+
+    const fallbackCopyText = (text, successMsg = '✓ Copied to clipboard!') => {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            if (typeof showToastNotification === 'function') {
+                showToastNotification(successMsg);
+            }
+        } catch (err) {
+            prompt('Copy to clipboard: Ctrl+C, Enter', text);
+        }
+        textArea.remove();
+    };
+
+    // Copy entire staff list with exact columns: Staff Name \t Class \t Bank Name \t Account Number \t IFSC Code
+    const copyStaffDbToClipboard = () => {
+        try {
+            const db = getStaffBankDb();
+            if (!db || db.length === 0) {
+                alert('No staff records found in database to copy.');
+                return;
+            }
+            const searchInput = document.getElementById('staff-db-search-input');
+            const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+            const listToCopy = query
+                ? db.filter(s =>
+                    (s.name && s.name.toLowerCase().includes(query)) ||
+                    (s.bank && s.bank.toLowerCase().includes(query)) ||
+                    (s.acc && s.acc.toLowerCase().includes(query)) ||
+                    (s.ifsc && s.ifsc.toLowerCase().includes(query)) ||
+                    (s.role && s.role.toLowerCase().includes(query))
+                )
+                : db;
+
+            // Tab-delimited format (perfect for direct Excel/Sheet pasting)
+            let text = "Staff Name\tClass\tBank Name\tAccount Number\tIFSC Code\n";
+            listToCopy.forEach(s => {
+                text += `${s.name || ''}\t${s.role || 'Staff'}\t${s.bank || ''}\t${s.acc || ''}\t${(s.ifsc || '').toUpperCase()}\n`;
+            });
+
+            const successMsg = `✓ Copied ${listToCopy.length} staff records (Staff Name, Class, Bank, Acc, IFSC) to clipboard!`;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    if (typeof showToastNotification === 'function') {
+                        showToastNotification(successMsg);
+                    }
+                }).catch(() => fallbackCopyText(text, successMsg));
+            } else {
+                fallbackCopyText(text, successMsg);
+            }
+        } catch (e) {
+            console.error('Error copying staff database:', e);
+            alert('Copy failed: ' + e.message);
+        }
+    };
+
+    // Copy a single staff member row (Staff Name, Class, Bank Name, Account Number, IFSC Code)
+    const copySingleStaffRow = (id) => {
+        const db = getStaffBankDb();
+        const staff = db.find(s => s.id === id);
+        if (!staff) return;
+
+        const rowText = `${staff.name || ''}\t${staff.role || 'Staff'}\t${staff.bank || ''}\t${staff.acc || ''}\t${(staff.ifsc || '').toUpperCase()}`;
+        const successMsg = `✓ Copied "${staff.name}" details to clipboard!`;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(rowText).then(() => {
+                if (typeof showToastNotification === 'function') {
+                    showToastNotification(successMsg);
+                }
+            }).catch(() => fallbackCopyText(rowText, successMsg));
+        } else {
+            fallbackCopyText(rowText, successMsg);
+        }
+    };
+
+    const renderStaffDbTable = (filterQuery = '') => {
+        const tbody = document.getElementById('staff-db-tbody');
+        const countSpan = document.getElementById('staff-db-total-count');
+        if (!tbody) return;
+
+        const db = getStaffBankDb();
+        if (countSpan) countSpan.textContent = `${db.length} staff registered`;
+
+        const query = filterQuery.trim().toLowerCase();
+        const filtered = query
+            ? db.filter(s =>
+                (s.name && s.name.toLowerCase().includes(query)) ||
+                (s.bank && s.bank.toLowerCase().includes(query)) ||
+                (s.acc && s.acc.toLowerCase().includes(query)) ||
+                (s.ifsc && s.ifsc.toLowerCase().includes(query)) ||
+                (s.role && s.role.toLowerCase().includes(query)) ||
+                (s.college && s.college.toLowerCase().includes(query))
+            )
+            : db;
+
+        tbody.innerHTML = '';
+        if (filtered.length === 0) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td colspan="7" style="text-align: center; padding: 24px; color: #94a3b8; font-style: italic;">
+                    ${query ? `No staff matching "${escapeHtml(filterQuery)}" found.` : 'No staff registered yet. Click "Add New Staff" to create one!'}
+                </td>
+            `;
+            tbody.appendChild(tr);
+            return;
+        }
+
+        filtered.forEach((staff, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="text-align: center; font-weight: 600; color: #64748b;">${index + 1}</td>
+                <td>
+                    <div class="staff-db-name-cell">
+                        <span style="font-weight: 700; color: #0f172a;">${escapeHtml(staff.name || '')}</span>
+                        ${staff.college ? `<span style="font-size: 0.72rem; color: #64748b;">${escapeHtml(staff.college)}</span>` : ''}
+                    </div>
+                </td>
+                <td><span class="staff-db-role-badge">${escapeHtml(staff.role || 'Staff')}</span></td>
+                <td style="font-weight: 600; color: #1e293b;">${escapeHtml(staff.bank || '')}</td>
+                <td><span class="staff-db-acc-code">${escapeHtml(staff.acc || '')}</span></td>
+                <td><span class="staff-db-ifsc-code">${escapeHtml((staff.ifsc || '').toUpperCase())}</span></td>
+                <td style="text-align: center;">
+                    <div class="staff-db-actions-cell" style="justify-content: center; gap: 4px;">
+                        <button type="button" class="staff-btn staff-btn-secondary" onclick="copySingleStaffRow('${staff.id}')" title="Copy (Staff Name, Class, Bank, Acc, IFSC)" style="padding: 4px 7px; font-size: 0.74rem; color: #0284c7; border-color: #bae6fd;">
+                            <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            Copy
+                        </button>
+                        <button type="button" class="staff-btn staff-btn-secondary" onclick="editStaffMember('${staff.id}')" title="Edit details" style="padding: 4px 7px; font-size: 0.74rem;">
+                            <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            Edit
+                        </button>
+                        <button type="button" class="staff-btn staff-btn-secondary" onclick="deleteStaffMember('${staff.id}')" title="Delete staff" style="padding: 4px 7px; font-size: 0.74rem; color: #ef4444; border-color: #fca5a5;">
+                            <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    };
+
+    const filterStaffDbTable = (query) => {
+        renderStaffDbTable(query);
+    };
+
+    const toggleStaffAddForm = (show, editId = null) => {
+        const panel = document.getElementById('staff-form-panel');
+        const titleEl = document.getElementById('staff-form-title');
+        const editIdInput = document.getElementById('staff-form-edit-id');
+        const nameInput = document.getElementById('staff-form-name');
+        const roleInput = document.getElementById('staff-form-role');
+        const bankInput = document.getElementById('staff-form-bank');
+        const accInput = document.getElementById('staff-form-acc');
+        const ifscInput = document.getElementById('staff-form-ifsc');
+        const collegeInput = document.getElementById('staff-form-college');
+
+        if (!panel) return;
+
+        if (!show) {
+            panel.style.display = 'none';
+            if (editIdInput) editIdInput.value = '';
+            return;
+        }
+
+        panel.style.display = 'block';
+        if (editId) {
+            const db = getStaffBankDb();
+            const staff = db.find(s => s.id === editId);
+            if (staff) {
+                if (titleEl) titleEl.textContent = `Edit Staff: ${staff.name}`;
+                if (editIdInput) editIdInput.value = staff.id;
+                if (nameInput) nameInput.value = staff.name || '';
+                if (roleInput) roleInput.value = staff.role || 'Expert';
+                if (bankInput) bankInput.value = staff.bank || '';
+                if (accInput) accInput.value = staff.acc || '';
+                if (ifscInput) ifscInput.value = (staff.ifsc || '').toUpperCase();
+                if (collegeInput) collegeInput.value = staff.college || 'Willingdon College, Sangli';
+            }
+        } else {
+            if (titleEl) titleEl.textContent = 'Add New Staff Member';
+            if (editIdInput) editIdInput.value = '';
+            if (nameInput) nameInput.value = '';
+            if (roleInput) roleInput.value = 'Expert';
+            if (bankInput) bankInput.value = '';
+            if (accInput) accInput.value = '';
+            if (ifscInput) ifscInput.value = '';
+            if (collegeInput) collegeInput.value = 'Willingdon College, Sangli';
+        }
+
+        setTimeout(() => {
+            if (nameInput) nameInput.focus();
+        }, 80);
+    };
+
+    const editStaffMember = (id) => {
+        toggleStaffAddForm(true, id);
+    };
+
+    const deleteStaffMember = (id) => {
+        const db = getStaffBankDb();
+        const staff = db.find(s => s.id === id);
+        if (!staff) return;
+
+        if (confirm(`Are you sure you want to delete "${staff.name}" from Staff Bank Database?`)) {
+            const updated = db.filter(s => s.id !== id);
+            saveStaffBankDb(updated);
+            renderStaffDbTable(document.getElementById('staff-db-search-input')?.value || '');
+            if (typeof showToastNotification === 'function') {
+                showToastNotification(`✓ Deleted "${staff.name}" from database.`);
+            }
+        }
+    };
+
+    const submitStaffMemberForm = () => {
+        const nameInput = document.getElementById('staff-form-name');
+        const roleInput = document.getElementById('staff-form-role');
+        const bankInput = document.getElementById('staff-form-bank');
+        const accInput = document.getElementById('staff-form-acc');
+        const ifscInput = document.getElementById('staff-form-ifsc');
+        const collegeInput = document.getElementById('staff-form-college');
+        const editIdInput = document.getElementById('staff-form-edit-id');
+
+        const name = (nameInput?.value || '').trim();
+        const role = (roleInput?.value || 'Staff').trim();
+        const bank = (bankInput?.value || '').trim();
+        const acc = (accInput?.value || '').trim();
+        const ifsc = (ifscInput?.value || '').trim().toUpperCase();
+        const college = (collegeInput?.value || 'Willingdon College, Sangli').trim();
+        const editId = (editIdInput?.value || '').trim();
+
+        if (!name) {
+            alert('Please enter the Staff Full Name.');
+            if (nameInput) nameInput.focus();
+            return;
+        }
+        if (!bank) {
+            alert('Please enter the Bank Name.');
+            if (bankInput) bankInput.focus();
+            return;
+        }
+        if (!acc) {
+            alert('Please enter the Account Number.');
+            if (accInput) accInput.focus();
+            return;
+        }
+        if (!ifsc) {
+            alert('Please enter the IFSC Code.');
+            if (ifscInput) ifscInput.focus();
+            return;
+        }
+
+        const db = getStaffBankDb();
+        if (editId) {
+            // Update existing
+            const index = db.findIndex(s => s.id === editId);
+            if (index !== -1) {
+                db[index] = { ...db[index], name, role, bank, acc, ifsc, college };
+            }
+        } else {
+            // Add new
+            const newId = 'staff_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+            db.push({ id: newId, name, role, bank, acc, ifsc, college });
+        }
+
+        saveStaffBankDb(db);
+        toggleStaffAddForm(false);
+        renderStaffDbTable(document.getElementById('staff-db-search-input')?.value || '');
+
+        // Auto-refresh any inputs on the page matching this staff
+        document.querySelectorAll('input, textarea').forEach(inp => {
+            if (inp.id && inp.id.includes('name') && inp.value && inp.value.trim().toLowerCase() === name.toLowerCase()) {
+                autofillBankDetailsForInput(inp, false);
+            }
+        });
+
+        if (typeof showToastNotification === 'function') {
+            showToastNotification(`✓ Successfully saved "${name}" to Staff Bank Database!`);
+        }
+    };
+
+    const exportStaffDbJson = () => {
+        try {
+            const db = getStaffBankDb();
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `Willingdon_Staff_Bank_Database_Backup_${new Date().toISOString().slice(0, 10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            if (typeof showToastNotification === 'function') {
+                showToastNotification('✓ Staff Bank Database JSON backup exported!');
+            }
+        } catch (e) {
+            alert('Export failed: ' + e.message);
+        }
+    };
+
+    const exportStaffDbCsv = () => {
+        try {
+            const db = getStaffBankDb();
+            let csv = "Staff Name,Class,Bank Name,Account Number,IFSC Code\n";
+            db.forEach((s) => {
+                const escapeCsv = (str) => `"${String(str || '').replace(/"/g, '""')}"`;
+                csv += `${escapeCsv(s.name)},${escapeCsv(s.role || 'Staff')},${escapeCsv(s.bank)},${escapeCsv(s.acc)},${escapeCsv((s.ifsc || '').toUpperCase())}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `Willingdon_Staff_Bank_Details_${new Date().toISOString().slice(0, 10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            if (typeof showToastNotification === 'function') {
+                showToastNotification('✓ Staff Bank Details CSV exported!');
+            }
+        } catch (e) {
+            alert('Export failed: ' + e.message);
+        }
+    };
+
+    const triggerStaffDbImport = () => {
+        const fileInput = document.getElementById('staff-db-import-file');
+        if (fileInput) {
+            fileInput.value = '';
+            fileInput.click();
+        }
+    };
+
+    const handleStaffDbFileImport = (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const content = e.target.result;
+                let imported = [];
+
+                if (file.name.endsWith('.json')) {
+                    const parsed = JSON.parse(content);
+                    if (Array.isArray(parsed)) {
+                        imported = parsed;
+                    } else {
+                        throw new Error('Invalid JSON structure: Expected an array of staff objects.');
+                    }
+                } else if (file.name.endsWith('.csv')) {
+                    const lines = content.split(/\r?\n/).filter(l => l.trim().length > 0);
+                    if (lines.length > 1) {
+                        for (let i = 1; i < lines.length; i++) {
+                            const cols = lines[i].split(',').map(c => c.replace(/^"|"$/g, '').trim());
+                            if (cols.length >= 4) {
+                                imported.push({
+                                    id: 'staff_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                                    name: cols[1] || cols[0] || '',
+                                    role: cols[2] || 'Staff',
+                                    bank: cols[3] || '',
+                                    acc: cols[4] || '',
+                                    ifsc: (cols[5] || '').toUpperCase(),
+                                    college: cols[6] || 'Willingdon College, Sangli'
+                                });
+                            }
+                        }
+                    }
+                }
+
+                if (imported.length === 0) {
+                    alert('No valid staff records found in the uploaded file.');
+                    return;
+                }
+
+                const currentDb = getStaffBankDb();
+                let addedCount = 0;
+                imported.forEach(newStaff => {
+                    if (newStaff.name && newStaff.bank) {
+                        const existingIdx = currentDb.findIndex(s => s.name.trim().toLowerCase() === newStaff.name.trim().toLowerCase());
+                        if (existingIdx !== -1) {
+                            currentDb[existingIdx] = { ...currentDb[existingIdx], ...newStaff, id: currentDb[existingIdx].id };
+                        } else {
+                            currentDb.push({
+                                id: newStaff.id || ('staff_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4)),
+                                name: newStaff.name,
+                                role: newStaff.role || 'Staff',
+                                bank: newStaff.bank || '',
+                                acc: newStaff.acc || '',
+                                ifsc: (newStaff.ifsc || '').toUpperCase(),
+                                college: newStaff.college || 'Willingdon College, Sangli'
+                            });
+                        }
+                        addedCount++;
+                    }
+                });
+
+                saveStaffBankDb(currentDb);
+                renderStaffDbTable();
+                if (typeof showToastNotification === 'function') {
+                    showToastNotification(`✓ Successfully imported ${addedCount} staff records!`);
+                }
+            } catch (err) {
+                console.error('Import error:', err);
+                alert('Failed to import file: ' + err.message);
+            }
+        };
+        reader.readAsText(file);
+    };
+
+    const resetStaffDbToDefaults = () => {
+        if (confirm('Reset Staff Bank Database to default Willingdon College sample staff list?')) {
+            saveStaffBankDb(DEFAULT_STAFF_DB);
+            renderStaffDbTable();
+            if (typeof showToastNotification === 'function') {
+                showToastNotification('✓ Staff Bank Database reset to college samples.');
+            }
+        }
+    };
+
     // Expose functions globally
     window.openShareModal = openShareModal;
     window.closeShareModal = closeShareModal;
@@ -3201,10 +3962,31 @@ document.addEventListener('DOMContentLoaded', () => {
     window.startPdfDownload = startPdfDownload;
     window.downloadPage8Excel = downloadPage8Excel;
 
+    // Staff Bank DB Global Exposes
+    window.openStaffBankDbModal = openStaffBankDbModal;
+    window.closeStaffBankDbModal = closeStaffBankDbModal;
+    window.filterStaffDbTable = filterStaffDbTable;
+    window.toggleStaffAddForm = toggleStaffAddForm;
+    window.submitStaffMemberForm = submitStaffMemberForm;
+    window.editStaffMember = editStaffMember;
+    window.deleteStaffMember = deleteStaffMember;
+    window.copyStaffDbToClipboard = copyStaffDbToClipboard;
+    window.copySingleStaffRow = copySingleStaffRow;
+    window.exportStaffDbJson = exportStaffDbJson;
+    window.exportStaffDbCsv = exportStaffDbCsv;
+    window.triggerStaffDbImport = triggerStaffDbImport;
+    window.handleStaffDbFileImport = handleStaffDbFileImport;
+    window.resetStaffDbToDefaults = resetStaffDbToDefaults;
+    window.autofillBankDetailsForInput = autofillBankDetailsForInput;
+    window.updateNavBankCountBadge = updateNavBankCountBadge;
+
     // Initial sequence
     assignPermanentFieldKeys();
     checkAuth();
     loadAllData();
+    updateStaffDatalist();
+    updateNavBankCountBadge();
+    setupStaffAutofillListeners();
 
     // Login input listeners for dynamic button reveal & 3D state
     const loginUserEl = document.getElementById('login-username');
@@ -3281,6 +4063,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof closeDownloadFilenameModal === 'function') closeDownloadFilenameModal();
             if (typeof closeDownloadConfirmModal === 'function') closeDownloadConfirmModal();
             if (typeof closeShareModal === 'function') closeShareModal();
+            if (typeof closeStaffBankDbModal === 'function') closeStaffBankDbModal();
         }
     });
 
