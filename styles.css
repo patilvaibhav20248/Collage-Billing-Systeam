@@ -809,7 +809,7 @@ body.logged-in {
     padding: 10px 24px;
     margin-bottom: 35px;
     box-sizing: border-box;
-    overflow: hidden;
+    overflow: visible;
     user-select: none;
     opacity: 0;
     transform: translateY(-115%);
@@ -1032,6 +1032,9 @@ body.logged-in {
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    cursor: pointer;
+    outline: none;
+    line-height: normal;
 }
 
 .nav-tab-badge {

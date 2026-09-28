@@ -101,12 +101,12 @@
                         <span class="nav-tab-badge">8</span>
                         <span class="nav-tab-text">Final Bills</span>
                     </a>
-                    <a href="javascript:void(0)" onclick="openStaffBankDbModal()" class="nav-tab nav-tab-bank-db"
+                    <button type="button" id="nav-tab-bank-db" onclick="openStaffBankDbModal()" class="nav-tab nav-tab-bank-db"
                         title="Staff Bank Database & Complete Editable List" style="--item-index: 9;">
                         <span class="nav-tab-badge">9</span>
                         <span class="nav-tab-text">Staff Bank List</span>
                         <span id="nav-bank-db-count-badge" class="nav-bank-count-badge">8</span>
-                    </a>
+                    </button>
                 </div>
 
                 <div class="nav-actions-group">
@@ -145,7 +145,7 @@
                         <span>Page 8 Excel</span>
                     </button>
                     <button type="button" onclick="window.print()" class="nav-btn btn-print" title="Print All Pages"
-                        style="--item-index: 12;">
+                        style="--item-index: 13;">
                         <svg class="nav-btn-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             viewBox="0 0 24 24">
@@ -156,7 +156,7 @@
                         <span>Print All</span>
                     </button>
                     <button type="button" onclick="clearAllBillData()" class="nav-btn btn-clear"
-                        title="Clear all entered bill data" style="--item-index: 12;">
+                        title="Clear all entered bill data" style="--item-index: 14;">
                         <svg class="nav-btn-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             viewBox="0 0 24 24">
@@ -166,7 +166,7 @@
                         <span>Clear Data</span>
                     </button>
                     <button type="button" onclick="openShareModal()" class="nav-btn btn-share"
-                        title="Share bill document" style="--item-index: 12;">
+                        title="Share bill document" style="--item-index: 15;">
                         <svg class="nav-btn-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             viewBox="0 0 24 24">
@@ -179,7 +179,7 @@
                         <span>Share</span>
                     </button>
                     <button type="button" onclick="logout()" class="nav-btn btn-logout" title="Sign out"
-                        style="--item-index: 13;">
+                        style="--item-index: 16;">
                         <svg class="nav-btn-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             viewBox="0 0 24 24">

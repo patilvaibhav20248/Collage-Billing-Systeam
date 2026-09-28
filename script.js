@@ -4042,6 +4042,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             pages.forEach(p => observer.observe(p));
         }
+        // Setup Staff Bank DB navigation button click listener
+        const staffBankNavBtn = document.getElementById('nav-tab-bank-db');
+        if (staffBankNavBtn) {
+            staffBankNavBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                openStaffBankDbModal();
+            });
+        }
     };
     initNavTabs();
 
