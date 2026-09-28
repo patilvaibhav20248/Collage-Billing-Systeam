@@ -2738,9 +2738,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                     span.style.lineHeight = '1.2';
                                 } else if (inp.classList.contains('staff-total-words')) {
                                     span.style.display = 'inline-block';
-                                    span.style.minWidth = '220px';
-                                    span.style.width = 'auto';
-                                    span.style.textAlign = 'center';
+                                    span.style.width = '100%';
+                                    span.style.textAlign = 'left';
                                     span.style.fontWeight = 'bold';
                                     span.style.fontSize = '9.5pt';
                                 } else if (inp.classList.contains('examiner-input') || inp.classList.contains('examiner2-input')) {
@@ -3248,9 +3247,12 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => element.classList.remove('bank-autofilled'), 2000);
     };
 
-    // Auto-fill bank details whenever a staff name is typed or chosen
+    // Auto-fill bank details whenever a staff name is typed or chosen (PAGE 8 EXCEL FILE ONLY)
     const autofillBankDetailsForInput = (inputEl, notify = true) => {
         if (!inputEl) return;
+        // Strictly only autofill if input is on Page 8 (the Excel file)
+        if (!inputEl.closest('#page8')) return;
+
         const nameVal = inputEl.value ? inputEl.value.trim() : '';
         if (!nameVal) return;
 
@@ -3260,23 +3262,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const targetId = inputEl.id;
         const autofilledEls = [];
 
+        const page8 = document.getElementById('page8');
+        if (!page8) return;
+
         const setFieldVal = (id, val) => {
             if (!val) return;
-            const el = document.getElementById(id);
+            const el = page8.querySelector('#' + id);
             if (el) {
                 el.value = val;
                 autofilledEls.push(el);
             }
         };
 
-        // Mapping rules based on input ID
-        if (targetId === 'p7-exp-name' || targetId === 'p6-name-1') {
+        // Mapping rules based on input ID (PAGE 8 ONLY)
+        if (targetId === 'p7-exp-name') {
             setFieldVal('p8-exp-bank', staff.bank);
             setFieldVal('p8-exp-acc', staff.acc);
             setFieldVal('p8-exp-ifsc', staff.ifsc);
-            const desig = document.getElementById('p7-exp-desig');
+            const desig = page8.querySelector('#p7-exp-desig');
             if (desig && (!desig.value || desig.value === 'Expert')) desig.value = staff.role || 'Expert';
-        } else if (targetId === 'p7-ext-name' || targetId === 'p1-ext-name' || targetId === 'p8-ext-name' || targetId === 'p8-tada-ext-name') {
+        } else if (targetId === 'p7-ext-name' || targetId === 'p8-ext-name' || targetId === 'p8-tada-ext-name') {
             setFieldVal('p8-ext-bank', staff.bank);
             setFieldVal('p8-tada-bank', staff.bank);
             setFieldVal('p8-ext-acc', staff.acc);
@@ -3284,39 +3289,35 @@ document.addEventListener('DOMContentLoaded', () => {
             setFieldVal('p8-ext-ifsc', staff.ifsc);
             setFieldVal('p8-tada-ifsc', staff.ifsc);
             if (staff.college) {
-                setFieldVal('p1-ext-college', staff.college);
                 setFieldVal('p8-ext-college', staff.college);
             }
-            const desig = document.getElementById('p7-ext-desig');
+            const desig = page8.querySelector('#p7-ext-desig');
             if (desig && (!desig.value || desig.value === 'External Examiner')) desig.value = staff.role || 'External Examiner';
-            const tadaUpperDesig = document.getElementById('p8-tada-upper-desig');
+            const tadaUpperDesig = page8.querySelector('#p8-tada-upper-desig');
             if (tadaUpperDesig) tadaUpperDesig.value = staff.role || 'External Examiner';
-            const tadaDesig1 = document.getElementById('p8-tada-desig-1');
+            const tadaDesig1 = page8.querySelector('#p8-tada-desig-1');
             if (tadaDesig1) tadaDesig1.value = staff.role || 'External Examiner';
-        } else if (targetId === 'p7-int-name' || targetId === 'p1-int-name') {
+        } else if (targetId === 'p7-int-name') {
             setFieldVal('p8-int-bank', staff.bank);
             setFieldVal('p8-int-acc', staff.acc);
             setFieldVal('p8-int-ifsc', staff.ifsc);
-            if (staff.college) {
-                setFieldVal('p1-int-college', staff.college);
-            }
-            const desig = document.getElementById('p7-int-desig');
+            const desig = page8.querySelector('#p7-int-desig');
             if (desig && (!desig.value || desig.value === 'Internal Examiner')) desig.value = staff.role || 'Internal Examiner';
-        } else if (targetId === 'p7-lab-name-1' || targetId === 'p6-name-2') {
+        } else if (targetId === 'p7-lab-name-1') {
             setFieldVal('p8-lab1-bank', staff.bank);
             setFieldVal('p8-lab1-acc', staff.acc);
             setFieldVal('p8-lab1-ifsc', staff.ifsc);
-            const desig = document.getElementById('p7-lab-desig-1');
+            const desig = page8.querySelector('#p7-lab-desig-1');
             if (desig && (!desig.value || desig.value === 'Lab. Attendent')) desig.value = staff.role || 'Lab. Attendent';
-        } else if (targetId === 'p7-lab-name-2' || targetId === 'p6-name-3') {
+        } else if (targetId === 'p7-lab-name-2') {
             setFieldVal('p8-lab2-bank', staff.bank);
             setFieldVal('p8-lab2-acc', staff.acc);
             setFieldVal('p8-lab2-ifsc', staff.ifsc);
-            const desig = document.getElementById('p7-lab-desig-2');
+            const desig = page8.querySelector('#p7-lab-desig-2');
             if (desig && (!desig.value || desig.value === 'Lab. Attendent')) desig.value = staff.role || 'Lab. Attendent';
         } else if (targetId === 'p8-ext-name-2') {
             if (staff.college) setFieldVal('p8-ext-college-2', staff.college);
-            const desig = document.getElementById('p8-tada-desig-2');
+            const desig = page8.querySelector('#p8-tada-desig-2');
             if (desig) desig.value = staff.role || 'External Examiner';
         }
 
@@ -3330,51 +3331,76 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Automatic Database Update: When user types new staff name + bank/acc directly in form, add/update in database!
+    // Automatic Database Update: When user enters new staff name + bank details directly on the Page 8 Excel file, add/update in database!
     let autoAddDbTimeout = null;
-    const checkAndAutoAddStaffFromRow = (rowType) => {
+    const checkAndAutoAddStaffFromRow = (rowType, triggerEl = null) => {
+        // STRICT REQUIREMENT: Only additions/edits made directly on Page 8 (the Excel file)
+        // are allowed to be added to the Staff Bank Database.
+        // Any inputs entered on other pages (Page 1-7) must NEVER add to the database!
+        if (triggerEl && !triggerEl.closest('#page8')) {
+            return;
+        }
+        const activeEl = document.activeElement;
+        if (activeEl && activeEl.tagName === 'INPUT' && !activeEl.closest('#page8')) {
+            return;
+        }
+
         clearTimeout(autoAddDbTimeout);
         autoAddDbTimeout = setTimeout(() => {
+            const currentActive = document.activeElement;
+            if (currentActive && currentActive.tagName === 'INPUT' && !currentActive.closest('#page8')) {
+                return;
+            }
+
+            const page8 = document.getElementById('page8');
+            if (!page8) return;
+
+            const getP8Val = (id) => {
+                const el = page8.querySelector('#' + id);
+                return el && el.value ? el.value.trim() : '';
+            };
+
             let name = '', bank = '', acc = '', ifsc = '', role = '', college = '';
 
             if (rowType === 'exp') {
-                name = document.getElementById('p7-exp-name')?.value?.trim() || '';
-                bank = document.getElementById('p8-exp-bank')?.value?.trim() || '';
-                acc = document.getElementById('p8-exp-acc')?.value?.trim() || '';
-                ifsc = (document.getElementById('p8-exp-ifsc')?.value?.trim() || '').toUpperCase();
-                role = document.getElementById('p7-exp-desig')?.value?.trim() || 'Expert';
+                name = getP8Val('p7-exp-name');
+                bank = getP8Val('p8-exp-bank');
+                acc = getP8Val('p8-exp-acc');
+                ifsc = getP8Val('p8-exp-ifsc').toUpperCase();
+                role = getP8Val('p7-exp-desig') || 'Expert';
             } else if (rowType === 'ext') {
-                name = document.getElementById('p7-ext-name')?.value?.trim() || document.getElementById('p1-ext-name')?.value?.trim() || '';
-                bank = document.getElementById('p8-ext-bank')?.value?.trim() || document.getElementById('p8-tada-bank')?.value?.trim() || '';
-                acc = document.getElementById('p8-ext-acc')?.value?.trim() || document.getElementById('p8-tada-acc')?.value?.trim() || '';
-                ifsc = (document.getElementById('p8-ext-ifsc')?.value?.trim() || document.getElementById('p8-tada-ifsc')?.value?.trim() || '').toUpperCase();
-                role = document.getElementById('p7-ext-desig')?.value?.trim() || 'External Examiner';
-                college = document.getElementById('p8-ext-college')?.value?.trim() || document.getElementById('p1-ext-college')?.value?.trim() || '';
+                name = getP8Val('p7-ext-name') || getP8Val('p8-tada-ext-name') || getP8Val('p8-ext-name');
+                bank = getP8Val('p8-ext-bank') || getP8Val('p8-tada-bank');
+                acc = getP8Val('p8-ext-acc') || getP8Val('p8-tada-acc');
+                ifsc = (getP8Val('p8-ext-ifsc') || getP8Val('p8-tada-ifsc')).toUpperCase();
+                role = getP8Val('p7-ext-desig') || getP8Val('p8-tada-upper-desig') || 'External Examiner';
+                college = getP8Val('p8-ext-college');
             } else if (rowType === 'int') {
-                name = document.getElementById('p7-int-name')?.value?.trim() || document.getElementById('p1-int-name')?.value?.trim() || '';
-                bank = document.getElementById('p8-int-bank')?.value?.trim() || '';
-                acc = document.getElementById('p8-int-acc')?.value?.trim() || '';
-                ifsc = (document.getElementById('p8-int-ifsc')?.value?.trim() || '').toUpperCase();
-                role = document.getElementById('p7-int-desig')?.value?.trim() || 'Internal Examiner';
-                college = document.getElementById('p1-int-college')?.value?.trim() || '';
+                name = getP8Val('p7-int-name');
+                bank = getP8Val('p8-int-bank');
+                acc = getP8Val('p8-int-acc');
+                ifsc = getP8Val('p8-int-ifsc').toUpperCase();
+                role = getP8Val('p7-int-desig') || 'Internal Examiner';
+                college = 'Willingdon College, Sangli';
             } else if (rowType === 'lab1') {
-                name = document.getElementById('p7-lab-name-1')?.value?.trim() || '';
-                bank = document.getElementById('p8-lab1-bank')?.value?.trim() || '';
-                acc = document.getElementById('p8-lab1-acc')?.value?.trim() || '';
-                ifsc = (document.getElementById('p8-lab1-ifsc')?.value?.trim() || '').toUpperCase();
-                role = document.getElementById('p7-lab-desig-1')?.value?.trim() || 'Lab. Attendent';
+                name = getP8Val('p7-lab-name-1');
+                bank = getP8Val('p8-lab1-bank');
+                acc = getP8Val('p8-lab1-acc');
+                ifsc = getP8Val('p8-lab1-ifsc').toUpperCase();
+                role = getP8Val('p7-lab-desig-1') || 'Lab. Attendent';
             } else if (rowType === 'lab2') {
-                name = document.getElementById('p7-lab-name-2')?.value?.trim() || '';
-                bank = document.getElementById('p8-lab2-bank')?.value?.trim() || '';
-                acc = document.getElementById('p8-lab2-acc')?.value?.trim() || '';
-                ifsc = (document.getElementById('p8-lab2-ifsc')?.value?.trim() || '').toUpperCase();
-                role = document.getElementById('p7-lab-desig-2')?.value?.trim() || 'Lab. Attendent';
+                name = getP8Val('p7-lab-name-2');
+                bank = getP8Val('p8-lab2-bank');
+                acc = getP8Val('p8-lab2-acc');
+                ifsc = getP8Val('p8-lab2-ifsc').toUpperCase();
+                role = getP8Val('p7-lab-desig-2') || 'Lab. Attendent';
             } else if (rowType === 'tada') {
-                name = document.getElementById('p8-tada-ext-name')?.value?.trim() || '';
-                bank = document.getElementById('p8-tada-bank')?.value?.trim() || '';
-                acc = document.getElementById('p8-tada-acc')?.value?.trim() || '';
-                ifsc = (document.getElementById('p8-tada-ifsc')?.value?.trim() || '').toUpperCase();
-                role = document.getElementById('p8-tada-upper-desig')?.value?.trim() || 'External Examiner';
+                name = getP8Val('p8-tada-ext-name') || getP8Val('p8-ext-name') || getP8Val('p7-ext-name');
+                bank = getP8Val('p8-tada-bank') || getP8Val('p8-ext-bank');
+                acc = getP8Val('p8-tada-acc') || getP8Val('p8-ext-acc');
+                ifsc = (getP8Val('p8-tada-ifsc') || getP8Val('p8-ext-ifsc')).toUpperCase();
+                role = getP8Val('p8-tada-upper-desig') || 'External Examiner';
+                college = getP8Val('p8-ext-college');
             }
 
             // Must have a valid staff name and at least an account number or bank name
@@ -3419,18 +3445,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500);
     };
 
-    // Attach autofill and auto-add event listeners to all staff name and bank inputs
+    // Attach autofill and auto-add event listeners to all staff name and bank inputs (PAGE 8 ONLY)
     const setupStaffAutofillListeners = () => {
         const staffNameInputIds = [
-            'p7-exp-name', 'p7-ext-name', 'p7-int-name',
-            'p7-lab-name-1', 'p7-lab-name-2', 'p8-tada-ext-name',
-            'p8-ext-name', 'p8-ext-name-2', 'p1-ext-name', 'p1-int-name',
-            'p6-name-1', 'p6-name-2', 'p6-name-3', 'p6-name-4'
+            'p7-exp-name', 'p7-ext-name', 'p7-int-name', 'p7-lab-name-1', 'p7-lab-name-2',
+            'p8-tada-ext-name', 'p8-ext-name', 'p8-ext-name-2'
         ];
 
         staffNameInputIds.forEach(id => {
             const el = document.getElementById(id);
-            if (el && !el.dataset.hasBankAutofill) {
+            if (el && el.closest('#page8') && !el.dataset.hasBankAutofill) {
                 el.dataset.hasBankAutofill = 'true';
                 ['input', 'change', 'blur'].forEach(evt => {
                     el.addEventListener(evt, () => {
@@ -3440,24 +3464,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Auto-save listeners on bank/account cells to auto-add new staff to DB
+        // Auto-save listeners on bank/account cells to auto-add new staff to DB (STRICTLY for Page 8 Excel sheet)
         const rowBindings = [
-            { type: 'exp', ids: ['p7-exp-name', 'p8-exp-bank', 'p8-exp-acc', 'p8-exp-ifsc', 'p7-exp-desig'] },
-            { type: 'ext', ids: ['p7-ext-name', 'p8-ext-bank', 'p8-ext-acc', 'p8-ext-ifsc', 'p7-ext-desig', 'p8-ext-college', 'p1-ext-name', 'p1-ext-college'] },
-            { type: 'int', ids: ['p7-int-name', 'p8-int-bank', 'p8-int-acc', 'p8-int-ifsc', 'p7-int-desig', 'p1-int-name', 'p1-int-college'] },
-            { type: 'lab1', ids: ['p7-lab-name-1', 'p8-lab1-bank', 'p8-lab1-acc', 'p8-lab1-ifsc', 'p7-lab-desig-1'] },
-            { type: 'lab2', ids: ['p7-lab-name-2', 'p8-lab2-bank', 'p8-lab2-acc', 'p8-lab2-ifsc', 'p7-lab-desig-2'] },
-            { type: 'tada', ids: ['p8-tada-ext-name', 'p8-tada-bank', 'p8-tada-acc', 'p8-tada-ifsc', 'p8-tada-upper-desig'] }
+            { type: 'exp', ids: ['p7-exp-name', 'p8-exp-bank', 'p8-exp-acc', 'p8-exp-ifsc', 'p7-exp-desig', 'p8-exp-class'] },
+            { type: 'ext', ids: ['p7-ext-name', 'p8-ext-bank', 'p8-ext-acc', 'p8-ext-ifsc', 'p7-ext-desig', 'p8-ext-college', 'p8-ext-class', 'p8-ext-name'] },
+            { type: 'int', ids: ['p7-int-name', 'p8-int-bank', 'p8-int-acc', 'p8-int-ifsc', 'p7-int-desig', 'p8-int-class'] },
+            { type: 'lab1', ids: ['p7-lab-name-1', 'p8-lab1-bank', 'p8-lab1-acc', 'p8-lab1-ifsc', 'p7-lab-desig-1', 'p8-lab1-class'] },
+            { type: 'lab2', ids: ['p7-lab-name-2', 'p8-lab2-bank', 'p8-lab2-acc', 'p8-lab2-ifsc', 'p7-lab-desig-2', 'p8-lab2-class'] },
+            { type: 'tada', ids: ['p8-tada-ext-name', 'p8-tada-bank', 'p8-tada-acc', 'p8-tada-ifsc', 'p8-tada-upper-desig', 'p8-tada-upper-class'] }
         ];
 
         rowBindings.forEach(binding => {
             binding.ids.forEach(id => {
                 const el = document.getElementById(id);
-                if (el && !el.dataset.hasAutoAddDb) {
+                if (el && el.closest('#page8') && !el.dataset.hasAutoAddDb) {
                     el.dataset.hasAutoAddDb = 'true';
                     ['change', 'blur'].forEach(evt => {
                         el.addEventListener(evt, () => {
-                            checkAndAutoAddStaffFromRow(binding.type);
+                            checkAndAutoAddStaffFromRow(binding.type, el);
                         });
                     });
                 }
@@ -3769,8 +3793,8 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleStaffAddForm(false);
         renderStaffDbTable(document.getElementById('staff-db-search-input')?.value || '');
 
-        // Auto-refresh any inputs on the page matching this staff
-        document.querySelectorAll('input, textarea').forEach(inp => {
+        // Auto-refresh any inputs on Page 8 (Excel file) matching this staff
+        document.querySelectorAll('#page8 input, #page8 textarea').forEach(inp => {
             if (inp.id && inp.id.includes('name') && inp.value && inp.value.trim().toLowerCase() === name.toLowerCase()) {
                 autofillBankDetailsForInput(inp, false);
             }
