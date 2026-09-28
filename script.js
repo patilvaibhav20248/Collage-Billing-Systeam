@@ -260,15 +260,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             totalDisplay.textContent = result;
 
-            // Brief highlight effect
-            const cell = totalDisplay.closest('td');
-            if (cell) {
-                cell.style.transition = 'background-color 0.3s';
-                cell.style.backgroundColor = '#dbeafe';
-                setTimeout(() => {
-                    cell.style.backgroundColor = '#f8f9fa';
-                }, 500);
-            }
             return result;
         };
 
@@ -370,15 +361,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             col5Display.textContent = finalTotalAbsent;
 
-            // Highlight cell
-            const cell5 = col5Display.closest('td');
-            if (cell5) {
-                cell5.style.transition = 'background-color 0.3s';
-                cell5.style.backgroundColor = '#dbeafe';
-                setTimeout(() => {
-                    cell5.style.backgroundColor = '#f8f9fa';
-                }, 500);
-            }
         }
 
         // Sync totals to Page 4 and Page 5 displays
@@ -489,7 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     pageVerticalTotal += (count * rate);
-                    row.style.backgroundColor = '#f0f9ff';
+                    row.style.backgroundColor = 'transparent';
                 } else {
                     // Student number NOT entered or 0:
                     // All other boxes (Rate, Examiners, Per-student rate, Calc, Total) must display EMPTY!
