@@ -2371,8 +2371,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Main Download PDF Trigger
     // -------------------------------------------------------------
     const handleDownloadPdf = () => {
-        // Directly prompt user for file name and start download immediately upon confirmation
-        openDownloadFilenameModal();
+        // Automatically start high-speed PDF download directly to machine
+        startPdfDownload();
     };
 
     // -------------------------------------------------------------
@@ -2388,7 +2388,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Check if html2canvas and jsPDF are loaded
         const hasJsPdf = (typeof window.jspdf !== 'undefined' && window.jspdf.jsPDF) || (typeof window.jsPDF !== 'undefined');
         if (typeof html2canvas === 'undefined' || !hasJsPdf) {
-            alert('PDF generation engine is still loading. Please wait 2 seconds and try again.');
+            alert('PDF generation engine is still loading. Please wait a moment and try again.');
             return;
         }
 
@@ -2481,6 +2481,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const currentPercent = Math.round(10 + (i / totalPages) * 75);
                 updateProgress(currentPercent, `Rendering Page ${pageNum} of ${totalPages}: ${config.name}...`);
+                await new Promise(r => setTimeout(r, 0));
 
                 // Assign unique tracking ID to each form element in pageEl before html2canvas clones it
                 let trackCounter = 0;
@@ -2494,11 +2495,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-                // No scrollIntoView needed - html2canvas renders cleanly in the background without moving the viewport
-
                 try {
                     const canvas = await html2canvas(pageEl, {
-                        scale: 3, // 3x ultra-high-definition rendering (300+ DPI) for razor-sharp letters and numbers
+                        scale: 2, // Fast, crisp high-definition rendering (200 DPI) for perfect readability
                         useCORS: true,
                         logging: false,
                         backgroundColor: '#ffffff',
@@ -2816,8 +2815,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     });
 
-                    // Lossless high-res PNG data URL: delivers razor-sharp text, numbers and table gridlines
-                    const imgData = canvas.toDataURL('image/png');
+                    // High-quality JPEG data URL: fast encoding and compact size with clear text
+                    const imgData = canvas.toDataURL('image/jpeg', 0.95);
 
                     // Calculate proportional dimensions to preserve true aspect ratio
                     const canvasRatio = canvas.height / canvas.width;
@@ -2842,8 +2841,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     if (i === 0) {
-                        // First page: portrait A4 (lossless high-fidelity embedding)
-                        pdf.addImage(imgData, 'PNG', posX, posY, renderWidth, renderHeight, undefined, 'SLOW');
+                        // First page: portrait A4
+                        pdf.addImage(imgData, 'JPEG', posX, posY, renderWidth, renderHeight, undefined, 'FAST');
                     } else {
                         // Subsequent pages with correct orientation (Page 7: Landscape [297, 210])
                         if (config.orientation === 'landscape') {
@@ -2851,7 +2850,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else {
                             pdf.addPage([210, 297], 'portrait');
                         }
-                        pdf.addImage(imgData, 'PNG', posX, posY, renderWidth, renderHeight, undefined, 'SLOW');
+                        pdf.addImage(imgData, 'JPEG', posX, posY, renderWidth, renderHeight, undefined, 'FAST');
                     }
                 } finally {
                     pageEl.querySelectorAll('[data-pdf-track-id]').forEach(el => {
@@ -2860,8 +2859,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            updateProgress(92, 'Compiling 7-page document...');
-            await new Promise(r => setTimeout(r, 120));
+            updateProgress(95, 'Finalizing document...');
 
             // Determine filename: use custom provided name or compute intelligent default
             let fileName = typeof customFileNameParam === 'string' && customFileNameParam.trim()
@@ -2871,24 +2869,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 fileName += '.pdf';
             }
 
-            updateProgress(98, 'Downloading PDF to your computer...');
-            await new Promise(r => setTimeout(r, 80));
-
-            // Save PDF directly to user's PC with chosen custom name
+            // Save PDF directly to user's machine automatically
             pdf.save(fileName);
 
-            updateProgress(100, 'Download complete!');
-            await new Promise(r => setTimeout(r, 400));
+            updateProgress(100, 'Downloaded!');
 
             // Show Toast
-            showToastNotification(`✓ PDF successfully saved as "${fileName}"!`);
+            showToastNotification(`✓ PDF downloaded successfully: "${fileName}"!`);
         } catch (err) {
             console.error('Error generating PDF:', err);
             alert('An error occurred while creating the PDF: ' + err.message);
         } finally {
             document.querySelectorAll('[data-pdf-track-id]').forEach(el => el.removeAttribute('data-pdf-track-id'));
             document.body.classList.remove('pdf-export-mode');
-            if (progressModal) progressModal.style.display = 'none';
+            if (progressModal) {
+                setTimeout(() => {
+                    progressModal.style.display = 'none';
+                }, 300);
+            }
             isGeneratingPdf = false;
         }
     };
