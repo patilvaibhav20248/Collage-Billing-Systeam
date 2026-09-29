@@ -2311,8 +2311,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Filename Customization Modal Handling
     // -------------------------------------------------------------
     const getDefaultPdfFileName = () => {
+        const examinerVal = (document.getElementById('p1-ext-name')?.value || document.getElementById('p1-int-name')?.value || '').trim().replace(/[^a-zA-Z0-9_-]/g, '_');
         const subjectVal = (document.getElementById('subject-input')?.value || 'BSc_IT').trim().replace(/[^a-zA-Z0-9_-]/g, '_');
         const dateVal = (document.getElementById('date-input')?.value || new Date().toISOString().slice(0, 10)).trim().replace(/[^a-zA-Z0-9_-]/g, '_');
+        if (examinerVal) {
+            return `Willingdon_College_${examinerVal}_${subjectVal}_Exam_Bill_${dateVal}`;
+        }
         return `Willingdon_College_${subjectVal}_Exam_Bill_${dateVal}`;
     };
 
@@ -2371,8 +2375,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Main Download PDF Trigger
     // -------------------------------------------------------------
     const handleDownloadPdf = () => {
-        // Automatically start high-speed PDF download directly to machine
-        startPdfDownload();
+        // Open file name prompt so user can enter custom filename or press Enter immediately
+        openDownloadFilenameModal();
     };
 
     // -------------------------------------------------------------
