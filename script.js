@@ -2371,15 +2371,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Main Download PDF Trigger
     // -------------------------------------------------------------
     const handleDownloadPdf = () => {
-        // First, check completeness
-        const status = checkFormFilledStatus();
-        if (!status.isFull) {
-            // Form is incomplete: prompt user with confirmation modal
-            openDownloadConfirmModal(status);
-            return;
-        }
-
-        // Form is 100% full: prompt user for file name before download
+        // Directly prompt user for file name and start download immediately upon confirmation
         openDownloadFilenameModal();
     };
 
@@ -2502,16 +2494,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-                // Ensure page is settled and scrolled into view for accurate layout rendering
-                pageEl.scrollIntoView({ block: 'start', inline: 'nearest' });
-                await new Promise(r => setTimeout(r, 100));
+                // No scrollIntoView needed - html2canvas renders cleanly in the background without moving the viewport
 
                 try {
                     const canvas = await html2canvas(pageEl, {
-                        scale: 2.5, // 2.5x high-definition rendering for razor-sharp clarity
+                        scale: 3, // 3x ultra-high-definition rendering (300+ DPI) for razor-sharp letters and numbers
                         useCORS: true,
                         logging: false,
                         backgroundColor: '#ffffff',
+                        imageTimeout: 0,
                         scrollX: 0,
                         scrollY: 0,
                         windowWidth: pageEl.scrollWidth,
@@ -2519,6 +2510,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         onclone: (clonedDoc) => {
                             const clonedPage = clonedDoc.getElementById(config.id);
                             if (!clonedPage) return;
+
+                            // Ensure high-fidelity font smoothing, high contrast, and crisp text rendering
+                            clonedDoc.body.style.webkitFontSmoothing = 'antialiased';
+                            clonedDoc.body.style.mozOsxFontSmoothing = 'grayscale';
+                            clonedDoc.body.style.textRendering = 'geometricPrecision';
+                            clonedDoc.body.style.color = '#000000';
+
+                            clonedPage.style.webkitFontSmoothing = 'antialiased';
+                            clonedPage.style.mozOsxFontSmoothing = 'grayscale';
+                            clonedPage.style.textRendering = 'geometricPrecision';
+                            clonedPage.style.color = '#000000';
 
                             // Helper to reliably find matching original element from live pageEl
                             const getOriginalElement = (clonedEl) => {
@@ -2540,6 +2542,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             const mainDateVal = mainDateEl ? (formatDateForDisplay(mainDateEl.value) || mainDateEl.value) : '';
                             clonedPage.querySelectorAll('.print-date-display').forEach(el => {
                                 el.style.display = 'inline';
+                                el.style.color = '#000000';
+                                el.style.fontWeight = 'bold';
                                 if (mainDateVal) el.textContent = mainDateVal;
                             });
 
@@ -2579,6 +2583,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                 span.style.boxShadow = 'none';
                                 span.style.fontFamily = 'inherit';
                                 span.style.fontWeight = 'bold';
+                                span.style.color = '#000000';
+                                span.style.webkitFontSmoothing = 'antialiased';
+                                span.style.textRendering = 'geometricPrecision';
 
                                 if (sel.classList.contains('batch-dropdown')) {
                                     span.style.display = 'block';
@@ -2610,12 +2617,15 @@ document.addEventListener('DOMContentLoaded', () => {
                                 div.style.textAlign = 'center';
                                 div.style.fontSize = '10pt';
                                 div.style.lineHeight = '1.25';
-                                div.style.fontWeight = '500';
+                                div.style.fontWeight = 'bold';
                                 div.style.fontFamily = 'inherit';
-                                div.style.wordBreak = 'break-word';
-                                div.style.whiteSpace = 'normal';
+                                div.style.wordBreak = 'normal';
+                                div.style.whiteSpace = 'nowrap';
                                 div.style.padding = '2px 0';
                                 div.style.boxSizing = 'border-box';
+                                div.style.color = '#000000';
+                                div.style.webkitFontSmoothing = 'antialiased';
+                                div.style.textRendering = 'geometricPrecision';
                                 div.textContent = val;
                                 if (inp.parentNode) {
                                     inp.parentNode.replaceChild(div, inp);
@@ -2650,6 +2660,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                 div.style.wordBreak = 'break-word';
                                 div.style.fontFamily = 'inherit';
                                 div.style.minHeight = '1.2em';
+                                div.style.color = '#000000';
+                                div.style.webkitFontSmoothing = 'antialiased';
+                                div.style.textRendering = 'geometricPrecision';
 
                                 if (ta.classList.contains('staff-exam-date')) {
                                     div.style.width = '100%';
@@ -2716,12 +2729,17 @@ document.addEventListener('DOMContentLoaded', () => {
                                 span.style.outline = 'none';
                                 span.style.fontFamily = 'inherit';
                                 span.style.wordBreak = 'break-word';
+                                span.style.color = '#000000';
+                                span.style.webkitFontSmoothing = 'antialiased';
+                                span.style.textRendering = 'geometricPrecision';
 
                                 if (inp.classList.contains('batch-date-input')) {
                                     span.style.display = 'block';
                                     span.style.width = '100%';
                                     span.style.textAlign = 'center';
                                     span.style.fontSize = '11px';
+                                    span.style.whiteSpace = 'nowrap';
+                                    span.style.wordBreak = 'normal';
                                 } else if (inp.classList.contains('staff-prep-date') || inp.classList.contains('staff-clean-date')) {
                                     span.style.display = 'block';
                                     span.style.width = '100%';
@@ -2729,10 +2747,21 @@ document.addEventListener('DOMContentLoaded', () => {
                                     span.style.fontWeight = 'bold';
                                     span.style.fontSize = '9pt';
                                     span.style.lineHeight = '1.2';
+                                    span.style.whiteSpace = 'nowrap';
+                                    span.style.wordBreak = 'normal';
                                 } else if (inp.classList.contains('table-input') || inp.classList.contains('remun-input') || inp.classList.contains('day-input') || inp.classList.contains('rate-input') || inp.classList.contains('amount-input') || inp.classList.contains('total-days-input') || inp.classList.contains('staff-grand-total')) {
                                     span.style.display = 'block';
                                     span.style.width = '100%';
                                     span.style.textAlign = 'center';
+                                    span.style.fontWeight = 'bold';
+                                    span.style.fontSize = '9.5pt';
+                                    span.style.lineHeight = '1.2';
+                                    span.style.whiteSpace = 'nowrap';
+                                    span.style.wordBreak = 'normal';
+                                } else if (inp.classList.contains('p4-center-input')) {
+                                    span.style.display = 'inline-block';
+                                    span.style.width = 'auto';
+                                    span.style.textAlign = 'left';
                                     span.style.fontWeight = 'bold';
                                     span.style.fontSize = '9.5pt';
                                     span.style.lineHeight = '1.2';
@@ -2787,7 +2816,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     });
 
-                    // Lossless PNG data URL: delivers crisp, blur-free text and sharp table gridlines
+                    // Lossless high-res PNG data URL: delivers razor-sharp text, numbers and table gridlines
                     const imgData = canvas.toDataURL('image/png');
 
                     // Calculate proportional dimensions to preserve true aspect ratio
@@ -2813,8 +2842,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     if (i === 0) {
-                        // First page: portrait A4
-                        pdf.addImage(imgData, 'PNG', posX, posY, renderWidth, renderHeight, undefined, 'FAST');
+                        // First page: portrait A4 (lossless high-fidelity embedding)
+                        pdf.addImage(imgData, 'PNG', posX, posY, renderWidth, renderHeight, undefined, 'SLOW');
                     } else {
                         // Subsequent pages with correct orientation (Page 7: Landscape [297, 210])
                         if (config.orientation === 'landscape') {
@@ -2822,7 +2851,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else {
                             pdf.addPage([210, 297], 'portrait');
                         }
-                        pdf.addImage(imgData, 'PNG', posX, posY, renderWidth, renderHeight, undefined, 'FAST');
+                        pdf.addImage(imgData, 'PNG', posX, posY, renderWidth, renderHeight, undefined, 'SLOW');
                     }
                 } finally {
                     pageEl.querySelectorAll('[data-pdf-track-id]').forEach(el => {

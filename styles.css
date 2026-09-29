@@ -1909,11 +1909,13 @@ body.pdf-export-mode input[type="time"]::-webkit-calendar-picker-indicator {
     text-align: center;
     border: 1px solid #ccc;
     background: #ffffff;
-    padding: 5px 6px;
+    padding: 4px 4px;
     font-family: inherit;
-    font-size: 11pt;
+    font-size: 10.5pt;
+    font-weight: bold;
     border-radius: 3px;
     box-sizing: border-box;
+    white-space: nowrap;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
@@ -2708,6 +2710,7 @@ body.pdf-export-mode input[type="time"]::-webkit-calendar-picker-indicator {
         display: none !important;
     }
 
+    .p4-center-input,
     .remun-input,
     .remun-title-input,
     .staff-input,
@@ -2746,6 +2749,12 @@ body.pdf-export-mode input[type="time"]::-webkit-calendar-picker-indicator {
 
     .total-remun {
         font-size: 10pt !important;
+    }
+
+    .staff-prep-date,
+    .staff-clean-date {
+        white-space: nowrap !important;
+        word-break: normal !important;
     }
 
     .no-print {
