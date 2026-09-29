@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Sync text display spans
             examinerDisplays.forEach(display => {
-                display.textContent = val || '__________________________________';
+                display.textContent = val || '';
             });
         });
     });
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Sync text display spans
             examiner2Displays.forEach(display => {
-                display.textContent = val || '__________________________________';
+                display.textContent = val || '';
             });
         });
     });
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Sync text display spans
             collegeDisplays.forEach(display => {
-                display.textContent = val || '__________________________________';
+                display.textContent = val || 'WILLINGDON COLLEGE SANGLI';
             });
         });
     });
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Sync text display spans
             college2Displays.forEach(display => {
-                display.textContent = val || '__________________________________';
+                display.textContent = val || 'WILLINGDON COLLEGE SANGLI';
             });
         });
     });
@@ -1638,8 +1638,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (tel) tel.value = defaultExamTitles[titleId];
             });
 
-            document.querySelectorAll('.examiner-display, .examiner-name-display').forEach(d => d.textContent = '__________________________________');
-            document.querySelectorAll('.examiner2-display, .examiner2-name-display').forEach(d => d.textContent = '__________________________________');
+            document.querySelectorAll('.examiner-display, .examiner-name-display').forEach(d => d.textContent = '');
+            document.querySelectorAll('.examiner2-display, .examiner2-name-display').forEach(d => d.textContent = '');
             document.querySelectorAll('.college-display').forEach(d => d.textContent = 'WILLINGDON COLLEGE SANGLI');
             document.querySelectorAll('.college2-display').forEach(d => d.textContent = 'WILLINGDON COLLEGE SANGLI');
 
@@ -1760,14 +1760,14 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSubjectDisplays(currentSubject);
 
         const extName = getVal('p1-ext-name');
-        document.querySelectorAll('.examiner-display').forEach(d => d.textContent = extName || '__________________________________');
+        document.querySelectorAll('.examiner-display').forEach(d => d.textContent = extName || '');
         ['p7-ext-name', 'p8-ext-name', 'p8-tada-ext-name'].forEach(tid => {
             const tel = document.getElementById(tid);
             if (tel && tel !== document.activeElement && extName) tel.value = extName;
         });
 
         const intName = getVal('p1-int-name');
-        document.querySelectorAll('.examiner2-display').forEach(d => d.textContent = intName || '__________________________________');
+        document.querySelectorAll('.examiner2-display').forEach(d => d.textContent = intName || '');
         ['p7-int-name', 'p8-int-name'].forEach(tid => {
             const tel = document.getElementById(tid);
             if (tel && tel !== document.activeElement && intName) tel.value = intName;

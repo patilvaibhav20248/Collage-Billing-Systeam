@@ -180,11 +180,35 @@ input:focus {
     padding: 0 5px;
 }
 
+/* Document Displays & Clean Underline Alignment */
+.examiner-display,
+.examiner2-display,
+.college-display,
+.college2-display,
+.subject-display,
+.course-display,
+.part-display,
+.month-display,
+.year-display {
+    font-family: inherit;
+    font-size: inherit;
+    vertical-align: baseline;
+}
+
+.examiner-display:empty::before,
+.examiner2-display:empty::before,
+.college-display:empty::before,
+.college2-display:empty::before {
+    content: "\00a0";
+}
+
 /* Signatures */
 .signature-section {
     display: flex;
     justify-content: space-between;
-    margin-top: 50px;
+    align-items: flex-end;
+    margin-top: 40px;
+    margin-bottom: 20px;
 }
 
 .signature-block {
@@ -195,6 +219,38 @@ input:focus {
     width: 200px;
     border-bottom: 1px solid black;
     margin-bottom: 5px;
+}
+
+.examiners-inline-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+    margin: 35px 0 15px 0;
+    font-size: 11.5pt;
+    font-family: "Times New Roman", Times, serif;
+}
+
+.examiners-inline-col {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    width: 48%;
+}
+
+.examiners-inline-col.col-right {
+    justify-content: flex-end;
+}
+
+.examiners-inline-col .examiner-display,
+.examiners-inline-col .examiner2-display {
+    border-bottom: 1px solid #000;
+    flex: 1;
+    min-width: 170px;
+    display: inline-block;
+    padding: 0 4px;
+    text-align: left;
+    font-weight: bold;
 }
 
 .footer-text {
