@@ -788,6 +788,190 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     setupStaffExamDatePicker();
 
+    // Page 7 Dynamic Assistants & Servants Rows Setup
+    const setupDynamicStaffRows = () => {
+        const table = document.getElementById('p7-staff-table');
+        const totalRow = document.getElementById('p7-total-row');
+        const addBtn = document.getElementById('p7-add-row-btn');
+        const topAddBtn = document.getElementById('p7-top-add-row-btn');
+        if (!table || !totalRow) return;
+
+        const reindexStaffRows = () => {
+            const rows = table.querySelectorAll('tr.staff-row');
+            rows.forEach((row, idx) => {
+                const srCell = row.querySelector('.staff-sr-no');
+                if (srCell) srCell.textContent = `${idx + 1}.`;
+            });
+            if (typeof updateStaffTotals === 'function') {
+                updateStaffTotals();
+            }
+        };
+
+        const bindStaffRowEvents = (row) => {
+            // Attach oninput for days and rates
+            row.querySelectorAll('.day-input, .total-days-input, .rate-input, .amount-input').forEach(inp => {
+                inp.addEventListener('input', () => {
+                    if (typeof updateStaffTotals === 'function') updateStaffTotals();
+                });
+            });
+
+            // Date picker listener
+            const picker = row.querySelector('.staff-exam-date-picker');
+            if (picker && !picker.dataset.hasPickerListener) {
+                picker.dataset.hasPickerListener = 'true';
+                const onPick = (e) => {
+                    const val = e.target.value;
+                    if (!val) return;
+                    const parts = val.split('-');
+                    if (parts.length !== 3) return;
+                    const formatted = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                    const cell = e.target.closest('td');
+                    const textarea = cell ? cell.querySelector('.staff-exam-date') : null;
+                    if (textarea) {
+                        const current = textarea.value.trim();
+                        if (!current) {
+                            textarea.value = formatted;
+                        } else if (!current.includes('To') && !current.includes('to') && current !== formatted) {
+                            textarea.value = `${current} To ${formatted}`;
+                        } else {
+                            textarea.value = formatted;
+                        }
+                    }
+                };
+                picker.addEventListener('change', onPick);
+                picker.addEventListener('input', onPick);
+                picker.addEventListener('click', () => {
+                    try { picker.showPicker(); } catch (err) { }
+                });
+            }
+
+            // Sync prep / clean dates if row 1 changes
+            const prepInp = row.querySelector('.staff-prep-date');
+            if (prepInp) {
+                prepInp.addEventListener('change', () => {
+                    const allPrep = table.querySelectorAll('.staff-prep-date');
+                    if (allPrep[0] === prepInp) {
+                        allPrep.forEach((p, i) => { if (i > 0) p.value = prepInp.value; });
+                    }
+                });
+            }
+
+            const cleanInp = row.querySelector('.staff-clean-date');
+            if (cleanInp) {
+                cleanInp.addEventListener('change', () => {
+                    const allClean = table.querySelectorAll('.staff-clean-date');
+                    if (allClean[0] === cleanInp) {
+                        allClean.forEach((c, i) => { if (i > 0) c.value = cleanInp.value; });
+                    }
+                });
+            }
+        };
+
+        // Bind existing rows
+        table.querySelectorAll('tr.staff-row').forEach(row => bindStaffRowEvents(row));
+
+        const addStaffRow = () => {
+            const currentRows = table.querySelectorAll('tr.staff-row');
+            const newIndex = currentRows.length + 1;
+
+            // Default dates copy from row 1 if filled
+            const row1ExamDate = document.querySelector('#page7 tr.staff-row .staff-exam-date');
+            const defaultExamDate = row1ExamDate ? row1ExamDate.value : '';
+
+            const row1PrepDate = document.querySelector('#page7 tr.staff-row .staff-prep-date');
+            const defaultPrepDate = row1PrepDate ? row1PrepDate.value : '';
+
+            const row1CleanDate = document.querySelector('#page7 tr.staff-row .staff-clean-date');
+            const defaultCleanDate = row1CleanDate ? row1CleanDate.value : '';
+
+            const tr = document.createElement('tr');
+            tr.className = 'staff-row dynamic-staff-row';
+            tr.innerHTML = `
+                <td style="text-align: center;" class="staff-sr-no">${newIndex}.</td>
+                <td style="padding: 1px;"><textarea id="p6-name-${newIndex}" class="staff-input staff-name-input"
+                        style="width: 100%; border: none; padding: 2px; font-weight: bold; font-size: 10pt; resize: none; overflow: hidden; font-family: inherit; min-height: 28px;"
+                        rows="1" placeholder=""></textarea></td>
+                <td style="padding: 1px;"><input type="text" id="p6-desig-${newIndex}" value="Lab. Attendant"
+                        class="staff-input" style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                <td style="padding: 1px;">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 2px; position: relative; width: 100%; min-height: 28px;">
+                        <textarea id="p7-exam-date-${newIndex}" class="staff-input staff-exam-date" placeholder="DD/MM/YYYY"
+                            style="width: calc(100% - 24px); border: none; padding: 2px; text-align: center; resize: none; overflow: hidden; font-family: inherit; font-size: 9pt; min-height: 26px; line-height: 1.2;"
+                            rows="1">${defaultExamDate}</textarea>
+                        <div class="no-print"
+                            style="position: relative; width: 20px; height: 20px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;">
+                            <input type="date" class="staff-exam-date-picker" title="Select Date from Calendar"
+                                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;">
+                            <svg width="15" height="15" fill="none" stroke="#2563eb" stroke-width="2" viewBox="0 0 24 24" style="pointer-events: none; z-index: 1;">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </div>
+                    </div>
+                </td>
+                <td style="padding: 1px;"><input type="date" id="p7-prep-date-${newIndex}" value="${defaultPrepDate}"
+                        class="staff-input staff-prep-date" title="Date of Preparation"
+                        style="width: 100%; border: none; padding: 2px; text-align: center; cursor: pointer; font-size: 9.5pt; font-family: inherit; font-weight: bold; white-space: nowrap;">
+                </td>
+                <td style="padding: 1px;"><input type="date" id="p7-clean-date-${newIndex}" value="${defaultCleanDate}"
+                        class="staff-input staff-clean-date" title="Date of Cleaning"
+                        style="width: 100%; border: none; padding: 2px; text-align: center; cursor: pointer; font-size: 9.5pt; font-family: inherit; font-weight: bold; white-space: nowrap;">
+                </td>
+                <td style="padding: 1px;"><input type="number" id="p7-exam-days-${newIndex}" value=""
+                        class="staff-input day-input" oninput="updateStaffTotals()"
+                        style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                <td style="padding: 1px;"><input type="number" id="p7-prep-days-${newIndex}" value=""
+                        class="staff-input day-input" oninput="updateStaffTotals()"
+                        style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                <td style="padding: 1px;"><input type="number" id="p7-clean-days-${newIndex}" value=""
+                        class="staff-input day-input" oninput="updateStaffTotals()"
+                        style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                <td style="padding: 1px;"><input type="number" id="p7-total-days-${newIndex}" value=""
+                        class="staff-input total-days-input" oninput="updateStaffTotals()"
+                        style="width: 100%; border: none; padding: 2px; text-align: center; font-weight: bold;">
+                </td>
+                <td style="padding: 1px;"><input type="text" id="p7-rate-${newIndex}" value="21/-"
+                        class="staff-input rate-input" oninput="updateStaffTotals()"
+                        style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                <td style="padding: 1px;"><input type="text" id="p6-amt-${newIndex}" value="" class="staff-input amount-input"
+                        oninput="updateStaffTotals()"
+                        style="width: 100%; border: none; padding: 2px; text-align: center;"></td>
+                <td style="text-align: center; vertical-align: middle;">
+                    <button type="button" class="remove-staff-row-btn no-print" title="Delete this row"
+                        style="background: #fff; border: 1px solid #fca5a5; border-radius: 3px; color: #ef4444; font-size: 10px; font-weight: bold; cursor: pointer; padding: 1px 5px; line-height: 1.2; display: inline-flex; align-items: center; justify-content: center; transition: all 0.15s;">✕</button>
+                </td>
+            `;
+
+            totalRow.parentNode.insertBefore(tr, totalRow);
+            bindStaffRowEvents(tr);
+            reindexStaffRows();
+        };
+
+        window.addStaffRow = addStaffRow;
+
+        if (addBtn) {
+            addBtn.addEventListener('click', addStaffRow);
+        }
+
+        if (topAddBtn) {
+            topAddBtn.addEventListener('click', addStaffRow);
+        }
+
+        // Delegate row removal
+        table.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-staff-row-btn')) {
+                const row = e.target.closest('tr.staff-row');
+                if (row) {
+                    row.remove();
+                    reindexStaffRows();
+                }
+            }
+        });
+    };
+    setupDynamicStaffRows();
+
     // Page 1 "Batch No. Date and time of the Practical examination" calendar picker logic
     const setupBatchDatePicker = () => {
         const pickers = document.querySelectorAll('.batch-date-picker');
@@ -2017,6 +2201,66 @@ document.addEventListener('DOMContentLoaded', () => {
         return false;
     };
 
+    const checkCredentialsValid = () => {
+        const userEl = document.getElementById('login-username');
+        const passEl = document.getElementById('login-password');
+        if (!userEl || !passEl) return false;
+        return userEl.value.trim().toLowerCase() === 'admin' && passEl.value === 'willingdon123';
+    };
+
+    let runawayX = 0;
+    let runawayY = 0;
+
+    const resetBtnDodge = () => {
+        const btnEl = document.getElementById('login-btn');
+        if (btnEl) {
+            btnEl.classList.remove('btn-runaway');
+            btnEl.classList.add('btn-ready');
+            btnEl.style.transform = 'translate(0px, 0px)';
+        }
+        runawayX = 0;
+        runawayY = 0;
+    };
+
+    const handleLoginBtnRunaway = (e) => {
+        if (checkCredentialsValid()) {
+            resetBtnDodge();
+            return;
+        }
+
+        const btnEl = document.getElementById('login-btn');
+        if (!btnEl) return;
+
+        btnEl.classList.remove('btn-ready');
+        btnEl.classList.add('btn-runaway');
+
+        const rect = btnEl.getBoundingClientRect();
+        const cursorX = e ? e.clientX : (rect.left + rect.width / 2);
+        const cursorY = e ? e.clientY : (rect.top + rect.height / 2);
+        const btnCenterX = rect.left + (rect.width / 2);
+        const btnCenterY = rect.top + (rect.height / 2);
+
+        // If cursor is on the left half -> jump right; if on right half -> jump left
+        let shiftX = 0;
+        if (cursorX <= btnCenterX) {
+            shiftX = Math.floor(Math.random() * 25) + 100; // +100px to +125px
+        } else {
+            shiftX = -(Math.floor(Math.random() * 25) + 100); // -100px to -125px
+        }
+
+        // Slight vertical variation
+        let shiftY = 0;
+        if (cursorY <= btnCenterY) {
+            shiftY = Math.floor(Math.random() * 20) + 10;
+        } else {
+            shiftY = -(Math.floor(Math.random() * 20) + 10);
+        }
+
+        runawayX = shiftX;
+        runawayY = shiftY;
+        btnEl.style.transform = `translate(${runawayX}px, ${runawayY}px)`;
+    };
+
     const updateLoginButtonState = () => {
         const userEl = document.getElementById('login-username');
         const passEl = document.getElementById('login-password');
@@ -2035,7 +2279,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const hasUser = userVal.length > 0;
         const hasPass = passVal.length > 0;
 
-        // Interactive 3D responsiveness while typing (never show lock while simply typing!)
+        // Interactive 3D responsiveness while typing
         if (document.activeElement === passEl || hasPass) {
             if (window.set3DState) window.set3DState('password');
         } else if (document.activeElement === userEl || hasUser) {
@@ -2049,6 +2293,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             btnEl.classList.remove('btn-fully-unlocked');
         }
+
+        if (checkCredentialsValid()) {
+            resetBtnDodge();
+        } else {
+            btnEl.classList.remove('btn-ready');
+        }
     };
 
     const attemptLogin = () => {
@@ -2056,6 +2306,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const passEl = document.getElementById('login-password');
         const errorEl = document.getElementById('login-error-msg');
         const cardEl = document.getElementById('login-card-element');
+        const btnEl = document.getElementById('login-btn');
 
         if (!userEl || !passEl) return;
 
@@ -2063,7 +2314,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = passEl.value;
 
         // Accept admin / willingdon123 (case-insensitive for username)
-        if (username.toLowerCase() === 'admin' && password === 'willingdon123') {
+        if (checkCredentialsValid()) {
+            resetBtnDodge();
             if (errorEl) errorEl.style.display = 'none';
             if (window.set3DState) window.set3DState('success');
 
@@ -2132,6 +2384,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             if (errorEl) errorEl.style.display = 'block';
             if (window.set3DState) window.set3DState('angry');
+            if (btnEl) {
+                handleLoginBtnRunaway();
+            }
             if (cardEl) {
                 cardEl.classList.remove('shake');
                 void cardEl.offsetWidth; // Trigger layout reflow to restart animation
@@ -4028,6 +4283,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Login input listeners for dynamic button reveal & 3D state
     const loginUserEl = document.getElementById('login-username');
     const loginPassEl = document.getElementById('login-password');
+    const loginBtnEl = document.getElementById('login-btn');
     if (loginUserEl && loginPassEl) {
         loginUserEl.addEventListener('input', updateLoginButtonState);
         loginPassEl.addEventListener('input', updateLoginButtonState);
@@ -4036,6 +4292,13 @@ document.addEventListener('DOMContentLoaded', () => {
         loginUserEl.addEventListener('blur', updateLoginButtonState);
         loginPassEl.addEventListener('blur', updateLoginButtonState);
         updateLoginButtonState();
+    }
+
+    if (loginBtnEl) {
+        loginBtnEl.addEventListener('mouseenter', handleLoginBtnRunaway);
+        loginBtnEl.addEventListener('mousemove', handleLoginBtnRunaway);
+        loginBtnEl.addEventListener('mouseover', handleLoginBtnRunaway);
+        loginBtnEl.addEventListener('touchstart', handleLoginBtnRunaway, { passive: true });
     }
 
     // Setup Navigation Tabs active state switching and smooth scrolling

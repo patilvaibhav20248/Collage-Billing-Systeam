@@ -78,6 +78,14 @@ body {
     box-sizing: border-box !important;
 }
 
+/* Compact layout for Page 5 and Page 6 to keep content high and leave space at bottom */
+#page5,
+#page6 {
+    padding: 10mm 16mm 10mm 16mm !important;
+}
+
+
+
 
 .header-meta {
     display: flex;
@@ -769,14 +777,27 @@ ul.bullet-list li {
     color: #00f0ff;
 }
 
-/* Cyber Login Button */
+/* ============================================================ */
+/* Interactive Runaway / Dodge Login Button                     */
+/* ============================================================ */
+
+.login-btn-container {
+    position: relative;
+    width: 100%;
+    min-height: 58px;
+    margin-top: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .login-btn {
     position: relative;
     width: 100%;
-    padding: 13px 14px;
-    max-height: 58px;
+    padding: 13px 16px;
+    max-height: 56px;
     opacity: 1;
-    margin-top: 18px;
+    margin-top: 0;
     overflow: hidden;
     pointer-events: auto;
     background: linear-gradient(135deg, #0284c7 0%, #00f0ff 100%);
@@ -787,18 +808,34 @@ ul.bullet-list li {
     font-weight: 800;
     letter-spacing: 1px;
     cursor: pointer;
-    box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
-    transform: translateY(0) scale(1);
-    transition: all 0.25s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 240, 255, 0.3);
+    transform: translate(0, 0);
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    will-change: transform;
+    user-select: none;
 }
 
 .login-btn:hover {
     filter: brightness(1.12);
-    transform: translateY(-2px) scale(1.02);
 }
 
 .login-btn:active {
-    transform: translateY(0) scale(0.98);
+    transform: scale(0.98);
+}
+
+/* Runaway state when dodging */
+.login-btn.btn-runaway {
+    border-color: rgba(255, 51, 102, 0.8) !important;
+    box-shadow: 0 0 25px rgba(255, 51, 102, 0.5), 0 8px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Unlocked ready state when password is correct */
+.login-btn.btn-ready {
+    background: linear-gradient(135deg, #059669 0%, #10b981 50%, #00f0ff 100%) !important;
+    border-color: #00ff88 !important;
+    box-shadow: 0 0 25px rgba(0, 255, 136, 0.5), 0 4px 15px rgba(0, 0, 0, 0.4) !important;
+    color: #021a12 !important;
+    transform: translate(0, 0) !important;
 }
 
 .login-error {
@@ -818,17 +855,14 @@ ul.bullet-list li {
 
 /* Shake animation for errors */
 @keyframes shake {
-
     0%,
     100% {
         transform: translateX(0);
     }
-
     20%,
     60% {
         transform: translateX(-6px);
     }
-
     40%,
     80% {
         transform: translateX(6px);
@@ -2048,6 +2082,13 @@ body.pdf-export-mode input[type="time"]::-webkit-calendar-picker-indicator {
     font-weight: bold;
     background-color: #ffffff;
     color: #000000;
+}
+
+/* Page 4 Borderless Verification Tables */
+#page4 table,
+#page4 th,
+#page4 td {
+    border: none !important;
 }
 
 /* Page 8 Professional Text Box & Table Styling */
