@@ -1043,7 +1043,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tr.className = 'batch-row dynamic-batch-row';
             tr.style.height = '47.15pt';
             tr.innerHTML = `
-                <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
+                <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px;">
                         <p class=MsoNormal style='margin: 0; flex: 1;'><b><span lang=EN-US>
                             <select id="p1-batch-dropdown-${newIndex}" class="batch-dropdown" style="font-size: 13px; font-weight: bold; font-family: inherit; margin: 0; padding: 2px 4px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer; width: 100%;">
@@ -1067,19 +1067,19 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
                 </td>
-                <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
+                <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
                     <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
                                 class="table-input col-2-input" placeholder="0" id="p1-r${newIndex}-c2"></span></p>
                 </td>
-                <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
+                <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
                     <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
                                 class="table-input col-3-input" placeholder="0" id="p1-r${newIndex}-c3"></span></p>
                 </td>
-                <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
+                <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
                     <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
                                 class="table-input col-4-input" placeholder="0" id="p1-r${newIndex}-c4"></span></p>
                 </td>
-                <td width=131 valign=top style='width:98.0pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
+                <td width=131 valign=top style='width:98.0pt;border:1px solid #000000;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
                     <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
                                 class="table-input col-5-input" placeholder="0" id="p1-r${newIndex}-c5"></span></p>
                 </td>
@@ -2208,96 +2208,39 @@ document.addEventListener('DOMContentLoaded', () => {
         return userEl.value.trim().toLowerCase() === 'admin' && passEl.value === 'willingdon123';
     };
 
-    let runawayX = 0;
-    let runawayY = 0;
-
-    const resetBtnDodge = () => {
-        const btnEl = document.getElementById('login-btn');
-        if (btnEl) {
-            btnEl.classList.remove('btn-runaway');
-            btnEl.classList.add('btn-ready');
-            btnEl.style.transform = 'translate(0px, 0px)';
+    // -------------------------------------------------------------
+    // Interactive Willingdon College Logo & Emblem Animation Engine
+    // -------------------------------------------------------------
+    const setEmblemState = (state) => {
+        const showcase = document.getElementById('login-emblem-showcase');
+        if (!showcase) return;
+        showcase.classList.remove('state-username', 'state-password', 'state-error', 'state-success');
+        if (state && state !== 'idle') {
+            showcase.classList.add(`state-${state}`);
         }
-        runawayX = 0;
-        runawayY = 0;
-    };
-
-    const handleLoginBtnRunaway = (e) => {
-        if (checkCredentialsValid()) {
-            resetBtnDodge();
-            return;
+        if (state === 'error') {
+            setTimeout(() => {
+                showcase.classList.remove('state-error');
+            }, 1800);
         }
-
-        const btnEl = document.getElementById('login-btn');
-        if (!btnEl) return;
-
-        btnEl.classList.remove('btn-ready');
-        btnEl.classList.add('btn-runaway');
-
-        const rect = btnEl.getBoundingClientRect();
-        const cursorX = e ? e.clientX : (rect.left + rect.width / 2);
-        const cursorY = e ? e.clientY : (rect.top + rect.height / 2);
-        const btnCenterX = rect.left + (rect.width / 2);
-        const btnCenterY = rect.top + (rect.height / 2);
-
-        // If cursor is on the left half -> jump right; if on right half -> jump left
-        let shiftX = 0;
-        if (cursorX <= btnCenterX) {
-            shiftX = Math.floor(Math.random() * 25) + 100; // +100px to +125px
-        } else {
-            shiftX = -(Math.floor(Math.random() * 25) + 100); // -100px to -125px
-        }
-
-        // Slight vertical variation
-        let shiftY = 0;
-        if (cursorY <= btnCenterY) {
-            shiftY = Math.floor(Math.random() * 20) + 10;
-        } else {
-            shiftY = -(Math.floor(Math.random() * 20) + 10);
-        }
-
-        runawayX = shiftX;
-        runawayY = shiftY;
-        btnEl.style.transform = `translate(${runawayX}px, ${runawayY}px)`;
     };
 
     const updateLoginButtonState = () => {
         const userEl = document.getElementById('login-username');
         const passEl = document.getElementById('login-password');
-        const btnEl = document.getElementById('login-btn');
         const errorEl = document.getElementById('login-error-msg');
-        if (!userEl || !passEl || !btnEl) return;
+        if (!userEl || !passEl) return;
 
-        // Automatically hide error message when user starts re-typing
         if (errorEl && errorEl.style.display !== 'none') {
             errorEl.style.display = 'none';
         }
 
-        const userVal = userEl.value.trim();
-        const passVal = passEl.value;
-
-        const hasUser = userVal.length > 0;
-        const hasPass = passVal.length > 0;
-
-        // Interactive 3D responsiveness while typing
-        if (document.activeElement === passEl || hasPass) {
-            if (window.set3DState) window.set3DState('password');
-        } else if (document.activeElement === userEl || hasUser) {
-            if (window.set3DState) window.set3DState('username');
+        if (document.activeElement === passEl) {
+            setEmblemState('password');
+        } else if (document.activeElement === userEl) {
+            setEmblemState('username');
         } else {
-            if (window.set3DState) window.set3DState('idle');
-        }
-
-        if (hasUser && hasPass) {
-            btnEl.classList.add('btn-fully-unlocked');
-        } else {
-            btnEl.classList.remove('btn-fully-unlocked');
-        }
-
-        if (checkCredentialsValid()) {
-            resetBtnDodge();
-        } else {
-            btnEl.classList.remove('btn-ready');
+            setEmblemState('idle');
         }
     };
 
@@ -2315,9 +2258,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Accept admin / willingdon123 (case-insensitive for username)
         if (checkCredentialsValid()) {
-            resetBtnDodge();
             if (errorEl) errorEl.style.display = 'none';
-            if (window.set3DState) window.set3DState('success');
+            setEmblemState('success');
+            if (btnEl) {
+                btnEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><polyline points="20 6 9 17 4 12"></polyline></svg> Access Granted';
+                btnEl.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+            }
 
             document.body.classList.add('logged-in');
             if (window.stopLoginAnimation) window.stopLoginAnimation();
@@ -2382,11 +2328,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateTadaTotals();
             }
         } else {
-            if (errorEl) errorEl.style.display = 'block';
-            if (window.set3DState) window.set3DState('angry');
-            if (btnEl) {
-                handleLoginBtnRunaway();
-            }
+            if (errorEl) errorEl.style.display = 'flex';
+            setEmblemState('error');
             if (cardEl) {
                 cardEl.classList.remove('shake');
                 void cardEl.offsetWidth; // Trigger layout reflow to restart animation
@@ -3054,6 +2997,17 @@ document.addEventListener('DOMContentLoaded', () => {
                                     inp.parentNode.replaceChild(span, inp);
                                 }
                             });
+
+                            // 8. Ensure Page 1 attendance table and all document tables render solid, crisp black borders
+                            const p1Table = clonedPage.querySelector('#p1-attendance-table');
+                            if (p1Table) {
+                                p1Table.style.borderCollapse = 'collapse';
+                                p1Table.style.border = '1px solid #000000';
+                                p1Table.querySelectorAll('td, th').forEach(cell => {
+                                    cell.style.border = '1px solid #000000';
+                                    cell.style.borderColor = '#000000';
+                                });
+                            }
                         },
                         ignoreElements: (el) => {
                             return el.classList && (
@@ -4292,13 +4246,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loginUserEl.addEventListener('blur', updateLoginButtonState);
         loginPassEl.addEventListener('blur', updateLoginButtonState);
         updateLoginButtonState();
-    }
-
-    if (loginBtnEl) {
-        loginBtnEl.addEventListener('mouseenter', handleLoginBtnRunaway);
-        loginBtnEl.addEventListener('mousemove', handleLoginBtnRunaway);
-        loginBtnEl.addEventListener('mouseover', handleLoginBtnRunaway);
-        loginBtnEl.addEventListener('touchstart', handleLoginBtnRunaway, { passive: true });
     }
 
     // Setup Navigation Tabs active state switching and smooth scrolling

@@ -11,39 +11,54 @@
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="icon" type="image/webp" href="college-logo.webp">
-    <link rel="stylesheet" href="styles.css?v=11.0">
+    <link rel="stylesheet" href="styles.css?v=40.0">
 </head>
 
 <body style="word-wrap: break-word;">
     <!-- Login Screen HTML -->
     <div id="login-screen" class="no-print login-backdrop">
+        <div class="login-bg-photo" id="login-bg-photo" style="background-image: url('willingdon-campus.jpg');"></div>
+        <div class="login-bg-overlay"></div>
         <canvas id="login-bg-canvas" class="login-bg-3d-canvas"></canvas>
-        <div class="login-card cyber-card" id="login-card-element">
-            <div class="cyber-corner top-left"></div>
-            <div class="cyber-corner top-right"></div>
-            <div class="cyber-corner bottom-left"></div>
-            <div class="cyber-corner bottom-right"></div>
-            <div id="login-3d-container" class="login-3d-canvas-wrap"></div>
-            <h1 class="login-logo">Willingdon College</h1>
-            <p class="login-subtitle">// AUTONOMOUS EXAM BILLING PORTAL</p>
-
-            <div id="login-error-msg" class="login-error" style="display: none;">ACCESS DENIED // INVALID CREDENTIALS
+        <div class="login-card" id="login-card-element">
+            <div class="login-brand-header">
+                <h1 class="login-logo">Willingdon College</h1>
+                <p class="login-subtitle">Autonomous Examination Billing Portal</p>
             </div>
 
-            <form onsubmit="event.preventDefault(); attemptLogin();">
+            <div id="login-error-msg" class="login-error" style="display: none;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span>Invalid credentials. Please try again.</span>
+            </div>
+
+            <form onsubmit="event.preventDefault(); attemptLogin();" class="login-form" id="login-form-element">
                 <div class="login-form-group">
-                    <label class="login-label" for="login-username">Login ID</label>
-                    <input type="text" id="login-username" class="login-input" required autocomplete="username"
-                        placeholder="Enter Login ID">
+                    <label class="login-label" for="login-username">Username</label>
+                    <div class="login-input-wrapper">
+                        <span class="login-input-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </span>
+                        <input type="text" id="login-username" class="login-input" required autocomplete="off"
+                            placeholder="Enter username">
+                    </div>
                 </div>
 
                 <div class="login-form-group">
                     <label class="login-label" for="login-password">Password</label>
                     <div class="login-input-wrapper">
+                        <span class="login-input-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                        </span>
                         <input type="password" id="login-password" class="login-input" required
-                            autocomplete="current-password" placeholder="Enter Password">
-                        <button type="button" class="login-toggle-password" onclick="toggleLoginPassword()">
-                            <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"
+                            autocomplete="new-password" placeholder="Enter password">
+                        <button type="button" class="login-toggle-password" onclick="toggleLoginPassword()" title="Toggle password visibility">
+                            <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                 viewBox="0 0 24 24">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
@@ -55,6 +70,13 @@
 
                 <div class="login-btn-container" id="login-btn-container">
                     <button type="submit" class="login-btn" id="login-btn">
+                        <span class="login-btn-icon" id="login-btn-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                                <polyline points="10 17 15 12 10 7"></polyline>
+                                <line x1="15" y1="12" x2="3" y2="12"></line>
+                            </svg>
+                        </span>
                         <span id="login-btn-text">Sign In</span>
                     </button>
                 </div>
@@ -299,47 +321,47 @@
 
             <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
 
-            <table id="p1-attendance-table" class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width=653
-                style='width:489.8pt;margin-left:21.75pt;border-collapse:collapse;border:none'>
+            <table id="p1-attendance-table" class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0" width="653"
+                style='width:489.8pt;margin-left:21.75pt;border-collapse:collapse;border:1px solid #000000'>
                 <tr style='height:89.1pt'>
-                    <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
+                    <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;
   padding:0cm 5.4pt 0cm 5.4pt;height:89.1pt'>
                         <p class=MsoNormal><span lang=EN-US>Batch No.</span></p>
                         <p class=MsoNormal><span lang=EN-US>Date and time of </span></p>
                         <p class=MsoNormal><span lang=EN-US>the Practical </span></p>
                         <p class=MsoNormal><span lang=EN-US>examination</span></p>
                     </td>
-                    <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
-  border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:89.1pt'>
+                    <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;
+  padding:0cm 5.4pt 0cm 5.4pt;height:89.1pt'>
                         <p class=MsoNormal><span lang=EN-US>Total No. of </span></p>
                         <p class=MsoNormal><span lang=EN-US>Candidates called</span></p>
                         <p class=MsoNormal><span lang=EN-US>for examination</span></p>
                     </td>
-                    <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
-  border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:89.1pt'>
+                    <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;
+  padding:0cm 5.4pt 0cm 5.4pt;height:89.1pt'>
                         <p class=MsoNormal><span lang=EN-US>Total No. of</span></p>
                         <p class=MsoNormal><span lang=EN-US>Candidates present</span></p>
                         <p class=MsoNormal><span lang=EN-US>at the examination</span></p>
                         <p class=MsoNormal><span lang=EN-US>on the dates</span></p>
                         <p class=MsoNormal><span lang=EN-US>allotted to them</span></p>
                     </td>
-                    <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
-  border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:89.1pt'>
+                    <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;
+  padding:0cm 5.4pt 0cm 5.4pt;height:89.1pt'>
                         <p class=MsoNormal><span lang=EN-US>Seat Nos. of </span></p>
                         <p class=MsoNormal><span lang=EN-US>Candidates</span></p>
                         <p class=MsoNormal><span lang=EN-US>examined</span></p>
                         <p class=MsoNormal><span lang=EN-US>out of turn</span></p>
                     </td>
-                    <td width=131 valign=top style='width:98.0pt;border:solid windowtext 1.0pt;
-  border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:89.1pt'>
+                    <td width=131 valign=top style='width:98.0pt;border:1px solid #000000;
+  padding:0cm 5.4pt 0cm 5.4pt;height:89.1pt'>
                         <p class=MsoNormal><span lang=EN-US>Seat No. of </span></p>
                         <p class=MsoNormal><span lang=EN-US>Candidates who</span></p>
                         <p class=MsoNormal><span lang=EN-US>were absent Total</span></p>
                     </td>
                 </tr>
                 <tr class="batch-row" style='height:62.1pt'>
-                    <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
-  border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:62.1pt'>
+                    <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;
+  padding:0cm 5.4pt 0cm 5.4pt;height:62.1pt'>
                         <p class=MsoNormal align=center style='text-align:center; margin-bottom: 3px;'><b><span
                                     lang=EN-US><select id="p1-batch-dropdown-1" class="batch-dropdown"
                                         style="font-size: 13px; font-weight: bold; font-family: inherit; margin: 0; padding: 2px 4px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer; width: 100%;">
@@ -368,34 +390,30 @@
                             </div>
                         </div>
                     </td>
-                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+                    <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;
   padding:0cm 5.4pt 0cm 5.4pt;height:62.1pt'>
                         <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
                                     class="table-input col-2-input" placeholder="0" id="p1-r1-c2"></span></p>
                     </td>
-                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+                    <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;
   padding:0cm 5.4pt 0cm 5.4pt;height:62.1pt'>
                         <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
                                     class="table-input col-3-input" placeholder="0" id="p1-r1-c3"></span></p>
                     </td>
-                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+                    <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;
   padding:0cm 5.4pt 0cm 5.4pt;height:62.1pt'>
                         <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
                                     class="table-input col-4-input" placeholder="0" id="p1-r1-c4"></span></p>
                     </td>
-                    <td width=131 valign=top style='width:98.0pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+                    <td width=131 valign=top style='width:98.0pt;border:1px solid #000000;
   padding:0cm 5.4pt 0cm 5.4pt;height:62.1pt'>
                         <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
                                     class="table-input col-5-input" placeholder="0" id="p1-r1-c5"></span></p>
                     </td>
                 </tr>
                 <tr class="batch-row" style='height:56.6pt'>
-                    <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
-  border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:56.6pt'>
+                    <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;
+  padding:0cm 5.4pt 0cm 5.4pt;height:56.6pt'>
                         <p class=MsoNormal align=center style='text-align:center; margin-bottom: 3px;'><b><span
                                     lang=EN-US><select id="p1-batch-dropdown-2" class="batch-dropdown"
                                         style="font-size: 13px; font-weight: bold; font-family: inherit; margin: 0; padding: 2px 4px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer; width: 100%;">
@@ -424,34 +442,30 @@
                             </div>
                         </div>
                     </td>
-                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+                    <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;
   padding:0cm 5.4pt 0cm 5.4pt;height:56.6pt'>
                         <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
                                     class="table-input col-2-input" placeholder="0" id="p1-r2-c2"></span></p>
                     </td>
-                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+                    <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;
   padding:0cm 5.4pt 0cm 5.4pt;height:56.6pt'>
                         <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
                                     class="table-input col-3-input" placeholder="0" id="p1-r2-c3"></span></p>
                     </td>
-                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+                    <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;
   padding:0cm 5.4pt 0cm 5.4pt;height:56.6pt'>
                         <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
                                     class="table-input col-4-input" placeholder="0" id="p1-r2-c4"></span></p>
                     </td>
-                    <td width=131 valign=top style='width:98.0pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+                    <td width=131 valign=top style='width:98.0pt;border:1px solid #000000;
   padding:0cm 5.4pt 0cm 5.4pt;height:56.6pt'>
                         <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
                                     class="table-input col-5-input" placeholder="0" id="p1-r2-c5"></span></p>
                     </td>
                 </tr>
                 <tr class="batch-row" style='height:47.15pt'>
-                    <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
-  border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
+                    <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;
+  padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
                         <p class=MsoNormal align=center style='text-align:center; margin-bottom: 3px;'><b><span
                                     lang=EN-US><select id="p1-batch-dropdown-3" class="batch-dropdown"
                                         style="font-size: 13px; font-weight: bold; font-family: inherit; margin: 0; padding: 2px 4px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer; width: 100%;">
@@ -491,34 +505,30 @@
                             </button>
                         </div>
                     </td>
-                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+                    <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;
   padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
                         <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
                                     class="table-input col-2-input" placeholder="0" id="p1-r3-c2"></span></p>
                     </td>
-                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+                    <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;
   padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
                         <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
                                     class="table-input col-3-input" placeholder="0" id="p1-r3-c3"></span></p>
                     </td>
-                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+                    <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;
   padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
                         <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
                                     class="table-input col-4-input" placeholder="0" id="p1-r3-c4"></span></p>
                     </td>
-                    <td width=131 valign=top style='width:98.0pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+                    <td width=131 valign=top style='width:98.0pt;border:1px solid #000000;
   padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
                         <p class=MsoNormal align=center style='text-align:center'><span lang=EN-US><input type="text"
                                     class="table-input col-5-input" placeholder="0" id="p1-r3-c5"></span></p>
                     </td>
                 </tr>
                 <tr id="p1-total-row" style='height:47.15pt'>
-                    <td width=131 valign=top style='width:97.95pt;border:solid windowtext 1.0pt;
-  border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
+                    <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;
+  padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt'>
                         <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US>&nbsp;</span></b>
                         </p>
                         <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US>Total</span></b>
@@ -526,26 +536,22 @@
                         <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US>&nbsp;</span></b>
                         </p>
                     </td>
-                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+                    <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;
   padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt; background-color: #ffffff;'>
                         <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US id="col-2-total"
                                     style="color: #000000; font-size: 14pt;">0</span></b></p>
                     </td>
-                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+                    <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;
   padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt; background-color: #ffffff;'>
                         <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US id="col-3-total"
                                     style="color: #000000; font-size: 14pt;">0</span></b></p>
                     </td>
-                    <td width=131 valign=top style='width:97.95pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+                    <td width=131 valign=top style='width:97.95pt;border:1px solid #000000;
   padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt; background-color: #ffffff;'>
                         <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US id="col-4-total"
                                     style="color: #000000; font-size: 14pt;">0</span></b></p>
                     </td>
-                    <td width=131 valign=top style='width:98.0pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+                    <td width=131 valign=top style='width:98.0pt;border:1px solid #000000;
   padding:0cm 5.4pt 0cm 5.4pt;height:47.15pt; background-color: #ffffff;'>
                         <p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US id="col-5-total"
                                     style="color: #000000; font-size: 14pt;">0</span></b></p>
@@ -2723,8 +2729,8 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
     <script src="html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>if (typeof XLSX === 'undefined') { document.write('<script src="xlsx.full.min.js"><\/script>'); }</script>
-    <script src="login-3d.js?v=9.7"></script>
-    <script src="script.js?v=9.7"></script>
+    <script src="login-3d.js?v=25.0"></script>
+    <script src="script.js?v=25.0"></script>
 </body>
 
 </html>
