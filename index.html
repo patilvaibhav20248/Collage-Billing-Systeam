@@ -11,7 +11,7 @@
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="icon" type="image/webp" href="college-logo.webp">
-    <link rel="stylesheet" href="styles.css?v=40.0">
+    <link rel="stylesheet" href="styles.css?v=43.0">
 </head>
 
 <body style="word-wrap: break-word;">
@@ -27,7 +27,12 @@
             </div>
 
             <div id="login-error-msg" class="login-error" style="display: none;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
                 <span>Invalid credentials. Please try again.</span>
             </div>
 
@@ -36,7 +41,8 @@
                     <label class="login-label" for="login-username">Username</label>
                     <div class="login-input-wrapper">
                         <span class="login-input-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="12" cy="7" r="4"></circle>
                             </svg>
@@ -50,14 +56,16 @@
                     <label class="login-label" for="login-password">Password</label>
                     <div class="login-input-wrapper">
                         <span class="login-input-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                             </svg>
                         </span>
                         <input type="password" id="login-password" class="login-input" required
                             autocomplete="new-password" placeholder="Enter password">
-                        <button type="button" class="login-toggle-password" onclick="toggleLoginPassword()" title="Toggle password visibility">
+                        <button type="button" class="login-toggle-password" onclick="toggleLoginPassword()"
+                            title="Toggle password visibility">
                             <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                 viewBox="0 0 24 24">
@@ -71,7 +79,8 @@
                 <div class="login-btn-container" id="login-btn-container">
                     <button type="submit" class="login-btn" id="login-btn">
                         <span class="login-btn-icon" id="login-btn-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
                                 <polyline points="10 17 15 12 10 7"></polyline>
                                 <line x1="15" y1="12" x2="3" y2="12"></line>
@@ -258,7 +267,6 @@
                     <option value="Part - I">Part - I</option>
                     <option value="Part - II">Part - II</option>
                     <option value="Part - III">Part - III</option>
-                    <option value="OGT/Projects">OGT/Projects</option>
                     <option value="Part - IV">Part - IV</option>
                     <option value="Part - V">Part - V</option>
                     <option value="Part - VI">Part - VI</option>
@@ -562,11 +570,13 @@
             <div class="examiners-inline-row" style="margin-top: 45px; margin-bottom: 25px;">
                 <div class="examiners-inline-col">
                     <span style="white-space: nowrap;">Examiners Signature - 1)</span>
-                    <span class="examiner-display" style="border-bottom: 1px solid #000; min-width: 170px; display: inline-block; padding: 0 4px; font-weight: bold; text-align: left;"></span>
+                    <span class="examiner-display"
+                        style="border-bottom: 1px solid #000; min-width: 170px; display: inline-block; padding: 0 4px; font-weight: bold; text-align: left;"></span>
                 </div>
                 <div class="examiners-inline-col col-right">
                     <span style="white-space: nowrap;">2)</span>
-                    <span class="examiner2-display" style="border-bottom: 1px solid #000; min-width: 170px; max-width: 300px; display: inline-block; padding: 0 4px; font-weight: bold; text-align: left;"></span>
+                    <span class="examiner2-display"
+                        style="border-bottom: 1px solid #000; min-width: 170px; max-width: 300px; display: inline-block; padding: 0 4px; font-weight: bold; text-align: left;"></span>
                 </div>
             </div>
 
@@ -636,15 +646,16 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
 
             <p class=MsoNormal style='line-height:140%'><span lang=EN-US>Name of the
                     Subject : </span><b><span class="subject-display"
-                            style="font-weight: bold; border-bottom: 1px solid #000; min-width: 220px; display: inline-block; padding: 0 5px;"></span></b></p>
-
-            <p class=MsoNormal style='line-height:140%'><span lang=EN-US>Name of the Examination : <strong><span
-                        class="course-display">B.SC.IT</span> - <span class="part-display">Part - I</span> <span
-                        class="month-display">March</span> <span class="year-display">2025</span></strong></span>
+                        style="font-weight: bold; border-bottom: 1px solid #000; min-width: 220px; display: inline-block; padding: 0 5px;"></span></b>
             </p>
 
-            <p class=MsoNormal style='line-height:140%'><span lang=EN-US>Date of Inspection : <input type="date" class="inspection-date-input"
-                        value="2025-10-08"
+            <p class=MsoNormal style='line-height:140%'><span lang=EN-US>Name of the Examination : <strong><span
+                            class="course-display">B.SC.IT</span> - <span class="part-display">Part - I</span> <span
+                            class="month-display">March</span> <span class="year-display">2025</span></strong></span>
+            </p>
+
+            <p class=MsoNormal style='line-height:140%'><span lang=EN-US>Date of Inspection : <input type="date"
+                        class="inspection-date-input" value="2025-10-08"
                         style="font-family: inherit; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; padding: 2px; background: white;"></span>
             </p>
 
@@ -654,16 +665,19 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
             <div class="examiners-inline-row" style="margin-top: 35px; margin-bottom: 15px;">
                 <div class="examiners-inline-col">
                     <span style="white-space: nowrap;">1)</span>
-                    <span class="examiner-display" style="border-bottom: 1px solid #000; min-width: 170px; display: inline-block; padding: 0 4px; font-weight: bold; text-align: left;"></span>
+                    <span class="examiner-display"
+                        style="border-bottom: 1px solid #000; min-width: 170px; display: inline-block; padding: 0 4px; font-weight: bold; text-align: left;"></span>
                 </div>
                 <div class="examiners-inline-col col-right">
                     <span style="white-space: nowrap;">2)</span>
-                    <span class="examiner2-display" style="border-bottom: 1px solid #000; min-width: 170px; max-width: 300px; display: inline-block; padding: 0 4px; font-weight: bold; text-align: left;"></span>
+                    <span class="examiner2-display"
+                        style="border-bottom: 1px solid #000; min-width: 170px; max-width: 300px; display: inline-block; padding: 0 4px; font-weight: bold; text-align: left;"></span>
                 </div>
             </div>
 
             <!-- Signature and name of the Examiner positioned lower down -->
-            <div style="text-align: right; margin-top: 50px; margin-bottom: 35px; font-family: 'Times New Roman', Times, serif;">
+            <div
+                style="text-align: right; margin-top: 50px; margin-bottom: 35px; font-family: 'Times New Roman', Times, serif;">
                 <p style="margin: 0; font-size: 11.5pt;">Signature and name of the</p>
                 <p style="margin: 2px 0 0 0; font-size: 11.5pt;">Examiner</p>
             </div>
@@ -671,7 +685,8 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
             <p class=MsoNormal style='line-height:115%; margin-top: 25px;'><span lang=EN-US>To be handed over
                     to the Chairman on or before the date of mark-settling meeting </span></p>
 
-            <p class=MsoNormal style='line-height:115%; border-top: 1px dashed #777; margin: 10px 0; padding-top: 4px;'><span lang=EN-US>*strike-out if not
+            <p class=MsoNormal style='line-height:115%; border-top: 1px dashed #777; margin: 10px 0; padding-top: 4px;'>
+                <span lang=EN-US>*strike-out if not
                     applicable </span></p>
 
             <p class=MsoNormal style='line-height:115%'><span lang=EN-US>&nbsp;</span></p>
@@ -711,11 +726,11 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                     style='font-size:14.0pt; font-weight: bold;'>CERTIFICATE
                     REGARDING THE ARRANGEMENTS OF PRACTICAL</span></p>
 
-            <p class=MsoNormal style='line-height:140%; margin-top: 15px; font-size: 11.5pt;'><span lang=EN-US>FOR THE <b><span
-                            class="subject-display"
+            <p class=MsoNormal style='line-height:140%; margin-top: 15px; font-size: 11.5pt;'><span lang=EN-US>FOR THE
+                    <b><span class="subject-display"
                             style="font-weight: bold; border-bottom: 1px solid #000; min-width: 220px; display: inline-block; padding: 0 5px;"></span>
-                        EXAMINATION</b> OF <b><u><span lang=EN-US class="month-display">March</span></u></b> <b><u><span lang=EN-US
-                                class="year-display">2025</span></u></b></span></p>
+                        EXAMINATION</b> OF <b><u><span lang=EN-US class="month-display">March</span></u></b> <b><u><span
+                                lang=EN-US class="year-display">2025</span></u></b></span></p>
 
             <p class=MsoNormal style='margin-left:36.0pt; margin-top: 15px;'><span lang=EN-US>Certified that
                     All Experiments from the supplied question papers are simultaneously arranged
@@ -724,16 +739,25 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
             <p class=MsoNormal style="margin-top: 10px;"><span lang=EN-US>The following experiments have not been
                     arranged for the reasons shown below: - </span></p>
 
-            <p class=MsoNormal style="margin-top: 10px;"><span lang=EN-US>Sr no. &nbsp;&nbsp;&nbsp;&nbsp; Experiments &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Reason</span></p>
+            <p class=MsoNormal style="margin-top: 10px;"><span lang=EN-US>Sr no. &nbsp;&nbsp;&nbsp;&nbsp; Experiments
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    Reason</span></p>
 
-            <p class=MsoNormal style="margin-top: 4px;"><span lang=EN-US>1. __________________________ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ______________________________</span></p>
-            <p class=MsoNormal style="margin-top: 4px;"><span lang=EN-US>2. __________________________ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ______________________________</span></p>
-            <p class=MsoNormal style="margin-top: 4px;"><span lang=EN-US>3. __________________________ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ______________________________</span></p>
-            <p class=MsoNormal style="margin-top: 4px;"><span lang=EN-US>4. __________________________ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ______________________________</span></p>
-            <p class=MsoNormal style="margin-top: 4px;"><span lang=EN-US>5. __________________________ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ______________________________</span></p>
-            <p class=MsoNormal style="margin-top: 4px;"><span lang=EN-US>6. __________________________ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ______________________________</span></p>
+            <p class=MsoNormal style="margin-top: 4px;"><span lang=EN-US>1. __________________________
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ______________________________</span></p>
+            <p class=MsoNormal style="margin-top: 4px;"><span lang=EN-US>2. __________________________
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ______________________________</span></p>
+            <p class=MsoNormal style="margin-top: 4px;"><span lang=EN-US>3. __________________________
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ______________________________</span></p>
+            <p class=MsoNormal style="margin-top: 4px;"><span lang=EN-US>4. __________________________
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ______________________________</span></p>
+            <p class=MsoNormal style="margin-top: 4px;"><span lang=EN-US>5. __________________________
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ______________________________</span></p>
+            <p class=MsoNormal style="margin-top: 4px;"><span lang=EN-US>6. __________________________
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ______________________________</span></p>
 
-            <p class=MsoNormal style="margin-top: 15px;"><span lang=EN-US>Date :- </span><span lang=EN-US class="date-display" style="font-weight: bold;">23/09/2026</span>
+            <p class=MsoNormal style="margin-top: 15px;"><span lang=EN-US>Date :- </span><span lang=EN-US
+                    class="date-display" style="font-weight: bold;">23/09/2026</span>
                 <input type="date" class="page-date-sync-input" value="2026-09-23" title="Change date via calendar"
                     style="font-size: 11px; padding: 1px 3px; border: 1px solid #ccc; border-radius: 3px; cursor: pointer; vertical-align: middle;">
             </p>
@@ -747,20 +771,24 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
             <p class=MsoNormal align=center style='text-align:center; margin: 15px 0;'><b><u>ALL EXPERIMENTS WERE
                         ARRANGED</u></b></p>
 
-            <p class=MsoNormal style="margin-top: 10px;"><span lang=EN-US>Date and time of Inspection of Laboratory : </span></p>
+            <p class=MsoNormal style="margin-top: 10px;"><span lang=EN-US>Date and time of Inspection of Laboratory :
+                </span></p>
 
             <div class="examiners-inline-row" style="margin-top: 30px; margin-bottom: 15px;">
                 <div class="examiners-inline-col">
                     <span style="white-space: nowrap;">1)</span>
-                    <span class="examiner-display" style="border-bottom: 1px solid #000; min-width: 170px; display: inline-block; padding: 0 4px; font-weight: bold; text-align: left;"></span>
+                    <span class="examiner-display"
+                        style="border-bottom: 1px solid #000; min-width: 170px; display: inline-block; padding: 0 4px; font-weight: bold; text-align: left;"></span>
                 </div>
                 <div class="examiners-inline-col col-right">
                     <span style="white-space: nowrap;">2)</span>
-                    <span class="examiner2-display" style="border-bottom: 1px solid #000; min-width: 170px; max-width: 300px; display: inline-block; padding: 0 4px; font-weight: bold; text-align: left;"></span>
+                    <span class="examiner2-display"
+                        style="border-bottom: 1px solid #000; min-width: 170px; max-width: 300px; display: inline-block; padding: 0 4px; font-weight: bold; text-align: left;"></span>
                 </div>
             </div>
 
-            <div style="text-align: right; margin-top: 35px; margin-bottom: 25px; font-family: 'Times New Roman', Times, serif;">
+            <div
+                style="text-align: right; margin-top: 35px; margin-bottom: 25px; font-family: 'Times New Roman', Times, serif;">
                 <p style="margin: 0; font-size: 11.5pt;">Examiner sign</p>
             </div>
 
@@ -836,7 +864,8 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                     </thead>
                     <tbody>
                         <tr>
-                            <td style="padding: 6px 10px; border: none; text-align: left;">1. WILLINGDON COLLEGE, SANGLI</td>
+                            <td style="padding: 6px 10px; border: none; text-align: left;">1. WILLINGDON COLLEGE, SANGLI
+                            </td>
                             <td style="text-align: center; padding: 6px 10px; border: none;"><b><span
                                         class="page4-total-present">0</span></b></td>
                             <td style="text-align: center; padding: 6px 10px; border: none;"><b><span
@@ -912,17 +941,25 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
 
             <div style="margin-bottom: 4px; line-height: 1.35; font-size: 10pt;">
                 <p class="MsoNormal" style="margin: 1px 0;">
-                    परीक्षकाचे नाव : <strong><span class="examiner-display" style="border-bottom: 1px solid #000; min-width: 220px; display: inline-block; padding: 0 6px;"></span></strong>
-                    &nbsp;&nbsp; <strong><span class="course-display" style="border-bottom: 1px solid #000; min-width: 100px; display: inline-block; text-align: center; padding: 0 4px;">B.SC.IT</span></strong> भाग - <strong><span class="part-display" style="border-bottom: 1px solid #000; min-width: 80px; display: inline-block; text-align: center;"></span></strong> परीक्षा
+                    परीक्षकाचे नाव : <strong><span class="examiner-display"
+                            style="border-bottom: 1px solid #000; min-width: 220px; display: inline-block; padding: 0 6px;"></span></strong>
+                    &nbsp;&nbsp; <strong><span class="course-display"
+                            style="border-bottom: 1px solid #000; min-width: 100px; display: inline-block; text-align: center; padding: 0 4px;">B.SC.IT</span></strong>
+                    भाग - <strong><span class="part-display"
+                            style="border-bottom: 1px solid #000; min-width: 80px; display: inline-block; text-align: center;"></span></strong>
+                    परीक्षा
                 </p>
                 <p class="MsoNormal" style="margin: 1px 0;">
-                    विषय : <strong><span class="subject-display" style="border-bottom: 1px solid #000; min-width: 250px; display: inline-block; padding: 0 6px;"></span></strong>
+                    विषय : <strong><span class="subject-display"
+                            style="border-bottom: 1px solid #000; min-width: 250px; display: inline-block; padding: 0 6px;"></span></strong>
                     &nbsp;&nbsp; प्रात्यक्षिक परीक्षेचे मानधन देयक.
                 </p>
             </div>
-            <p class="MsoNormal" style="margin-bottom: 3px; font-size: 9.5pt;"><strong>रसायनशास्त्राखेरीज अन्य सर्व विषयांचे मानधन अदा करण्याचे कोष्टक</strong></p>
+            <p class="MsoNormal" style="margin-bottom: 3px; font-size: 9.5pt;"><strong>रसायनशास्त्राखेरीज अन्य सर्व
+                    विषयांचे मानधन अदा करण्याचे कोष्टक</strong></p>
 
-            <table style="width:100%; border-collapse: collapse; border: 1px solid black; table-layout: fixed; font-size: 9pt;">
+            <table
+                style="width:100%; border-collapse: collapse; border: 1px solid black; table-layout: fixed; font-size: 9pt;">
                 <tr style="text-align: center; font-weight: bold;">
                     <td style="border: 1px solid black; padding: 2px 3px; width: 23%;">
                         <p style="margin:0;">परीक्षा</p>
@@ -934,14 +971,16 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                         <p style="margin:0;">परीक्षक संख्या</p>
                     </td>
                     <td style="border: 1px solid black; padding: 2px 3px; width: 17%;">
-                        <p style="margin:0;">(pair) द्वायीमधील प्रत्येक परीक्षकास प्रतिविद्यार्थी दिले जाणारे मानधन रुपये</p>
+                        <p style="margin:0;">(pair) द्वायीमधील प्रत्येक परीक्षकास प्रतिविद्यार्थी दिले जाणारे मानधन
+                            रुपये</p>
                     </td>
                     <td style="border: 1px solid black; padding: 2px 3px; width: 10%;">
                         <p style="margin:0;">परीक्षकाने असेस केलेली विद्यार्थी संख्या</p>
                     </td>
                     <td style="border: 1px solid black; padding: 2px 3px; width: 21%;">
                         <p style="margin:0;">अदा करण्यात आलेले एकूण मानधन</p>
-                        <p style="margin:0; font-size: 7.5pt;">(column no 4 * column no. 5= Remuneration for examiner )</p>
+                        <p style="margin:0; font-size: 7.5pt;">(column no 4 * column no. 5= Remuneration for examiner )
+                        </p>
                     </td>
                     <td style="border: 1px solid black; padding: 2px 3px; width: 12%;">
                         <p style="margin:0;">Total</p>
@@ -976,8 +1015,8 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                     </td>
                     <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" step="0.01" value=""
                             data-default="17.00" id="p5-rate-1" class="remun-input rate-input"></td>
-                    <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" value="" data-default="2"
-                            id="p5-examiners-1" class="remun-input examiners-input"></td>
+                    <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" value=""
+                            data-default="2" id="p5-examiners-1" class="remun-input examiners-input"></td>
                     <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" step="0.01" value=""
                             data-default="14.00" id="p5-per-student-1" class="remun-input per-student-input"></td>
                     <td style="border: 1px solid black; padding: 2px 3px;">
@@ -997,8 +1036,8 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                     </td>
                     <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" step="0.01" value=""
                             data-default="25.00" id="p5-rate-2" class="remun-input rate-input"></td>
-                    <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" value="" data-default="2"
-                            id="p5-examiners-2" class="remun-input examiners-input"></td>
+                    <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" value=""
+                            data-default="2" id="p5-examiners-2" class="remun-input examiners-input"></td>
                     <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" step="0.01" value=""
                             data-default="14.00" id="p5-per-student-2" class="remun-input per-student-input"></td>
                     <td style="border: 1px solid black; padding: 2px 3px;">
@@ -1018,8 +1057,8 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                     </td>
                     <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" step="0.01" value=""
                             data-default="40.00" id="p5-rate-3" class="remun-input rate-input"></td>
-                    <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" value="" data-default="2"
-                            id="p5-examiners-3" class="remun-input examiners-input"></td>
+                    <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" value=""
+                            data-default="2" id="p5-examiners-3" class="remun-input examiners-input"></td>
                     <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" step="0.01" value=""
                             data-default="21.00" id="p5-per-student-3" class="remun-input per-student-input"></td>
                     <td style="border: 1px solid black; padding: 2px 3px;">
@@ -1039,8 +1078,8 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                     </td>
                     <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" step="0.01" value=""
                             data-default="50.00" id="p5-rate-ogt" class="remun-input rate-input"></td>
-                    <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" value="" data-default="2"
-                            id="p5-examiners-ogt" class="remun-input examiners-input"></td>
+                    <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" value=""
+                            data-default="2" id="p5-examiners-ogt" class="remun-input examiners-input"></td>
                     <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" step="0.01" value=""
                             data-default="25.00" id="p5-per-student-ogt" class="remun-input per-student-input"></td>
                     <td style="border: 1px solid black; padding: 2px 3px;">
@@ -1065,11 +1104,20 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                 </tr>
             </table>
 
-            <p class="MsoNormal" style="margin-top: 5px; margin-bottom: 1px; font-size: 9.5pt;"><strong>पोहोच पावती</strong></p>
+            <p class="MsoNormal" style="margin-top: 5px; margin-bottom: 1px; font-size: 9.5pt;"><strong>पोहोच
+                    पावती</strong></p>
             <p class="MsoNormal" style="line-height: 1.35; margin-bottom: 2px; font-size: 9pt;">
-                मी <strong><span class="examiner-display" style="border-bottom: 1px solid #000; min-width: 180px; display: inline-block; padding: 0 4px;"></span></strong> पोहोच पावती लिहून देतो/देते कि
-                <strong>WILLINGDON COLLEGE SANGLI</strong> या महाविद्यालयात प्रात्यक्षिक परीक्षेचे <strong><span class="page4-total-present" style="border-bottom: 1px solid #000; min-width: 35px; display: inline-block; text-align: center;">0</span></strong> इतके विद्यार्थी असेस केलेले आहेत. मा. वित्त व लेखा अधिकारी,
-                विलिंग्डन महाविद्यालय, सांगली (Autonomous) यांचे कडून मला त्याचे मानधन रुपये <strong><span class="total-remun-display" style="border-bottom: 1px solid #000; min-width: 50px; display: inline-block; text-align: center;">0</span></strong> इतके रोखीने प्राप्त झाले.
+                मी <strong><span class="examiner-display"
+                        style="border-bottom: 1px solid #000; min-width: 180px; display: inline-block; padding: 0 4px;"></span></strong>
+                पोहोच पावती लिहून देतो/देते कि
+                <strong>WILLINGDON COLLEGE SANGLI</strong> या महाविद्यालयात प्रात्यक्षिक परीक्षेचे <strong><span
+                        class="page4-total-present"
+                        style="border-bottom: 1px solid #000; min-width: 35px; display: inline-block; text-align: center;">0</span></strong>
+                इतके विद्यार्थी असेस केलेले आहेत. मा. वित्त व लेखा अधिकारी,
+                विलिंग्डन महाविद्यालय, सांगली (Autonomous) यांचे कडून मला त्याचे मानधन रुपये <strong><span
+                        class="total-remun-display"
+                        style="border-bottom: 1px solid #000; min-width: 50px; display: inline-block; text-align: center;">0</span></strong>
+                इतके रोखीने प्राप्त झाले.
             </p>
 
             <p class="MsoNormal" style="margin-bottom: 2px; font-size: 9pt;">
@@ -1078,29 +1126,43 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                     style="font-size: 11px; padding: 1px 3px; border: 1px solid #ccc; border-radius: 3px; cursor: pointer; vertical-align: middle;">
             </p>
 
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin: 4px 0; font-size: 9pt;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: flex-end; margin: 4px 0; font-size: 9pt;">
                 <div>देयक अदा करणाऱ्या कर्मचाऱ्याची स्वाक्षरी</div>
                 <div>परीक्षकाची स्वाक्षरी</div>
             </div>
 
-            <p class="MsoNormal" style="margin-top: 4px; margin-bottom: 1px; font-size: 9pt;"><strong>परीक्षकाचे नाव व महाविद्यालयाचा व पत्र व्यवहाराचा संपूर्ण पत्ता</strong></p>
-            <div style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 2px 0; margin: 1px 0 3px 0;">
+            <p class="MsoNormal" style="margin-top: 4px; margin-bottom: 1px; font-size: 9pt;"><strong>परीक्षकाचे नाव व
+                    महाविद्यालयाचा व पत्र व्यवहाराचा संपूर्ण पत्ता</strong></p>
+            <div
+                style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 2px 0; margin: 1px 0 3px 0;">
                 <p class="MsoNormal" style="margin: 0; line-height: 1.35; font-size: 9pt;">
-                    <strong><span class="examiner-display" style="border-bottom: 1px solid #000; min-width: 180px; display: inline-block; padding: 0 4px;"></span></strong> &nbsp;
-                    <strong><span class="college-display" style="border-bottom: 1px solid #000; min-width: 220px; display: inline-block; padding: 0 4px;">WILLINGDON COLLEGE SANGLI</span></strong>
+                    <strong><span class="examiner-display"
+                            style="border-bottom: 1px solid #000; min-width: 180px; display: inline-block; padding: 0 4px;"></span></strong>
+                    &nbsp;
+                    <strong><span class="college-display"
+                            style="border-bottom: 1px solid #000; min-width: 220px; display: inline-block; padding: 0 4px;">WILLINGDON
+                            COLLEGE SANGLI</span></strong>
                 </p>
             </div>
 
-            <p class="MsoNormal" style="margin-top: 4px; margin-bottom: 1px; font-size: 9pt;"><strong>संबंधित परीक्षा केंद्रावरील सहपरीक्षक व विभाग प्रमुखांचे प्रमाणपत्र</strong></p>
+            <p class="MsoNormal" style="margin-top: 4px; margin-bottom: 1px; font-size: 9pt;"><strong>संबंधित परीक्षा
+                    केंद्रावरील सहपरीक्षक व विभाग प्रमुखांचे प्रमाणपत्र</strong></p>
             <p class="MsoNormal" style="line-height: 1.3; margin-bottom: 1px; font-size: 9pt;">
-                प्रमाणित करण्यात येते कि, श्री. / श्रीमती <strong><span class="examiner-display" style="border-bottom: 1px solid #000; min-width: 200px; display: inline-block; padding: 0 4px;"></span></strong>
+                प्रमाणित करण्यात येते कि, श्री. / श्रीमती <strong><span class="examiner-display"
+                        style="border-bottom: 1px solid #000; min-width: 200px; display: inline-block; padding: 0 4px;"></span></strong>
             </p>
             <p class="MsoNormal" style="line-height: 1.3; margin-bottom: 2px; font-size: 9pt;">
-                यांनी <strong><span class="college-display" style="border-bottom: 1px solid #000; min-width: 200px; display: inline-block; padding: 0 4px;">WILLINGDON COLLEGE SANGLI</span></strong> महाविद्यालयात वर उल्लेख केलेल्या
-                प्रात्यक्षिक परीक्षेचे <strong><span class="page4-total-present" style="border-bottom: 1px solid #000; min-width: 35px; display: inline-block; text-align: center;">0</span></strong> इतके विद्यार्थी असेस केलेले आहेत. सदरची माहिती सत्य आहे.
+                यांनी <strong><span class="college-display"
+                        style="border-bottom: 1px solid #000; min-width: 200px; display: inline-block; padding: 0 4px;">WILLINGDON
+                        COLLEGE SANGLI</span></strong> महाविद्यालयात वर उल्लेख केलेल्या
+                प्रात्यक्षिक परीक्षेचे <strong><span class="page4-total-present"
+                        style="border-bottom: 1px solid #000; min-width: 35px; display: inline-block; text-align: center;">0</span></strong>
+                इतके विद्यार्थी असेस केलेले आहेत. सदरची माहिती सत्य आहे.
             </p>
 
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 14px; margin-bottom: 6px; font-size: 9pt;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 14px; margin-bottom: 6px; font-size: 9pt;">
                 <div style="text-align: left;">
                     <div style="height: 16px;"></div>
                     <div>वरिष्ठ सहपरीक्षक सही</div>
@@ -1112,7 +1174,8 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                 </div>
             </div>
 
-            <table style="width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 5px; font-size: 8pt;">
+            <table
+                style="width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 5px; font-size: 8pt;">
                 <tr>
                     <td colspan="5" style="border: 1px solid black; padding: 2px 3px; text-align: center;">
                         <p style="margin:0;"><strong>FOR UNIVERSITY OFFICE ( EXAM SECTION ) USE ONLY</strong></p>
@@ -1137,10 +1200,12 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                 </tr>
             </table>
 
-            <table style="width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 3px; font-size: 8pt;">
+            <table
+                style="width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 3px; font-size: 8pt;">
                 <tr>
                     <td style="border: 1px solid black; padding: 2px 6px;">
-                        <p style="margin:0 0 1px 0;"><strong>FOR UNIVERSITY ACCOUNT (Internal Audit Section) SECTION USE ONLY</strong></p>
+                        <p style="margin:0 0 1px 0;"><strong>FOR UNIVERSITY ACCOUNT (Internal Audit Section) SECTION USE
+                                ONLY</strong></p>
                         <p style="margin:0 0 1px 0;">TOTAL AMOUNT PASSED RS. ( )</p>
                         <p style="margin:0 0 1px 0;">(IN WORDS ………………………………………………………………….)</p>
                         <p style="margin:0;">PASSED PAYMENT RS. ( )</p>
@@ -1148,7 +1213,8 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                 </tr>
             </table>
 
-            <table style="width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 3px; font-size: 8pt;">
+            <table
+                style="width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 3px; font-size: 8pt;">
                 <tr style="text-align: center;">
                     <td style="border: 1px solid black; padding: 2px 3px;">
                         <p style="margin:0;">Clerk</p>
@@ -1179,17 +1245,25 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
 
             <div style="margin-bottom: 4px; line-height: 1.35; font-size: 10pt;">
                 <p class="MsoNormal" style="margin: 1px 0;">
-                    परीक्षकाचे नाव : <strong><span class="examiner2-display" style="border-bottom: 1px solid #000; min-width: 220px; display: inline-block; padding: 0 6px;"></span></strong>
-                    &nbsp;&nbsp; <strong><span class="course-display" style="border-bottom: 1px solid #000; min-width: 100px; display: inline-block; text-align: center; padding: 0 4px;">B.SC.IT</span></strong> भाग - <strong><span class="part-display" style="border-bottom: 1px solid #000; min-width: 80px; display: inline-block; text-align: center;"></span></strong> परीक्षा
+                    परीक्षकाचे नाव : <strong><span class="examiner2-display"
+                            style="border-bottom: 1px solid #000; min-width: 220px; display: inline-block; padding: 0 6px;"></span></strong>
+                    &nbsp;&nbsp; <strong><span class="course-display"
+                            style="border-bottom: 1px solid #000; min-width: 100px; display: inline-block; text-align: center; padding: 0 4px;">B.SC.IT</span></strong>
+                    भाग - <strong><span class="part-display"
+                            style="border-bottom: 1px solid #000; min-width: 80px; display: inline-block; text-align: center;"></span></strong>
+                    परीक्षा
                 </p>
                 <p class="MsoNormal" style="margin: 1px 0;">
-                    विषय : <strong><span class="subject-display" style="border-bottom: 1px solid #000; min-width: 250px; display: inline-block; padding: 0 6px;"></span></strong>
+                    विषय : <strong><span class="subject-display"
+                            style="border-bottom: 1px solid #000; min-width: 250px; display: inline-block; padding: 0 6px;"></span></strong>
                     &nbsp;&nbsp; प्रात्यक्षिक परीक्षेचे मानधन देयक.
                 </p>
             </div>
-            <p class="MsoNormal" style="margin-bottom: 3px; font-size: 9.5pt;"><strong>रसायनशास्त्राखेरीज अन्य सर्व विषयांचे मानधन अदा करण्याचे कोष्टक</strong></p>
+            <p class="MsoNormal" style="margin-bottom: 3px; font-size: 9.5pt;"><strong>रसायनशास्त्राखेरीज अन्य सर्व
+                    विषयांचे मानधन अदा करण्याचे कोष्टक</strong></p>
 
-            <table style="width:100%; border-collapse: collapse; border: 1px solid black; table-layout: fixed; font-size: 9pt;">
+            <table
+                style="width:100%; border-collapse: collapse; border: 1px solid black; table-layout: fixed; font-size: 9pt;">
                 <tr style="text-align: center; font-weight: bold;">
                     <td style="border: 1px solid black; padding: 2px 3px; width: 23%;">
                         <p style="margin:0;">परीक्षा</p>
@@ -1201,14 +1275,16 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                         <p style="margin:0;">परीक्षक संख्या</p>
                     </td>
                     <td style="border: 1px solid black; padding: 2px 3px; width: 17%;">
-                        <p style="margin:0;">(pair) द्वायीमधील प्रत्येक परीक्षकास प्रतिविद्यार्थी दिले जाणारे मानधन रुपये</p>
+                        <p style="margin:0;">(pair) द्वायीमधील प्रत्येक परीक्षकास प्रतिविद्यार्थी दिले जाणारे मानधन
+                            रुपये</p>
                     </td>
                     <td style="border: 1px solid black; padding: 2px 3px; width: 10%;">
                         <p style="margin:0;">परीक्षकाने असेस केलेली विद्यार्थी संख्या</p>
                     </td>
                     <td style="border: 1px solid black; padding: 2px 3px; width: 21%;">
                         <p style="margin:0;">अदा करण्यात आलेले एकूण मानधन</p>
-                        <p style="margin:0; font-size: 7.5pt;">(column no 4 * column no. 5= Remuneration for examiner )</p>
+                        <p style="margin:0; font-size: 7.5pt;">(column no 4 * column no. 5= Remuneration for examiner )
+                        </p>
                     </td>
                     <td style="border: 1px solid black; padding: 2px 3px; width: 12%;">
                         <p style="margin:0;">Total</p>
@@ -1243,8 +1319,8 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                     </td>
                     <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" step="0.01" value=""
                             data-default="17.00" id="p6-rate-1" class="remun-input rate-input"></td>
-                    <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" value="" data-default="2"
-                            id="p6-examiners-1" class="remun-input examiners-input"></td>
+                    <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" value=""
+                            data-default="2" id="p6-examiners-1" class="remun-input examiners-input"></td>
                     <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" step="0.01" value=""
                             data-default="14.00" id="p6-per-student-1" class="remun-input per-student-input"></td>
                     <td style="border: 1px solid black; padding: 2px 3px;">
@@ -1264,8 +1340,8 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                     </td>
                     <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" step="0.01" value=""
                             data-default="25.00" id="p6-rate-2" class="remun-input rate-input"></td>
-                    <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" value="" data-default="2"
-                            id="p6-examiners-2" class="remun-input examiners-input"></td>
+                    <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" value=""
+                            data-default="2" id="p6-examiners-2" class="remun-input examiners-input"></td>
                     <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" step="0.01" value=""
                             data-default="14.00" id="p6-per-student-2" class="remun-input per-student-input"></td>
                     <td style="border: 1px solid black; padding: 2px 3px;">
@@ -1285,8 +1361,8 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                     </td>
                     <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" step="0.01" value=""
                             data-default="40.00" id="p6-rate-3" class="remun-input rate-input"></td>
-                    <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" value="" data-default="2"
-                            id="p6-examiners-3" class="remun-input examiners-input"></td>
+                    <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" value=""
+                            data-default="2" id="p6-examiners-3" class="remun-input examiners-input"></td>
                     <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" step="0.01" value=""
                             data-default="21.00" id="p6-per-student-3" class="remun-input per-student-input"></td>
                     <td style="border: 1px solid black; padding: 2px 3px;">
@@ -1306,8 +1382,8 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                     </td>
                     <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" step="0.01" value=""
                             data-default="50.00" id="p6-rate-ogt" class="remun-input rate-input"></td>
-                    <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" value="" data-default="2"
-                            id="p6-examiners-ogt" class="remun-input examiners-input"></td>
+                    <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" value=""
+                            data-default="2" id="p6-examiners-ogt" class="remun-input examiners-input"></td>
                     <td style="border: 1px solid black; padding: 2px 3px;"><input type="number" step="0.01" value=""
                             data-default="25.00" id="p6-per-student-ogt" class="remun-input per-student-input"></td>
                     <td style="border: 1px solid black; padding: 2px 3px;">
@@ -1332,11 +1408,20 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                 </tr>
             </table>
 
-            <p class="MsoNormal" style="margin-top: 5px; margin-bottom: 1px; font-size: 9.5pt;"><strong>पोहोच पावती</strong></p>
+            <p class="MsoNormal" style="margin-top: 5px; margin-bottom: 1px; font-size: 9.5pt;"><strong>पोहोच
+                    पावती</strong></p>
             <p class="MsoNormal" style="line-height: 1.35; margin-bottom: 2px; font-size: 9pt;">
-                मी <strong><span class="examiner2-display" style="border-bottom: 1px solid #000; min-width: 180px; display: inline-block; padding: 0 4px;"></span></strong> पोहोच पावती लिहून देतो/देते कि
-                <strong><span class="college2-display">WILLINGDON COLLEGE SANGLI</span></strong> या महाविद्यालयात प्रात्यक्षिक परीक्षेचे <strong><span class="page4-total-present" style="border-bottom: 1px solid #000; min-width: 35px; display: inline-block; text-align: center;">0</span></strong> इतके विद्यार्थी असेस केलेले आहेत. मा. वित्त व लेखा अधिकारी,
-                विलिंग्डन महाविद्यालय, सांगली (Autonomous) यांचे कडून मला त्याचे मानधन रुपये <strong><span class="total-remun-display" style="border-bottom: 1px solid #000; min-width: 50px; display: inline-block; text-align: center;">0</span></strong> इतके रोखीने प्राप्त झाले.
+                मी <strong><span class="examiner2-display"
+                        style="border-bottom: 1px solid #000; min-width: 180px; display: inline-block; padding: 0 4px;"></span></strong>
+                पोहोच पावती लिहून देतो/देते कि
+                <strong><span class="college2-display">WILLINGDON COLLEGE SANGLI</span></strong> या महाविद्यालयात
+                प्रात्यक्षिक परीक्षेचे <strong><span class="page4-total-present"
+                        style="border-bottom: 1px solid #000; min-width: 35px; display: inline-block; text-align: center;">0</span></strong>
+                इतके विद्यार्थी असेस केलेले आहेत. मा. वित्त व लेखा अधिकारी,
+                विलिंग्डन महाविद्यालय, सांगली (Autonomous) यांचे कडून मला त्याचे मानधन रुपये <strong><span
+                        class="total-remun-display"
+                        style="border-bottom: 1px solid #000; min-width: 50px; display: inline-block; text-align: center;">0</span></strong>
+                इतके रोखीने प्राप्त झाले.
             </p>
 
             <p class="MsoNormal" style="margin-bottom: 2px; font-size: 9pt;">
@@ -1345,29 +1430,43 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                     style="font-size: 11px; padding: 1px 3px; border: 1px solid #ccc; border-radius: 3px; cursor: pointer; vertical-align: middle;">
             </p>
 
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin: 4px 0; font-size: 9pt;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: flex-end; margin: 4px 0; font-size: 9pt;">
                 <div>देयक अदा करणाऱ्या कर्मचाऱ्याची स्वाक्षरी</div>
                 <div>परीक्षकाची स्वाक्षरी</div>
             </div>
 
-            <p class="MsoNormal" style="margin-top: 4px; margin-bottom: 1px; font-size: 9pt;"><strong>परीक्षकाचे नाव व महाविद्यालयाचा व पत्र व्यवहाराचा संपूर्ण पत्ता</strong></p>
-            <div style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 2px 0; margin: 1px 0 3px 0;">
+            <p class="MsoNormal" style="margin-top: 4px; margin-bottom: 1px; font-size: 9pt;"><strong>परीक्षकाचे नाव व
+                    महाविद्यालयाचा व पत्र व्यवहाराचा संपूर्ण पत्ता</strong></p>
+            <div
+                style="border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 2px 0; margin: 1px 0 3px 0;">
                 <p class="MsoNormal" style="margin: 0; line-height: 1.35; font-size: 9pt;">
-                    <strong><span class="examiner2-display" style="border-bottom: 1px solid #000; min-width: 180px; display: inline-block; padding: 0 4px;"></span></strong> &nbsp;
-                    <strong><span class="college2-display" style="border-bottom: 1px solid #000; min-width: 220px; display: inline-block; padding: 0 4px;">WILLINGDON COLLEGE SANGLI</span></strong>
+                    <strong><span class="examiner2-display"
+                            style="border-bottom: 1px solid #000; min-width: 180px; display: inline-block; padding: 0 4px;"></span></strong>
+                    &nbsp;
+                    <strong><span class="college2-display"
+                            style="border-bottom: 1px solid #000; min-width: 220px; display: inline-block; padding: 0 4px;">WILLINGDON
+                            COLLEGE SANGLI</span></strong>
                 </p>
             </div>
 
-            <p class="MsoNormal" style="margin-top: 4px; margin-bottom: 1px; font-size: 9pt;"><strong>संबंधित परीक्षा केंद्रावरील सहपरीक्षक व विभाग प्रमुखांचे प्रमाणपत्र</strong></p>
+            <p class="MsoNormal" style="margin-top: 4px; margin-bottom: 1px; font-size: 9pt;"><strong>संबंधित परीक्षा
+                    केंद्रावरील सहपरीक्षक व विभाग प्रमुखांचे प्रमाणपत्र</strong></p>
             <p class="MsoNormal" style="line-height: 1.3; margin-bottom: 1px; font-size: 9pt;">
-                प्रमाणित करण्यात येते कि, श्री. / श्रीमती <strong><span class="examiner2-display" style="border-bottom: 1px solid #000; min-width: 200px; display: inline-block; padding: 0 4px;"></span></strong>
+                प्रमाणित करण्यात येते कि, श्री. / श्रीमती <strong><span class="examiner2-display"
+                        style="border-bottom: 1px solid #000; min-width: 200px; display: inline-block; padding: 0 4px;"></span></strong>
             </p>
             <p class="MsoNormal" style="line-height: 1.3; margin-bottom: 2px; font-size: 9pt;">
-                यांनी <strong><span class="college2-display" style="border-bottom: 1px solid #000; min-width: 200px; display: inline-block; padding: 0 4px;">WILLINGDON COLLEGE SANGLI</span></strong> महाविद्यालयात वर उल्लेख केलेल्या
-                प्रात्यक्षिक परीक्षेचे <strong><span class="page4-total-present" style="border-bottom: 1px solid #000; min-width: 35px; display: inline-block; text-align: center;">0</span></strong> इतके विद्यार्थी असेस केलेले आहेत. सदरची माहिती सत्य आहे.
+                यांनी <strong><span class="college2-display"
+                        style="border-bottom: 1px solid #000; min-width: 200px; display: inline-block; padding: 0 4px;">WILLINGDON
+                        COLLEGE SANGLI</span></strong> महाविद्यालयात वर उल्लेख केलेल्या
+                प्रात्यक्षिक परीक्षेचे <strong><span class="page4-total-present"
+                        style="border-bottom: 1px solid #000; min-width: 35px; display: inline-block; text-align: center;">0</span></strong>
+                इतके विद्यार्थी असेस केलेले आहेत. सदरची माहिती सत्य आहे.
             </p>
 
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 14px; margin-bottom: 6px; font-size: 9pt;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 14px; margin-bottom: 6px; font-size: 9pt;">
                 <div style="text-align: left;">
                     <div style="height: 16px;"></div>
                     <div>वरिष्ठ सहपरीक्षक सही</div>
@@ -1379,7 +1478,8 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                 </div>
             </div>
 
-            <table style="width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 5px; font-size: 8pt;">
+            <table
+                style="width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 5px; font-size: 8pt;">
                 <tr>
                     <td colspan="5" style="border: 1px solid black; padding: 2px 3px; text-align: center;">
                         <p style="margin:0;"><strong>FOR UNIVERSITY OFFICE ( EXAM SECTION ) USE ONLY</strong></p>
@@ -1404,10 +1504,12 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                 </tr>
             </table>
 
-            <table style="width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 3px; font-size: 8pt;">
+            <table
+                style="width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 3px; font-size: 8pt;">
                 <tr>
                     <td style="border: 1px solid black; padding: 2px 6px;">
-                        <p style="margin:0 0 1px 0;"><strong>FOR UNIVERSITY ACCOUNT (Internal Audit Section) SECTION USE ONLY</strong></p>
+                        <p style="margin:0 0 1px 0;"><strong>FOR UNIVERSITY ACCOUNT (Internal Audit Section) SECTION USE
+                                ONLY</strong></p>
                         <p style="margin:0 0 1px 0;">TOTAL AMOUNT PASSED RS. ( )</p>
                         <p style="margin:0 0 1px 0;">(IN WORDS ………………………………………………………………….)</p>
                         <p style="margin:0;">PASSED PAYMENT RS. ( )</p>
@@ -1415,7 +1517,8 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                 </tr>
             </table>
 
-            <table style="width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 3px; font-size: 8pt;">
+            <table
+                style="width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 3px; font-size: 8pt;">
                 <tr style="text-align: center;">
                     <td style="border: 1px solid black; padding: 2px 3px;">
                         <p style="margin:0;">Clerk</p>
@@ -1452,10 +1555,10 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                     Page 7: Assistants & Servants Bill (A4 Landscape)
                 </span>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <button id="p7-top-add-row-btn" type="button"
-                        title="Add a new row to Assistants & Servants Table"
+                    <button id="p7-top-add-row-btn" type="button" title="Add a new row to Assistants & Servants Table"
                         style="background: #ffffff; color: #0284c7; border: 1.5px solid #7dd3fc; padding: 5px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s;">
-                        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"
+                            viewBox="0 0 24 24">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
                             <line x1="5" y1="12" x2="12" y2="12"></line>
                         </svg>
@@ -1464,7 +1567,8 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                     <button onclick="printPage('page7', 'landscape')" type="button"
                         title="Print only Page 7 in Landscape orientation"
                         style="background: #2563eb; color: white; border: none; padding: 5px 14px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: background 0.2s;">
-                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
                             <path
                                 d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
                             <rect x="6" y="14" width="12" height="8" />
@@ -1770,15 +1874,18 @@ line-height:115%'><span lang=EN-US>&nbsp;</span></p>
                     <td style="text-align: center; font-weight: bold; padding: 2px;">Total</td>
                     <td style="text-align: center;"><input type="text" value="" id="p7-grand-total"
                             class="staff-grand-total" oninput="updateStaffTotals()"
-                            style="width: 100%; border: none; text-align: center; font-weight: bold; font-family: inherit; font-size: 9.5pt;"></td>
+                            style="width: 100%; border: none; text-align: center; font-weight: bold; font-family: inherit; font-size: 9.5pt;">
+                    </td>
                     <td></td>
                 </tr>
             </table>
 
-            <div class="no-print" style="margin-top: 2px; margin-bottom: 8px; display: flex; gap: 8px; align-items: center;">
+            <div class="no-print"
+                style="margin-top: 2px; margin-bottom: 8px; display: flex; gap: 8px; align-items: center;">
                 <button type="button" id="p7-add-row-btn" title="Add another assistant / servant row"
                     style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; font-size: 11.5px; font-weight: bold; background: #e0f2fe; color: #0284c7; border: 1.5px dashed #0284c7; border-radius: 4px; cursor: pointer; transition: all 0.2s;">
-                    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"
+                        viewBox="0 0 24 24">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="12" y2="12"></line>
                     </svg>

@@ -644,7 +644,7 @@ ul.bullet-list li {
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.25) 100%);
+    background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.08) 100%);
     z-index: 1;
     pointer-events: none;
 }
@@ -659,23 +659,48 @@ ul.bullet-list li {
     z-index: 2;
 }
 
-/* Ultra Light Transparent Crystal Glassmorphic Login Card */
+/* Keyframes for Staggered Slide In From Left & Glass Fade */
+@keyframes slideInFromLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-60px);
+        filter: blur(4px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+        filter: blur(0px);
+    }
+}
+
+@keyframes loginCardFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* 100% Pure Crystal Transparent Glass Login Card */
 .login-card {
     position: relative;
     z-index: 10;
-    background: rgba(15, 23, 42, 0.22);
-    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
     border-radius: 24px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.45);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.2);
     width: 92%;
     max-width: 420px;
     padding: 34px 32px 36px 32px;
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     text-align: center;
-    animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    animation: loginCardFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
 .login-brand-header {
@@ -683,6 +708,7 @@ ul.bullet-list li {
     flex-direction: column;
     align-items: center;
     margin-bottom: 24px;
+    animation: slideInFromLeft 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
 }
 
 .login-logo {
@@ -716,6 +742,15 @@ ul.bullet-list li {
     align-items: center;
 }
 
+/* Staggered slide from left for Username and Password */
+.login-form-group:nth-of-type(1) {
+    animation: slideInFromLeft 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
+}
+
+.login-form-group:nth-of-type(2) {
+    animation: slideInFromLeft 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.32s both;
+}
+
 .login-label {
     display: block;
     width: 100%;
@@ -739,7 +774,7 @@ ul.bullet-list li {
 .login-input-icon {
     position: absolute;
     left: 16px;
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 0.9);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -750,22 +785,22 @@ ul.bullet-list li {
 .login-input {
     width: 100%;
     padding: 13px 48px 13px 48px;
-    background: rgba(0, 0, 0, 0.18) !important;
-    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    background: transparent !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
     border-radius: 14px;
     font-size: 0.98rem;
     font-weight: 600;
     color: #ffffff !important;
     text-align: center;
     outline: none;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25), 0 2px 6px rgba(0, 0, 0, 0.2);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
     transition: all 0.25s ease;
 }
 
 .login-input::placeholder {
-    color: rgba(255, 255, 255, 0.70);
+    color: rgba(255, 255, 255, 0.8);
     font-size: 0.92rem;
     font-weight: 400;
     text-align: center;
@@ -778,17 +813,17 @@ ul.bullet-list li {
 .login-input:-webkit-autofill:active {
     -webkit-text-fill-color: #ffffff !important;
     caret-color: #ffffff !important;
-    -webkit-box-shadow: 0 0 0px 1000px rgba(0, 0, 0, 0.22) inset !important;
-    box-shadow: 0 0 0px 1000px rgba(0, 0, 0, 0.22) inset !important;
+    -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+    box-shadow: 0 0 0px 1000px transparent inset !important;
     background-color: transparent !important;
     transition: background-color 50000s ease-in-out 0s;
 }
 
 .login-input:focus,
 .login-input:active {
-    background: rgba(0, 0, 0, 0.25) !important;
+    background: rgba(255, 255, 255, 0.06) !important;
     border-color: #fbbf24;
-    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.35), inset 0 2px 4px rgba(0, 0, 0, 0.25), 0 8px 20px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.35), 0 8px 20px rgba(0, 0, 0, 0.25);
 }
 
 .login-input:focus + .login-input-icon,
@@ -801,7 +836,7 @@ ul.bullet-list li {
     right: 14px;
     background: none;
     border: none;
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 0.9);
     cursor: pointer;
     padding: 6px;
     display: flex;
@@ -813,7 +848,7 @@ ul.bullet-list li {
 
 .login-toggle-password:hover {
     color: #ffffff;
-    background: rgba(255, 255, 255, 0.20);
+    background: rgba(255, 255, 255, 0.15);
 }
 
 /* ============================================================ */
@@ -824,6 +859,7 @@ ul.bullet-list li {
     position: relative;
     width: 100%;
     margin-top: 24px;
+    animation: slideInFromLeft 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.46s both;
 }
 
 .login-btn {
@@ -833,17 +869,17 @@ ul.bullet-list li {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.05);
     color: #ffffff;
-    border: 1.5px solid rgba(255, 255, 255, 0.45);
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
     border-radius: 14px;
     font-size: 1rem;
     font-weight: 700;
     letter-spacing: 0.3px;
     cursor: pointer;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     user-select: none;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
@@ -851,15 +887,15 @@ ul.bullet-list li {
 
 .login-btn:hover {
     transform: translateY(-2px);
-    background: rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.16);
     border-color: #fbbf24;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5), 0 0 20px rgba(251, 191, 36, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35), 0 0 20px rgba(251, 191, 36, 0.35);
 }
 
 .login-btn:active {
     transform: translateY(1px);
-    background: rgba(255, 255, 255, 0.20);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
 }
 
 .login-btn:focus-visible {
